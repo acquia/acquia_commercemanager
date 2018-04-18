@@ -47,7 +47,7 @@ jobs:
         - composer config repositories.drupal composer https://packages.drupal.org/8
         - mkdir -p docroot/modules/contrib
         - mv ../acm docroot/modules/contrib
-        - composer require drupal/core:8.4.3 commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'>=2.0@RC'
+        - composer require commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'>=2.0@RC'
         - cat composer.json
         - composer install
         # Install drupal.
