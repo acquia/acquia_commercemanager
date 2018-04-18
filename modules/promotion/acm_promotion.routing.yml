@@ -1,0 +1,7 @@
+acm_promotion.sync:
+  path: '/admin/commerce/promotion/sync'
+  defaults:
+    _form: '\Drupal\acm_promotion\Form\PromotionSyncForm'
+    _title: 'Synchronize Promotion Data'
+  requirements:
+    _permission: 'access commerce administration pages'

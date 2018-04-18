@@ -1,0 +1,11 @@
+.customer-address {
+  width: 100%;
+  float: left;
+  clear: both;
+  margin-bottom: 1rem;
+}
+
+.customer-address__edit-button {
+  float: right;
+  clear: right;
+}

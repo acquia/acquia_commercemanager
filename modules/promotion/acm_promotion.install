@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for acm_promotion.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Create 'Always On?' field.
+ */
+function acm_promotion_update_8001() {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  $storages = $entityTypeManager->getStorage('field_storage_config')
+    ->loadByProperties(['id' => 'node.field_acm_promotion_always_on']);
+  if (empty($storages)) {
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_acm_promotion_always_on',
+      'entity_type' => 'node',
+      'type' => 'boolean',
+      'cardinality' => '1',
+      'translatable' => TRUE,
+    ]);
+    $storage->save();
+  }
+  else {
+    $storage = reset($storages);
+  }
+
+  $fields = $entityTypeManager->getStorage('field_config')
+    ->loadByProperties(['id' => 'node.acm_promotion.field_acm_promotion_always_on']);
+  if (empty($fields)) {
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'acm_promotion',
+      'label' => 'Always On?',
+      'description' => 'Check this field if this promotion should always apply to users (ie a sale or a promotion without a marketing link).',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'settings' => [
+        'on_label' => 'On',
+        'off_label' => 'Off',
+      ],
+    ])->save();
+  }
+}

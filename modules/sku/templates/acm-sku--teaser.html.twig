@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ *
+ * Default SKU template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - sku: The rendered SKU fields.
+ *   Use 'sku' to print them all, or print a subset such as
+ *   'sku.title'. Use the following code to exclude the
+ *   printing of a given field:
+ *   @code
+ *   {{ sku|without('title') }}
+ *   @endcode
+ * - sku_entity: The SKU entity.
+ * - sku_url: The SKU URL.
+ *
+ * @ingroup themeable
+ */
+#}
+<article{{ attributes }}>
+  {{- sku -}}
+</article>

@@ -1,0 +1,18 @@
+status: true
+dependencies:
+  module:
+    - acm_cart
+  theme:
+    - bartik
+id: cartminiblock
+theme: bartik
+region: secondary_menu
+weight: 6
+provider: null
+plugin: cart_mini_block
+settings:
+  id: cart_mini_block
+  label: 'Cart Mini Block'
+  provider: acm_cart
+  label_display: '0'
+visibility: {  }

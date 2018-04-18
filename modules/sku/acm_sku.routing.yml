@@ -1,0 +1,70 @@
+entity.acm_sku.canonical:
+  path: '/admin/commerce/sku/{acm_sku}'
+  defaults:
+    _entity_view: 'acm_sku'
+    _title: 'SKU'
+  requirements:
+    _entity_access: 'acm_sku.view'
+
+entity.acm_sku.collection:
+  path: '/admin/commerce/skus'
+  defaults:
+    _entity_list: 'acm_sku'
+    _title: 'SKUs'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+entity.acm_sku.edit_form:
+  path: '/admin/commerce/sku/{acm_sku}/edit'
+  defaults:
+    _entity_form: acm_sku.edit
+    _title: 'Edit SKU'
+  requirements:
+    _entity_access: 'acm_sku.edit'
+
+entity.acm_sku.delete_form:
+  path: '/admin/commerce/sku/{acm_sku}/delete'
+  defaults:
+    _entity_form: acm_sku.delete
+    _title: 'Delete SKU'
+  requirements:
+    _entity_access: 'acm_sku.delete'
+
+acm_sku.configuration:
+  path: '/admin/commerce/config/sku/{acm_sku_type}'
+  defaults:
+    _entity_form: 'acm_sku_type.edit'
+  requirements:
+    _permission: 'administer commerce sku entity'
+
+acm_sku.sku_add:
+  path: '/admin/commerce/sku/add/{acm_sku_type}'
+  defaults:
+    _controller: '\Drupal\acm_sku\Controller\SKUController::add'
+    _title_callback: '\Drupal\acm_sku\Controller\SKUController::addPageTitle'
+  requirements:
+    _entity_create_access: 'acm_sku'
+
+acm_sku.sku_add_page:
+  path: '/admin/commerce/sku/add'
+  defaults:
+    _controller: '\Drupal\acm_sku\Controller\SKUController::addPage'
+    _title: 'Add SKU'
+  requirements:
+    _entity_create_access: 'acm_sku'
+
+acm_sku.sync:
+  path: '/admin/commerce/sku/sync'
+  defaults:
+    _form: '\Drupal\acm_sku\Form\ProductSyncForm'
+    _title: 'Synchronize Product / Category Data'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm_sku.settings:
+  path: '/admin/commerce/sku/settings'
+  defaults:
+    _form: '\Drupal\acm_sku\Form\SKUSettingsForm'
+    _title: 'SKU Custom Settings'
+  requirements:
+    _permission: 'access commerce administration pages'

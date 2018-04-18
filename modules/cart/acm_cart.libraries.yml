@@ -1,0 +1,5 @@
+minicart:
+  version: VERSION
+  css:
+    theme:
+      css/acm_cart.minicart.css: {}

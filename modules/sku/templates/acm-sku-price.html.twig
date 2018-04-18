@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Default theme implementation to show SKU prices.
+ *
+ * Available variables:
+ * - price: The variant price
+ *
+ * @ingroup themeable
+ */
+#}
+{% if price %}
+  <div class="price">
+    <div class="price__display-price">
+      {{ price }}
+    </div>
+  </div>
+{% endif %}

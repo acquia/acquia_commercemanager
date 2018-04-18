@@ -1,0 +1,112 @@
+{#
+/**
+ * @file
+ *
+ * Default user order information template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - order: Order information received from connector.
+ *   Each order will have the following elements:
+ *   - customer_id: Customer ID from the commerce backend.
+ *   - store_id: The store ID from the commerce backend.
+ *   - increment_id: [?]
+ *   - created_at: The date the order was created.
+ *   - group_id: [?]
+ *   - email: The email that was used to place the order.
+ *   - firstname: [?]
+ *   - lastname: [?]
+ *   - billing:
+ *     - address_id: The customers address ID.
+ *     - firstname: The name to address the delivery to.
+ *     - lastname: The name to address the delivery to.
+ *     - street: The street that was.
+ *     - street2: Second stree entry.
+ *     - city: The city string.
+ *     - region: The region that was chosen.
+ *     - postcode: The postcode.
+ *     - country_id: The 2 letter country code.
+ *     - telephone: The entered phone number.
+ *     - default_billing: [?]
+ *     - default_shipping: [?]
+ *     - customer_address_id: [?]
+ *     - customer_id: [?]
+ *     - extension: [?]
+ *   - shipping:
+ *   - totals
+ *     - sub: Sub total formatted to 2 decimal places.
+ *     - tax: Total tax amount formatted to 2 decimal places.
+ *     - discount: Discount amount applied formatted to 2 decimal places.
+ *     - grand: Grand total of the order formatted to 2 decimal places.
+ *   - items:
+ *     Each item will have the following elements:
+ *     - product_id: The product ID.
+ *     - sku: The product SKU.
+ *     - name: The product name.
+ *     - type: The product type.
+ *     - price: The price of the product.
+ *     - ordered: The order quantity.
+ *     - shipped: The quantity of items shipped.
+ *     - refunded: The quantity of items refunded.
+ *   - coupon: The coupon code that has been applied.
+ *   - payment:
+ *     - method_code: [?]
+ *     - method_title: [?]
+ *     - amount: The amount that has been payed
+ *     - extension:
+ *       - cc_last4: Last 4 digits for the credit card.
+ *       - cc_year: The expiration year.
+ *       - cc_month: The expiration month.
+ *   - status: Status of the order.
+ *   - state
+ *   - extension
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass(['customer-order__information']) }}>
+  <div class="customer-order__order-number">
+    <div class="customer-order__order-number-label">{{ 'Order NO'|t }}:</div>
+    <div class="customer-order__order-number-value">{{ order.order_id }}</div>
+  </div>
+  <div class="customer-order__order-date">
+    <div class="customer-order__order-date-label">{{ 'Order Placed On'|t }}:</div>
+    <div class="customer-order__order-date-value">{{ order.created_at|date('U')|format_date('long') }}</div>
+  </div>
+  <div class="customer-order__shipping">
+    <div class="customer-order__shipping-label">{{ 'Shipped To'|t }}:</div>
+    <div class="customer-order__shipping-value">{{ acm_format_address(order.shipping.address) }}</div>
+  </div>
+  <div class="customer-order__billing">
+    <div class="customer-order__billing-label">{{ 'Billed To'|t }}:</div>
+    <div class="customer-order__billing-value">{{ acm_format_address(order.billing) }}</div>
+  </div>
+  <div class="customer-order__name">
+    <div class="customer-order__name-value">{{ order.firstname }} {{ order.lastname }}</div>
+  </div>
+  <div class="customer-order__email">
+    <div class="customer-order__email-value">{{ order.email }}</div>
+  </div>
+  <div class="customer-order__totals">
+    <div class="customer-order__subtotal">
+      <div class="customer-order__subtotal-label">{{ 'Subtotal'|t }}:</div>
+      <div class="customer-order__subtotal-value">{{ order.totals.sub }}</div>
+    </div>
+    <div class="customer-order__shipping-cost">
+      <div class="customer-order__shipping-cost-label">{{ 'Shipping'|t }}:</div>
+      <div class="customer-order__shipping-cost-value">{{ order.shipping.method.amount }}</div>
+    </div>
+    <div class="customer-order__tax">
+      <div class="customer-order__tax-label">{{ 'Tax'|t }}:</div>
+      <div class="customer-order__tax-value">{{ order.totals.tax }}</div>
+    </div>
+    <div class="customer-order__discounts">
+      <div class="customer-order__discounts-label">{{ 'Discounts'|t }}:</div>
+      <div class="customer-order__discounts-value">-{{ order.totals.discount }}</div>
+    </div>
+    <div class="customer-order__grand-total">
+      <div class="customer-order__grand-total-label">{{ 'Grand Total'|t }}:</div>
+      <div class="customer-order__grand-total-value">{{ order.totals.grand }}</div>
+    </div>
+  </div>
+</div>

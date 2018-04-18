@@ -1,0 +1,12 @@
+braintree:
+  version: VERSION
+  js:
+    js/braintree/client.min.js: {}
+    js/braintree/hosted-fields.min.js: {}
+    js/braintree/pane.js: {}
+  css:
+    base:
+      css/braintree.css: { weight: -20 }
+  dependencies:
+    - core/jquery
+    - core/drupal

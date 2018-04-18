@@ -1,0 +1,17 @@
+status: true
+dependencies:
+  config:
+    - acm_sku.type.configurable
+    - field.storage.acm_sku.field_configurable_attributes
+id: acm_sku.configurable.field_configurable_attributes
+field_name: field_configurable_attributes
+entity_type: acm_sku
+bundle: configurable
+label: 'Configurable Attributes'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

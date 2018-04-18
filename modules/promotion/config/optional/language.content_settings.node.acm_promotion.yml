@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.acm_promotion
+third_party_settings: {}
+id: node.acm_promotion
+target_entity_type_id: node
+target_bundle: acm_promotion
+default_langcode: site_default
+language_alterable: true

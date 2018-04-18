@@ -1,0 +1,3 @@
+currency_code: 'USD'
+price_range_format_string: 'From @min to @max'
+langcode: en

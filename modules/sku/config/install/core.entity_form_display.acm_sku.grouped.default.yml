@@ -1,0 +1,44 @@
+status: true
+dependencies:
+  config:
+    - acm_sku.type.grouped
+    - field.field.acm_sku.grouped.field_grouped_skus
+    - image.style.thumbnail
+  module:
+    - acm_sku
+    - image
+id: acm_sku.grouped.default
+targetEntityType: acm_sku
+bundle: grouped
+mode: default
+content:
+  field_grouped_skus:
+    weight: 3
+    settings:
+      size: 60
+    third_party_settings: {  }
+    type: sku_widget
+  image:
+    type: image_image
+    weight: 2
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  sku:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  attributes: true
+  price: true

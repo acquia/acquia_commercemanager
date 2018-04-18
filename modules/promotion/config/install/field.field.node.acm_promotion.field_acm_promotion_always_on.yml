@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_acm_promotion_always_on
+    - node.type.acm_promotion
+third_party_settings: {  }
+id: node.acm_promotion.field_acm_promotion_always_on
+field_name: field_acm_promotion_always_on
+entity_type: node
+bundle: acm_promotion
+label: 'Always On?'
+description: 'Check this field if this promotion should always apply to users (ie a sale or a promotion without a marketing link).'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

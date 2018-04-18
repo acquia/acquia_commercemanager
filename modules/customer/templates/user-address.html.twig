@@ -1,0 +1,47 @@
+{#
+/**
+ * @file
+ *
+ * Default user address template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - links: Any action links associated to the address.
+ * - address:
+ *   Each address will have the following properties.
+ *   - address_id: The customers address ID.
+ *   - firstname: The name to address the delivery to.
+ *   - lastname: The name to address the delivery to.
+ *   - street: The street that was.
+ *   - street2: Second stree entry.
+ *   - city: The city string.
+ *   - region: The region that was chosen.
+ *   - postcode: The postcode.
+ *   - country_id: The 2 letter country code.
+ *   - telephone: The entered phone number.
+ *   - default_billing: [?]
+ *   - default_shipping: [?]
+ *   - customer_address_id: [?]
+ *   - customer_id: [?]
+ *   - extension: [?]
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass(['customer-address']) }}>
+  <div class="customer-address__links">
+    {{ links }}
+  </div>
+  <div class="customer-address__address-heading">
+    {% if address.default_billing and address.default_shipping %}
+      <strong>{{ 'Default Billing and Shipping Address'|t }}:</strong>
+    {% elseif address.default_billing %}
+      <strong>{{ 'Default Billing Address'|t }}:</strong>
+    {% elseif address.default_shipping %}
+      <strong>{{ 'Default Shipping Address'|t }}:</strong>
+    {% endif %}
+  </div>
+  <div class="customer-address__address-value">
+    {{ acm_format_address(address) }}
+  </div>
+</div>

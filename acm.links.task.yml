@@ -1,0 +1,4 @@
+acm.configuration.store:
+  title: Store and Currency Settings
+  route_name: acm.configuration.store
+  base_route: acm.configuration.store

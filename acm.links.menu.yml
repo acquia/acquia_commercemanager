@@ -1,0 +1,34 @@
+acm.admin_commerce:
+  title: 'Commerce'
+  route_name: 'acm.commerce'
+  parent: 'system.admin'
+  description: 'Administer your commerce data and configuration.'
+  weight: -9
+
+acm.configuration:
+  title: 'Configuration'
+  route_name: 'acm.configuration'
+  parent: 'acm.admin_commerce'
+  description: 'Configure your store and Commerce module settings.'
+  weight: -99
+
+acm.configuration.connector:
+  title: 'Connector Settings'
+  route_name: 'acm.configuration.connector'
+  parent: 'acm.configuration'
+  description: 'Configure your Acquia Commerce Connector settings.'
+  weight: 20
+
+acm.configuration.store:
+  title: 'Store Settings'
+  route_name: 'acm.configuration.store'
+  parent: 'acm.configuration'
+  description: 'Configure store and currency mapping.'
+  weight: 21
+
+acm.configuration.commerce_users:
+  title: 'Commerce User Settings'
+  route_name: 'acm.configuration.commerce_users'
+  parent: 'acm.configuration'
+  description: 'Configure your Acquia Commerce User settings.'
+  weight: 23

@@ -1,0 +1,12 @@
+services:
+  acm_exception.route_exception_subscriber:
+    class: Drupal\acm_exception\EventSubscriber\RouteExceptionSubscriber
+    tags:
+      - { name: 'event_subscriber' }
+  acm_exception.route_exception_event_subscriber:
+    class: Drupal\acm_exception\EventSubscriber\RouteExceptionEventSubscriber
+    tags:
+      - { name: 'event_subscriber' }
+  acm_exception.route_exception_handler:
+    class: Drupal\acm_exception\RouteExceptionHandler
+    arguments: ['@config.factory', '@logger.factory']

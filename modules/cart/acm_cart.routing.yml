@@ -1,0 +1,19 @@
+acm_cart.cart:
+  path: '/cart'
+  defaults:
+    _form: '\Drupal\acm_cart\Form\CustomerCartForm'
+    _title: 'Cart'
+  requirements:
+    _permission: 'access cart page'
+  options:
+    no_cache: 'TRUE'
+
+acm_cart.empty:
+  path: '/cart/empty'
+  defaults:
+    _form: '\Drupal\acm_cart\Form\EmptyCartForm'
+    _title: 'Empty cart'
+  requirements:
+    _cart_access: 'true'
+  options:
+    no_cache: 'TRUE'

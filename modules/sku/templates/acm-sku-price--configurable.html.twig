@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Default theme implementation to show SKU prices.
+ *
+ * Available variables:
+ * - price: The formatted price as a string or array if price represents a range
+ * - price.min_price The minimum price, if price represents a range
+ * - price.max_price The maximum price, if price represents a range
+ *
+ * @ingroup themeable
+ */
+#}
+{% if price %}
+<div class="price">
+  <div class="price__display-price">
+    {% if price is iterable %}
+        <span class="price__display-price-range">
+          From {{ price.min_price }} to {{ price.max_price }}
+        </span>
+    {% else %}
+        price
+    {% endif %}
+  </div>
+</div>
+{% endif %}

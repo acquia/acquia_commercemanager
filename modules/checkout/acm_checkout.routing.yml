@@ -1,0 +1,29 @@
+acm_checkout.configuration:
+  path: '/admin/commerce/config/checkout'
+  defaults:
+    _form: '\Drupal\acm_checkout\Form\CheckoutSettingsForm'
+    _title: 'Checkout Settings'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm_checkout.form:
+  path: '/cart/checkout/{step}'
+  defaults:
+    _controller: '\Drupal\acm_checkout\Controller\CheckoutController::formPage'
+    _title: 'Checkout'
+    step: null
+  requirements:
+    _custom_access: '\Drupal\acm_checkout\Controller\CheckoutController::checkAccess'
+  options:
+    no_cache: 'TRUE'
+
+acm_checkout.ajax_form:
+  path: '/ajax/cart/checkout/{step}'
+  defaults:
+    _controller: '\Drupal\acm_checkout\Controller\CheckoutController::ajaxFormPage'
+    _title: 'Checkout'
+    step: null
+  requirements:
+    _custom_access: '\Drupal\acm_checkout\Controller\CheckoutController::checkAccess'
+  options:
+    no_cache: 'TRUE'

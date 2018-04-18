@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Contains install, update, uninstall hooks.
+ */
+
+use Drupal\rest\Entity\RestResourceConfig;
+use Drupal\rest\RestResourceConfigInterface;
+
+/**
+ * Implements hook_update_N().
+ *
+ * Enable the 'acm_customer_delete' rest resource.
+ */
+function acm_customer_update_8001() {
+  // Creating and enabling 'customer delete' resource.
+  $rest_config = [
+    'id' => 'acm_customer_delete',
+    'plugin_id' => 'acm_customer_delete',
+    'status' => TRUE,
+    'granularity' => RestResourceConfigInterface::METHOD_GRANULARITY,
+    'configuration' => [
+      'POST' => [
+        'supported_formats' => ['json'],
+        'supported_auth' => ['oauth2'],
+      ],
+    ],
+    'dependencies' => [
+      'module' => [
+        'acm_customer',
+        'serialization',
+        'simple_oauth',
+        'user',
+      ],
+    ],
+  ];
+
+  $rest_resource = new RestResourceConfig($rest_config, 'rest_resource_config');
+  $rest_resource->save();
+}

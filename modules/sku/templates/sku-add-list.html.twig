@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Default theme implementation to list sku types available for adding skus.
+ *
+ * This list is displayed on the Add content admin page.
+ *
+ * Available variables:
+ * - types: A list of content types, each with the following properties:
+ *   - add_link: Link to create a piece of content of this type.
+ *
+ * @see template_preprocess_sku_add_list()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if content %}
+  <ul class="admin-list">
+    {% for type in types %}
+      <li class="clearfix"><a href="{{ type.url }}"><span class="label">{{ type.label }}</span></a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>
+    {% set create_sku_type = path('acm_sku.type_add') %}
+    {% trans %}
+      You have not created any SKU types yet. Go to the <a href="{{ create_sku_type }}">SKU type creation page</a> to add a new SKU type.
+    {% endtrans %}
+  </p>
+{% endif %}

@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_acm_promotion_disc_type
+    - node.type.acm_promotion
+  module:
+    - options
+id: node.acm_promotion.field_acm_promotion_disc_type
+field_name: field_acm_promotion_disc_type
+entity_type: node
+bundle: acm_promotion
+label: 'Discount Type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,4 @@
+acm_exception.settings_tab:
+  route_name: acm_exception.settings
+  title: Settings
+  base_route: acm_exception.settings

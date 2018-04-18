@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Hooks for the Acquia Commerce Exception module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function acm_exception_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the acm_exception module.
+    case 'help.page.acm_exception':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides configurable error messaging for API exceptions.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

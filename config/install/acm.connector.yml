@@ -1,0 +1,10 @@
+url: ''
+hmac_id: ''
+hmac_secret: ''
+timeout: 30
+verify_ssl: true
+product_page_size: 50
+product_publish: false
+api_version: v2
+filter_root_category: false
+text_format: rich_text

@@ -1,0 +1,69 @@
+services:
+  plugin.manager.sku:
+    class: \Drupal\acm_sku\AcquiaCommerce\SKUPluginManager
+    parent: default_plugin_manager
+
+  acm_sku.category_manager:
+    class: Drupal\acm_sku\CategoryManager
+    arguments:
+      - '@entity_type.manager'
+      - '@acm.client_factory'
+      - '@acm.api'
+      - '@logger.factory'
+      - '@acm.i18n_helper'
+
+  acm_sku.product_options_manager:
+    class: Drupal\acm_sku\ProductOptionsManager
+    arguments:
+      - '@entity_type.manager'
+      - '@acm.api'
+      - '@logger.factory'
+      - '@acm.i18n_helper'
+
+  acm_sku.category_repo:
+    class: Drupal\acm_sku\CategoryRepository
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.factory'
+      - '@config.factory'
+
+  acm_sku.form_builder:
+    class: Drupal\acm_sku\Form\AcmSkuFormBuilder
+    arguments:
+      - '@form_validator'
+      - '@form_submitter'
+      - '@form_cache'
+      - '@module_handler'
+      - '@event_dispatcher'
+      - '@request_stack'
+      - '@class_resolver'
+      - '@element_info'
+      - '@theme.manager'
+      - '@csrf_token'
+
+  acm_sku.product_manager:
+    class: Drupal\acm_sku\ProductManager
+    arguments:
+      - '@entity_type.manager'
+      - '@entity.query'
+      - '@config.factory'
+      - '@logger.factory'
+      - '@acm_sku.category_repo'
+      - '@acm_sku.product_options_manager'
+      - '@acm.i18n_helper'
+
+  cache.stock:
+      class: Drupal\Core\Cache\CacheBackendInterface
+      tags:
+        - { name: cache.bin, default_backend: cache.backend.permanent_database }
+      factory: cache_factory:get
+      arguments: [stock]
+
+  acm_sku.linked_sku:
+    class: Drupal\acm_sku\AcmSkuLinkedSku
+    arguments:
+      - '@acm.api'
+      - '@cache.default'
+      - '@config.factory'
+      - '@language_manager'
+      - '@logger.factory'

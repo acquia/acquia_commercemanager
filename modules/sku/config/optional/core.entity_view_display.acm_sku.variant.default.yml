@@ -1,0 +1,22 @@
+status: true
+dependencies:
+  config:
+    - acm_sku.type.variant
+    - field.field.acm_sku.variant.field_configurable_attributes
+    - field.field.acm_sku.variant.field_configured_skus
+id: acm_sku.variant.default
+targetEntityType: acm_sku
+bundle: variant
+mode: default
+content: {  }
+hidden:
+  attributes: true
+  field_configurable_attributes: true
+  field_configured_skus: true
+  final_price: true
+  image: true
+  media: true
+  name: true
+  price: true
+  sku: true
+  special_price: true

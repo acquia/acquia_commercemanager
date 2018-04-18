@@ -1,0 +1,14 @@
+name: Acquia Commerce Manager
+type: module
+description: This module lays the foundation to use the Acquia Commerce Connector Service.
+core: 8.x
+package: Commerce
+libraries:
+  - acm/global_styles
+dependencies:
+  - drupal:rest
+  - simple_oauth:simple_oauth
+  - simple_oauth:simple_oauth_extras
+  - pcb:pcb
+  - drupal:options
+configure: acm.configuration.conductor

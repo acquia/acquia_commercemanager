@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * Installation and update functions for SKU Position.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function acm_sku_position_schema() {
+  $schema['acm_sku_position'] = [
+    'description' => 'Stores sku product position.',
+    'fields' => [
+      'nid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Product nid.',
+      ],
+      'tid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Product category tid.',
+      ],
+      'position' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Product position.',
+      ],
+      'position_type' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => 'Type of position',
+      ],
+    ],
+    'indexes' => [
+      'indexing' => ['nid', 'tid', 'position_type'],
+    ],
+    'primary key' => ['nid', 'tid', 'position_type'],
+  ];
+  return $schema;
+}

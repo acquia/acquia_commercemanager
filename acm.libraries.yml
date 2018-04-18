@@ -1,0 +1,11 @@
+drupal.acm.toolbar:
+  version: 1.x
+  css:
+    theme:
+      css/acm.icons.css: {}
+
+global_styles:
+  version: 1.x
+  css:
+    theme:
+      css/acm.buttons.css: {}

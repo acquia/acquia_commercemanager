@@ -1,0 +1,8 @@
+variant:
+  version: VERSION
+  js:
+    js/variant.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings

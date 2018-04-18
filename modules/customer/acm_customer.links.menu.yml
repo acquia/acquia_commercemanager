@@ -1,0 +1,6 @@
+acm_customer.list:
+  title: 'Customers'
+  route_name: 'acm_customer.admin'
+  parent: 'acm.admin_commerce'
+  description: 'Access stored customer data.'
+  weight: 10

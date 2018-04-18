@@ -1,0 +1,20 @@
+/**
+ * @file
+ * Styling for Commerce buttons.
+ */
+
+/* Checkout buttons */
+.customer-cart-form .button,
+.customer-cart-form .button:first-child {
+  margin-right: 1rem;
+  margin-left: 0rem;
+}
+.customer-cart-form .button:last-child {
+  margin-right: 0rem;
+}
+
+/* Product node buttons */
+.node--type-acm-product .button {
+  margin-right: 1rem;
+  margin-left: 0rem;
+}

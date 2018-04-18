@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.acm_product.body
+    - field.field.node.acm_product.field_category
+    - field.field.node.acm_product.field_skus
+    - node.type.acm_product
+  module:
+    - acm_sku
+    - user
+id: node.acm_product.teaser
+targetEntityType: node
+bundle: acm_product
+mode: teaser
+content:
+  field_skus:
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: teaser
+    third_party_settings: {  }
+    type: sku_formatter
+    region: content
+hidden:
+  body: true
+  field_category: true
+  langcode: true
+  links: true

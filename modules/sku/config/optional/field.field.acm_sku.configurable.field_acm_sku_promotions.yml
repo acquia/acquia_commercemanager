@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - acm_sku.type.configurable
+    - field.storage.acm_sku.field_acm_sku_promotions
+    - node.type.acm_promotion
+id: acm_sku.configurable.field_acm_sku_promotions
+field_name: field_acm_sku_promotions
+entity_type: acm_sku
+bundle: configurable
+label: Promotions
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      acm_promotion: acm_promotion
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

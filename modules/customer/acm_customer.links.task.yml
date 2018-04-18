@@ -1,0 +1,3 @@
+acm_customer.local_tasks:
+  class: Drupal\Core\Menu\LocalTaskDefault
+  deriver: Drupal\acm_customer\Plugin\Derivative\CustomerPagesLocalTasks

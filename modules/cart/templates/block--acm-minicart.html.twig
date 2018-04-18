@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * This template is used for rendering minicart block.
+ *
+ * Available variables:
+ *  - total - formatted price with currency. Null if cart is empty.
+ *  - quantity - count of all products in cart. 0 if cart is empty. Recommended way for checking if cart is empty or not.
+ *  - currency_code - if you need standalone currency code, here it is as alpha code.
+ *
+ * @see template_preprocess_acm_cart_mini_cart()
+ */
+#}
+<div class="acm-mini-cart">
+    {% if quantity > 0 %}
+        <a class="cart-link cart-link--empty" href="{{ url('acm_cart.empty') }}?return={{ url('<current>') }}">{{ "Clear cart items" | t }}</a>
+        <a class="cart-link cart-link--continue" href="{{ url('acm_cart.cart') }}">Cart ({{ total }})</a>
+    {% else %}
+        <a class="cart-link cart-link--continue" href="{{ url('acm_cart.cart') }}">Cart (empty)</a>
+    {% endif %}
+</div>

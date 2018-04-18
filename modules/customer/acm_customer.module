@@ -1,0 +1,120 @@
+<?php
+
+/**
+ * @file
+ * Acquia Commerce customer module file.
+ *
+ * Provides base hooks to the customer profile functionality of Acquia Commerce
+ * connector.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Entity\EntityTypeInterface;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function acm_customer_element_info_alter(array &$types) {
+  if (isset($types['acm_password_update'])) {
+    $types['acm_password_update']['#process'][] = 'acm_customer_form_process_acm_password_update';
+  }
+}
+
+/**
+ * Form element process handler for client-side password validation.
+ *
+ * This #process handler is automatically invoked for 'password_confirm' form
+ * elements to add the JavaScript and string translations for dynamic password
+ * validation.
+ */
+function acm_customer_form_process_acm_password_update($element) {
+  $password_settings = [
+    'confirmTitle' => t('Passwords match:'),
+    'confirmSuccess' => t('yes'),
+    'confirmFailure' => t('no'),
+    'showStrengthIndicator' => FALSE,
+  ];
+
+  if (\Drupal::config('user.settings')->get('password_strength')) {
+    $password_settings['showStrengthIndicator'] = TRUE;
+    $password_settings += [
+      'strengthTitle' => t('Password strength:'),
+      'hasWeaknesses' => t('Recommendations to make your password stronger:'),
+      'tooShort' => t('Make it at least 12 characters'),
+      'addLowerCase' => t('Add lowercase letters'),
+      'addUpperCase' => t('Add uppercase letters'),
+      'addNumbers' => t('Add numbers'),
+      'addPunctuation' => t('Add punctuation'),
+      'sameAsUsername' => t('Make it different from your username'),
+      'weak' => t('Weak'),
+      'fair' => t('Fair'),
+      'good' => t('Good'),
+      'strong' => t('Strong'),
+      'username' => '',
+    ];
+  }
+
+  $element['#attached']['library'][] = 'user/drupal.user';
+  $element['#attached']['drupalSettings']['password'] = $password_settings;
+
+  return $element;
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function acm_customer_entity_base_field_info(EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'user') {
+    $fields['acm_customer_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Customer ID'))
+      ->setDescription(t('Remote ID used to identify user'))
+      ->setDisplayOptions('form', [
+        'type' => 'hidden',
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'hidden',
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
+
+    return $fields;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function acm_customer_theme($existing, $type, $theme, $path) {
+  return [
+    'user_order' => [
+      'render element' => 'elements',
+      'variables' => [
+        'order' => NULL,
+        'order_details_path' => NULL,
+      ],
+    ],
+    'user_order_detailed' => [
+      'render element' => 'form',
+    ],
+    'user_order_items' => [
+      'render element' => 'elements',
+      'variables' => [
+        'order' => NULL,
+      ],
+    ],
+    'user_order_information' => [
+      'render element' => 'elements',
+      'variables' => [
+        'order' => NULL,
+      ],
+    ],
+    'user_address' => [
+      'render element' => 'elements',
+      'variables' => [
+        'address' => NULL,
+        'address_edit_path' => NULL,
+        'links' => NULL,
+      ],
+    ],
+  ];
+}

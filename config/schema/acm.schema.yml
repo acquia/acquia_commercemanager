@@ -1,0 +1,12 @@
+# Schema for the configuration files of the Acquia Commerce module.
+
+acm.currency:
+  type: config_object
+  label: 'Currency Settings'
+  mapping:
+    currency_code:
+      type: label
+      label: 'Currency Code'
+    price_range_format_string:
+      type: label
+      label: "The format string to use for generating price ranges displayed on the admin pages. For example 'From %min to %mix'. Use %min and %max just like that as placeholders for the actual prices. For price-range display on the front pages use the theme template files in the acm_sku module eg /modules/acm_sku/templates/acm-sku-price--configurable.html.twig "

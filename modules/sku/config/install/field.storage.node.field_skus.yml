@@ -1,0 +1,19 @@
+status: true
+dependencies:
+  module:
+    - acm_sku
+    - node
+_core:
+  default_config_hash: lCwVHBJ92Z0HqD9CN7tF15REbCnzOwQmIXfY-FOoCsc
+id: node.field_skus
+field_name: field_skus
+entity_type: node
+type: sku
+settings: {  }
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
