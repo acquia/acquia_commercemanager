@@ -1,9 +1,14 @@
 # Acquia Commerce Manager
 
-[![Build Status](https://travis-ci.org/acquia/commerce-manager.svg?branch=master)](https://travis-ci.org/acquia/commerce-manager)
+[![Build Status](
+https://travis-ci.org/acquia/commerce-manager.svg?branch=master
+)](https://travis-ci.org/acquia/commerce-manager)
 
 ## Summary
-The Acquia Commerce Manager Drupal module enables site builders to use tools and templates in Drupal to rapidly build commerce experiences. It connects Drupal sites to Acquia's Commerce Connector Service leveraging eCommerce systems as the source of truth for eCommerce data in these experiences.
+The Acquia Commerce Manager Drupal module enables site builders to use tools
+and templates in Drupal to rapidly build commerce experiences. It connects
+Drupal sites to Acquia's Commerce Connector Service leveraging eCommerce 
+systems as the source of truth for eCommerce data in these experiences.
 
 ## Installation
 Module can be installed using Composer:

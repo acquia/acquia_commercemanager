@@ -9,7 +9,7 @@ use Drupal\Core\Queue\QueueWorkerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class AcmPromotionQueueBase
+ * Class AcmPromotionQueueBase.
  *
  * @package Drupal\acm_promotion
  */
