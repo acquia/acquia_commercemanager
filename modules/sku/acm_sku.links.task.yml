@@ -1,0 +1,20 @@
+acm_sku.configuration:
+  route_name: acm_sku.configuration
+  base_route: acm_sku.configuration
+  title: Settings
+
+entity.acm_sku.canonical:
+  route_name: entity.acm_sku.canonical
+  base_route: entity.acm_sku.canonical
+  title: View
+
+entity.acm_sku.edit_form:
+  route_name: entity.acm_sku.edit_form
+  base_route: entity.acm_sku.canonical
+  title: Edit
+
+entity.acm_sku.delete_form:
+  route_name: entity.acm_sku.delete_form
+  base_route: entity.acm_sku.canonical
+  title: Delete
+  weight: 10

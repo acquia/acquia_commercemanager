@@ -1,0 +1,38 @@
+status: true
+dependencies:
+  config:
+    - acm_sku.type.grouped
+    - field.field.acm_sku.grouped.field_grouped_skus
+  module:
+    - image
+id: acm_sku.grouped.default
+targetEntityType: acm_sku
+bundle: grouped
+mode: default
+content:
+  image:
+    label: hidden
+    type: image
+    weight: 0
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+  name:
+    label: hidden
+    type: string
+    weight: 2
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  sku:
+    label: above
+    type: string
+    weight: 1
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  attributes: true
+  field_grouped_skus: true
+  price: true

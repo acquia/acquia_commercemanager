@@ -1,0 +1,26 @@
+<div id="braintree_pane" class="cardtype">
+  <h4>{{ 'Chosen payment method:'|t }}</h4>
+  <p class="payment_method">{{ 'Braintree'|t }}</p>
+
+  <div class="cardinfo">
+    <div class="cardinfo__card-number">
+      <label class="cardinfo__label" for="cc-card-number">{{ 'Card Number'|t }}</label>
+      <div class="cardinfo__input-wrapper" id="cc-card-number"></div>
+      <div class="cardinfo__card-image"></div>
+    </div>
+
+    <div class="cardinfo__wrapper">
+      <div class="cardinfo__exp-date">
+        <label class="cardinfo__label" for="cc-expiration-date">{{ 'Valid Thru'|t }}</label>
+        <div class="cardinfo__input-wrapper" id="cc-expiration-date"></div>
+      </div>
+
+      <div class="cardinfo__cvv">
+        <label class="cardinfo__label" for="cc-cvv">{{ 'CVV'|t }}</label>
+        <div class="cardinfo__input-wrapper" id="cc-cvv"></div>
+      </div>
+    </div>
+
+    {{ form.payload_nonce }}
+  </div>
+</div>

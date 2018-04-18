@@ -1,0 +1,84 @@
+{#
+/**
+ * @file
+ *
+ * Default user order items template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - order: Order information received from connector.
+ *   Each order will have the following elements:
+ *   - customer_id: Customer ID from the commerce backend.
+ *   - store_id: The store ID from the commerce backend.
+ *   - increment_id: [?]
+ *   - created_at: The date the order was created.
+ *   - group_id: [?]
+ *   - email: The email that was used to place the order.
+ *   - firstname: [?]
+ *   - lastname: [?]
+ *   - billing:
+ *     - address_id: The customers address ID.
+ *     - firstname: The name to address the delivery to.
+ *     - lastname: The name to address the delivery to.
+ *     - street: The street that was.
+ *     - street2: Second stree entry.
+ *     - city: The city string.
+ *     - region: The region that was chosen.
+ *     - postcode: The postcode.
+ *     - country_id: The 2 letter country code.
+ *     - telephone: The entered phone number.
+ *     - default_billing: [?]
+ *     - default_shipping: [?]
+ *     - customer_address_id: [?]
+ *     - customer_id: [?]
+ *     - extension: [?]
+ *   - shipping:
+ *   - totals
+ *     - sub: Sub total formatted to 2 decimal places.
+ *     - tax: Total tax amount formatted to 2 decimal places.
+ *     - discount: Discount amount applied formatted to 2 decimal places.
+ *     - grand: Grand total of the order formatted to 2 decimal places.
+ *   - items:
+ *     Each item will have the following elements:
+ *     - product_id: The product ID.
+ *     - sku: The product SKU.
+ *     - name: The product name.
+ *     - type: The product type.
+ *     - price: The price of the product.
+ *     - ordered: The order quantity.
+ *     - shipped: The quantity of items shipped.
+ *     - refunded: The quantity of items refunded.
+ *   - coupon: The coupon code that has been applied.
+ *   - payment:
+ *     - method_code: [?]
+ *     - method_title: [?]
+ *     - amount: The amount that has been payed
+ *     - extension:
+ *       - cc_last4: Last 4 digits for the credit card.
+ *       - cc_year: The expiration year.
+ *       - cc_month: The expiration month.
+ *   - status: Status of the order.
+ *   - state
+ *   - extension
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass(['customer-order__items']) }}>
+  {% for item in order.items %}
+    <div class="customer-order__item">
+      <div class="customer-order__item-name">
+        <div class="customer-order__item-name-value">{{ item.name }}</div>
+        <div class="customer-order__item-sku-value">{{ item.sku }}</div>
+      </div>
+      <div class="customer-order__price">
+        <div class="customer-order__price-label">{{ 'Unit Price'|t }}</div>
+        <div class="customer-order__price-value">{{ item.price }}</div>
+      </div>
+      <div class="customer-order__quantity">
+        <div class="customer-order__quantity-label">{{ 'Quantity'|t }}</div>
+        <div class="customer-order__quantity-value">{{ item.ordered }}</div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

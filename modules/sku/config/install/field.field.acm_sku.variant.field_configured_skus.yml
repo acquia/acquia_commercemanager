@@ -1,0 +1,19 @@
+status: true
+dependencies:
+  config:
+    - acm_sku.type.variant
+    - field.storage.acm_sku.field_configured_skus
+  module:
+    - acm_sku
+id: acm_sku.variant.field_configured_skus
+field_name: field_configured_skus
+entity_type: acm_sku
+bundle: variant
+label: 'Configured SKUs'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: sku

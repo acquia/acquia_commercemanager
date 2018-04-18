@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function acm_diagnostic_requirements($phase) {
+  $requirements = [];
+  $severities = [];
+
+  if ($phase != 'runtime') {
+    return $requirements;
+  }
+
+  /** @var \Drupal\acm_diagnostic\CommerceRequirementManager $plugin_manager */
+  $plugin_manager = \Drupal::service('plugin.manager.acm_diagnostic_requirements');
+
+  foreach ($plugin_manager->createInstanceMultiple() as $id => $requirement) {
+    $severities[] = $requirement->severity();
+
+    if ($requirement->severity() > REQUIREMENT_OK) {
+      $requirements["acm_diagnostic_{$id}"] = [
+        'title' => t('Acquia Commerce: @requirement_title', [
+          '@requirement_title' => $requirement->title(),
+        ]),
+        'value' => $requirement->value(),
+        'description' => $requirement->description(),
+        'severity' => $requirement->severity(),
+      ];
+    }
+  }
+
+  $greatest_severity = @max($severities);
+  $severity_counts = array_count_values($severities);
+  $requirements['acm_diagnostic'] = [
+    'title' => t('Acquia Commerce'),
+    'value' => ($greatest_severity > REQUIREMENT_OK) ? t('Detected @error_count errors and @warning_count warnings', [
+      '@warning_count' => @$severity_counts[REQUIREMENT_WARNING] ?: 0,
+      '@error_count' => @$severity_counts[REQUIREMENT_ERROR] ?: 0,
+    ]) : t('No problems detected'),
+    'severity' => $greatest_severity,
+  ];
+
+  return $requirements;
+}

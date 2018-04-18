@@ -1,0 +1,20 @@
+.customer-profile .form-item {
+  width: 100%;
+  float: left;
+  clear: both;
+  margin-bottom: 1rem;
+}
+
+.customer-profile .form-item__label {
+  float: left;
+}
+
+.customer-profile .form-item__input,
+.customer-profile .form-item__value {
+  float: left;
+  clear: left;
+}
+
+.customer-profile .form-item__buttons {
+  float: right;
+}

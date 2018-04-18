@@ -1,0 +1,5 @@
+acm_exception.settings:
+  title: 'API Exceptions'
+  description: 'Configure API exception messages.'
+  parent: acm.configuration
+  route_name: acm_exception.settings

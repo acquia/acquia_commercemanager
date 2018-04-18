@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_acm_promotion_label
+    - node.type.acm_promotion
+id: node.acm_promotion.field_acm_promotion_label
+field_name: field_acm_promotion_label
+entity_type: node
+bundle: acm_promotion
+label: Label
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

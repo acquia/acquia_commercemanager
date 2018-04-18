@@ -1,0 +1,21 @@
+uuid: 3a5e528d-cb5e-412b-a0ad-f6039dad6fea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_skus
+    - node.type.acm_product
+_core:
+  default_config_hash: rADXUWaLcC5ckALy-RgFhcWBYjXOTUg3NHKPf_yDo80
+id: node.acm_product.field_skus
+field_name: field_skus
+entity_type: node
+bundle: acm_product
+label: SKUs
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: sku

@@ -1,0 +1,86 @@
+/**
+ * @file
+ * Default theme implementation for the checkout progress component.
+ */
+
+.checkout-progress {
+  width: 100%;
+}
+
+.checkout-progress__step {
+  width: 16%;
+  max-height: 30px;
+  position: relative;
+  display: inline-block;
+  padding: 6px 0;
+  font-family: Helvetica, Arial, "Nimbus Sans L", sans-serif;
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.checkout-progress__step:before,
+.checkout-progress__step:after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  right: -15px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 15px 0 15px 15px;
+}
+
+.checkout-progress__step:after {
+  z-index: 1;
+  right: -18px;
+  border-color: transparent transparent transparent #fff;
+}
+
+.checkout-progress__step.-previous {
+  background: #007fc9;
+}
+
+.checkout-progress__step.-previous:before {
+  border-color: transparent transparent transparent #007fc9;
+}
+
+.checkout-progress__step.-current {
+  background: #015484;
+}
+
+.checkout-progress__step.-current:before {
+  border-color: transparent transparent transparent #015484;
+}
+
+.checkout-progress__step.-next {
+  background: #9fc9e0;
+}
+
+.checkout-progress__step.-next:before {
+  border-color: transparent transparent transparent #9fc9e0;
+}
+
+.checkout-progress__step.-has-link {
+  padding: 0;
+}
+
+.checkout-progress__step:last-child:before,
+.checkout-progress__step:last-child:after {
+  display: none;
+}
+
+.checkout-progress__step a {
+  display: block;
+  color: inherit;
+  border: 0;
+  padding: 6px 0;
+}
+
+.checkout-progress__step a:hover,
+.checkout-progress__step a:active,
+.checkout-progress__step a:focus {
+  color: inherit;
+}

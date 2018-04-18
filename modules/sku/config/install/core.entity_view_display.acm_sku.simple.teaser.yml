@@ -1,0 +1,50 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - acm_sku.type.simple
+    - core.entity_view_mode.acm_sku.teaser
+    - image.style.thumbnail
+  module:
+    - acm_sku
+    - image
+id: acm_sku.simple.teaser
+targetEntityType: acm_sku
+bundle: simple
+mode: teaser
+content:
+  attr_special_price:
+    label: above
+    type: string
+    weight: 3
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  image:
+    label: hidden
+    type: product_link
+    weight: 0
+    settings:
+      image_style: thumbnail
+      image_link: content
+    third_party_settings: {  }
+    region: content
+  price:
+    label: hidden
+    type: price_formatter
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  attr_color: true
+  attr_size: true
+  attributes: true
+  crosssell: true
+  final_price: true
+  media: true
+  name: true
+  sku: true
+  special_price: true
+  upsell: true

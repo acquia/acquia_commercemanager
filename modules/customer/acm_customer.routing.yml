@@ -1,0 +1,35 @@
+acm_customer.admin:
+  path: '/admin/commerce/customers'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Customers'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm_customer.view_page:
+  path: '/account/{page}/{action}/{id}'
+  defaults:
+    _controller: '\Drupal\acm_customer\Controller\CustomerController::formPage'
+    _title_callback: '\Drupal\acm_customer\Controller\CustomerController::getTitle'
+    page: null
+    action: 'view'
+    id: 0
+  requirements:
+    _commerce_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\acm_customer\Controller\CustomerController::checkAccess'
+  options:
+    no_cache: 'TRUE'
+
+acm_customer.ajax_view_page:
+  path: '/ajax/account/{page}/{action}/{id}'
+  defaults:
+    _controller: '\Drupal\acm_customer\Controller\CustomerController::ajaxFormPage'
+    _title_callback: '\Drupal\acm_customer\Controller\CustomerController::getTitle'
+    page: null
+    action: 'view'
+    id: 0
+  requirements:
+    _commerce_user_is_logged_in: 'TRUE'
+    _custom_access: '\Drupal\acm_customer\Controller\CustomerController::checkAccess'
+  options:
+    no_cache: 'TRUE'

@@ -1,0 +1,4 @@
+services:
+  plugin.manager.acm_payment_method:
+    class: Drupal\acm_payment\PaymentMethodManager
+    parent: default_plugin_manager

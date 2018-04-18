@@ -1,0 +1,6 @@
+acm_promotion.sync:
+  title: 'Synchronize Promotions'
+  route_name: 'acm_promotion.sync'
+  parent: 'acm.configuration'
+  description: 'Synchronize Promotion Data.'
+  weight: 30

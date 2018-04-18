@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for acm.
+ */
+
+/**
+ * Delete ACM ID global config.
+ */
+function acm_update_8001() {
+  \Drupal::configFactory()
+    ->getEditable('acm_commerce.connector')->clear('acm_id')->delete();
+}

@@ -1,0 +1,53 @@
+acm_promotion:
+  version: 1.x
+  js:
+    js/acm_promotion.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+acm_promotion_marketing_link:
+  version: 1.x
+  js:
+    js/acm_promotion_marketing_link.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+acm_promotion_form:
+  version: 1.x
+  js:
+    js/acm_promotion_form.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+acm_promotion_content:
+  version: 1.x
+  js:
+    js/acm_promotion_content.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+acm_promotion_block:
+  version: 1.x
+  js:
+    js/acm_promotion_block.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+acm_promotion_add_promotions:
+  version: 1.x
+  js:
+    js/acm_promotion_add_promotions.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings

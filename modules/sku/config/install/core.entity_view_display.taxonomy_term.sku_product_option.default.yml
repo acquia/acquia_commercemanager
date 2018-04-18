@@ -1,0 +1,47 @@
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.sku_product_option.field_sku_attribute_code
+    - field.field.taxonomy_term.sku_product_option.field_sku_attribute_id
+    - field.field.taxonomy_term.sku_product_option.field_sku_option_id
+    - taxonomy.vocabulary.sku_product_option
+  module:
+    - text
+id: taxonomy_term.sku_product_option.default
+targetEntityType: taxonomy_term
+bundle: sku_product_option
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_sku_attribute_code:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_sku_attribute_id:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_sku_option_id:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  langcode: true

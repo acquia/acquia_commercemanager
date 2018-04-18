@@ -1,0 +1,11 @@
+acm_sku.sku_add_page:
+  route_name: acm_sku.sku_add_page
+  title: 'Add SKU'
+  appears_on:
+    - entity.acm_sku.collection
+    - entity.acm_sku.canonical
+entity.acm_sku_type.add_form:
+  route_name: 'entity.acm_sku_type.add_form'
+  title: 'Add SKU type'
+  appears_on:
+    - entity.acm_sku_type.collection

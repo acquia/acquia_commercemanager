@@ -1,0 +1,27 @@
+entity.acm_sku_type.collection:
+  title: 'SKU Settings'
+  route_name: entity.acm_sku_type.collection
+  description: 'Change SKU settings.'
+  parent: acm.configuration
+  weight: 10
+
+acm_sku.settings:
+  title: 'SKU Custom Settings'
+  route_name: acm_sku.settings
+  description: 'Change SKU Custom settings.'
+  parent: acm.configuration
+  weight: 11
+
+entity.acm_sku.collection:
+  title: 'SKUs'
+  route_name: 'entity.acm_sku.collection'
+  parent: 'acm.admin_commerce'
+  description: 'List available SKUs.'
+  weight: 10
+
+acm_sku.sync:
+  title: 'Synchronize'
+  route_name: 'acm_sku.sync'
+  parent: 'acm.configuration'
+  description: 'Synchronize Product and Category data.'
+  weight: 30

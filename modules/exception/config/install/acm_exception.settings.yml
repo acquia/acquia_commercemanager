@@ -1,0 +1,110 @@
+langcode: 'en'
+default:
+  message: 'There was an error processing your request. Please try again.'
+  redirect: ''
+  log: 0
+routes:
+  createCart:
+    message: 'There was an error creating your cart. Please try again.'
+    redirect: ''
+    log: 0
+  skuStockCheck:
+    message: 'There was an error checking SKU stock levels. Please try again.'
+    redirect: ''
+    log: 0
+  getCart:
+    message: 'There was an error retrieving your cart.'
+    redirect: ''
+    log: 0
+  updateCart:
+    message: 'There was an error updating your cart. Please try again.'
+    redirect: ''
+    log: 0
+  associateCart:
+    message: 'There was an error associating the active active cart with the user. Please try again.'
+    redirect: ''
+    log: 0
+  placeOrder:
+    message: 'There was an error placing your order. Please try again.'
+    redirect: ''
+    log: 0
+  getShippingMethods:
+    message: 'There was an error retrieving shipping methods for your order. Please try again.'
+    redirect: ''
+    log: 0
+  getShippingEstimates:
+    message: 'There was an error retrieving shipping estimates for your order. Please try again.'
+    redirect: ''
+    log: 0
+  getPaymentMethods:
+    message: 'There was an error retrieving payment methods for your order. Please try again.'
+    redirect: ''
+    log: 0
+  createCustomer:
+    message: 'There was an error creating your account. Please try again.'
+    redirect: ''
+    log: 0
+  updateCustomer:
+    message: 'There was an error updating your account. Please try again.'
+    redirect: ''
+    log: 0
+  authenticateCustomer:
+    message: 'There was an error authenticating your account. Please try again.'
+    redirect: ''
+    log: 0
+  getCustomer:
+    message: 'There was an error retrieving your account. Please try again.'
+    redirect: ''
+    log: 0
+  getCustomerOrders:
+    message: 'There was an error retrieving your orders. Please try again.'
+    redirect: ''
+    log: 0
+  getCustomerToken:
+    message: 'There was an error authenticating your account. Please try again.'
+    redirect: ''
+    log: 0
+  getCurrentCustomer:
+    message: 'There was an error retrieving your account. Please try again.'
+    redirect: ''
+    log: 0
+  updateOrderStatus:
+    message: 'There was an error updating your order. Please try again.'
+    redirect: ''
+    log: 0
+  getCategories:
+    message: 'There was an error retrieving categories from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  getProductOptions:
+    message: 'There was an error retrieving product options from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  getPromotions:
+    message: 'There was an error retrieving promotions from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  getProductsByUpdatedDate:
+    message: 'There was an error retrieving products from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  productFullSync:
+    message: 'There was an error retrieving products from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  getProducts:
+    message: 'There was an error retrieving products from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  getPaymentToken:
+    message: 'There was an error retrieving a payment token from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0
+  subscribeNewsletter:
+    message: 'There was an error subscribing to the newsletter. Please try again.'
+    redirect: ''
+    log: 0
+  systemWatchdog:
+    message: 'There was an error retieving system status from the e-commerce system. Please try again.'
+    redirect: ''
+    log: 0

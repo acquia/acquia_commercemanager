@@ -1,0 +1,13 @@
+services:
+  acm_cart.cart_storage:
+    class: Drupal\acm_cart\CartStorage
+    arguments: ['@acm.session_storage', '@acm.api', '@event_dispatcher', '@logger.factory']
+  acm_cart.mini_cart:
+    class: Drupal\acm_cart\MiniCartManager
+    arguments: ['@acm_cart.cart_storage']
+
+  acm_cart.access.cart:
+    class: Drupal\acm_cart\Access\CartAccess
+    arguments: ['@acm_cart.cart_storage']
+    tags:
+      - { name: access_check, applies_to: _cart_access }

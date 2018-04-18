@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_category_include_menu
+    - taxonomy.vocabulary.acm_product_category
+id: taxonomy_term.acm_product_category.field_category_include_menu
+field_name: field_category_include_menu
+entity_type: taxonomy_term
+bundle: acm_product_category
+label: 'Include in Menu'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

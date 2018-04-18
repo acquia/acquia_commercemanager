@@ -1,0 +1,13 @@
+services:
+  acm_promotion.promotions_manager:
+    class: Drupal\acm_promotion\AcmPromotionsManager
+    arguments:
+      - '@entity_type.manager'
+      - '@acm.api'
+      - '@logger.factory'
+      - '@language_manager'
+      - '@entity.repository'
+      - '@queue'
+      - '@config.factory'
+      - '@database'
+      - '@acm.i18n_helper'

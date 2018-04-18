@@ -1,0 +1,5 @@
+name: Acquia Commerce Manager Checkout
+type: module
+description: This module provides cart checkout functionality to the Acquia Commerce Connector Service.
+core: 8.x
+package: Commerce

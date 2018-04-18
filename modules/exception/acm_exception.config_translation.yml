@@ -1,0 +1,5 @@
+acm_exception.settings:
+  title: 'Exception Messages'
+  base_route_name: acm_exception.settings
+  names:
+    - acm_exception.settings

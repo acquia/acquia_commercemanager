@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - acm_promotion
+    - serialization
+    - simple_oauth
+id: acm_promotionsync
+plugin_id: acm_promotionsync
+granularity: method
+configuration:
+  POST:
+    supported_formats:
+      - json
+    supported_auth:
+      - oauth2

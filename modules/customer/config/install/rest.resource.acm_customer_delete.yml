@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - acm_customer
+    - serialization
+    - simple_oauth
+    - user
+id: acm_customer_delete
+plugin_id: acm_customer_delete
+granularity: method
+configuration:
+  POST:
+    supported_formats:
+      - json
+    supported_auth:
+      - oauth2

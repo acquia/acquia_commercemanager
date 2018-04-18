@@ -1,0 +1,19 @@
+status: true
+dependencies:
+  config:
+    - acm_sku.type.grouped
+    - field.storage.acm_sku.field_grouped_skus
+  module:
+    - acm_sku
+id: acm_sku.grouped.field_grouped_skus
+field_name: field_grouped_skus
+entity_type: acm_sku
+bundle: grouped
+label: 'Grouped SKUs'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: sku

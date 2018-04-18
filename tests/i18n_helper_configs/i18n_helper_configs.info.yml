@@ -1,0 +1,4 @@
+name: 'Configuration for I18nHelper'
+type: module
+package: Testing
+core: 8.x

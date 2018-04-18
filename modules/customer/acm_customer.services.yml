@@ -1,0 +1,12 @@
+services:
+  acm_customer.route_subscriber:
+    class: Drupal\acm_customer\Routing\CustomerPagesRoutes
+    arguments: ['@plugin.manager.acm_customer_pages', '@config.factory']
+
+  plugin.manager.acm_customer_pages:
+    class: Drupal\acm_customer\CustomerPagesManager
+    parent: default_plugin_manager
+
+  plugin.manager.acm_customer_form:
+    class: Drupal\acm_customer\CustomerFormManager
+    parent: default_plugin_manager

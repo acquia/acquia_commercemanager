@@ -1,0 +1,7 @@
+status: true
+dependencies: {  }
+name: 'Product Category'
+vid: acm_product_category
+description: 'Product categories used to sort products.'
+hierarchy: 0
+weight: 0

@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for acm_product.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function acm_product_install() {
+  \Drupal::configFactory()->getEditable('acm.connector')
+    ->set('product_node_type', 'acm_product')
+    ->set('sku_field_name', 'field_skus')
+    ->set('category_vid', 'acm_product_category')
+    ->set('category_field_name', 'field_category')
+    ->save();
+}

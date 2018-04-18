@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - acm_sku.type.simple
+    - image.style.large
+  module:
+    - acm_sku
+    - image
+id: acm_sku.simple.default
+targetEntityType: acm_sku
+bundle: simple
+mode: default
+content:
+  image:
+    label: hidden
+    type: image
+    weight: 0
+    settings:
+      image_style: large
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  price:
+    label: above
+    type: price_formatter
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  attributes: true
+  final_price: true
+  media: true
+  name: true
+  sku: true
+  special_price: true

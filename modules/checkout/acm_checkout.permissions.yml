@@ -1,0 +1,3 @@
+access checkout:
+  title: 'Access checkout'
+  description: 'Complete a purchase through the Acquia Commerce checkout form.'

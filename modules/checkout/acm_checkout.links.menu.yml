@@ -1,0 +1,6 @@
+acm_checkout.configuration:
+  title: 'Checkout Settings'
+  route_name: 'acm_checkout.configuration'
+  parent: 'acm.configuration'
+  description: 'Change checkout settings.'
+  weight: 10

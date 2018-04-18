@@ -1,0 +1,4 @@
+services:
+  plugin.manager.acm_diagnostic_requirements:
+    class: Drupal\acm_diagnostic\CommerceRequirementManager
+    parent: default_plugin_manager

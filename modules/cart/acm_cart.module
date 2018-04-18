@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Provides base hooks to the cart functionality of Acquia Commerce connector.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function acm_cart_preprocess_acm_sku(&$variables) {
+  // We would rather allow modules to implement the preprocess hook directly,
+  // however the main issue there is that we can't disable cart separately so
+  // we provide a hook that's only called if this module is enabled on display.
+  \Drupal::moduleHandler()->alter('add_to_cart_display', $variables);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function acm_cart_theme($existing, $type, $theme, $path) {
+  return [
+    'acm_cart_mini_cart' => [
+      'variables' => [
+        'quantity' => 0,
+        'total' => NULL,
+        'currency_code' => NULL,
+      ],
+      'template' => 'block--acm-minicart',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for minicart templates.
+ *
+ * Default template: block--acmminicart.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - quantity - count of all products in cart.
+ *   - total - formatted price with currency.
+ *   - currency_code - alpha code for currency.
+ */
+function template_preprocess_acm_cart_mini_cart(array &$variables) {
+  // Fetch the config.
+  $config = \Drupal::configFactory()->get('acm.currency');
+
+  // Fetch the currency format from the config factor.
+  $variables['currency_code'] = $config->get('currency_code');
+}
+
+/**
+ * Implements hook_user_logout().
+ */
+function acm_cart_user_logout($account) {
+  $cookies = \Drupal::request()->cookies->all();
+  if (isset($cookies['Drupal_visitor_acm_cart_id'])) {
+    user_cookie_delete('acm_cart_id');
+  }
+}

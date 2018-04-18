@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for acm_cart.
+ */
+
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function acm_cart_install() {
+  $role = Role::load('anonymous');
+  $role->grantPermission('access cart page');
+  $role->save();
+
+  $role = Role::load('authenticated');
+  $role->grantPermission('access cart page');
+  $role->save();
+}

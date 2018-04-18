@@ -1,0 +1,6 @@
+status: true
+dependencies:
+  module:
+    - acm_sku
+id: simple
+label: Simple

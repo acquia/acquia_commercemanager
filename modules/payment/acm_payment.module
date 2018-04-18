@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains acm_payment.module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function acm_payment_theme($existing, $type, $theme, $path) {
+  return [
+    'acm_payment' => [
+      'render element' => 'form',
+      'variables' => [
+        'payment_method' => '',
+        'payment_method_name' => '',
+      ],
+    ],
+    'acm_payment__braintree' => [
+      'base hook' => 'acm_payment',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function acm_payment_theme_suggestions_acm_payment(array $variables) {
+  $suggestions = [];
+  $paymentMethod = $variables['payment_method'];
+  $suggestions[] = 'acm_payment__' . $paymentMethod;
+  return $suggestions;
+}

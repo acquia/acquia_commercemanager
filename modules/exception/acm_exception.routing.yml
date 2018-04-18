@@ -1,0 +1,7 @@
+acm_exception.settings:
+  path: 'admin/commerce/config/exceptions'
+  defaults:
+    _form: '\Drupal\acm_exception\Form\ExceptionSettingsForm'
+    _title: 'API Exception Settings'
+  requirements:
+    _permission: 'access commerce administration pages'

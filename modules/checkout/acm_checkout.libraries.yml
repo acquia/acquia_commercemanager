@@ -1,0 +1,17 @@
+checkout_progress:
+  version: VERSION
+  css:
+    theme:
+      css/acm_checkout.progress.css: {}
+
+single_page_checkout:
+  version: VERSION
+  js:
+    js/CheckoutRouter.js: {}
+    js/views/BasePanesView.js: {}
+    js/views/CheckoutView.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/backbone

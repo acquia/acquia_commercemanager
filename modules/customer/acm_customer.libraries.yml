@@ -1,0 +1,22 @@
+base:
+  version: VERSION
+  css:
+    component:
+      css/components/customer-address.css: { weight: -10 }
+      css/components/customer-order.css: { weight: -10 }
+      css/components/customer-profile.css: { weight: -10 }
+
+single_page_app:
+  version: VERSION
+  js:
+    js/CustomerRouter.js: {}
+    js/views/BaseCustomerPageView.js: {}
+    js/views/ProfilePageView.js: {}
+    js/views/AddressesPageView.js: {}
+    js/views/CustomerView.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/backbone
+    - core/drupal.ajax

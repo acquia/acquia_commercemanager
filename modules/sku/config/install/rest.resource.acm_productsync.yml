@@ -1,0 +1,16 @@
+status: true
+dependencies:
+  module:
+    - acm_sku
+    - serialization
+    - user
+    - simple_oauth
+id: acm_productsync
+plugin_id: acm_productsync
+granularity: method
+configuration:
+  POST:
+    supported_formats:
+      - json
+    supported_auth:
+      - oauth2

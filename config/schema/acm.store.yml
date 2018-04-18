@@ -1,0 +1,10 @@
+acm.store:
+  type: config_object
+  label: 'Store Settings'
+  mapping:
+    store_id:
+      type: label
+      label: 'Store id'
+    langcode:
+      type: string
+      label: 'Language code'

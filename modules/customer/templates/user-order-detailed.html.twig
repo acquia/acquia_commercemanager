@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ *
+ * Default user re-order form.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - form: The reorder form.
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass(['customer-order', 'customer-order--detailed']) }}>
+  <div class="customer-order__items-wrapper">
+    <div class="customer-order__wrapper-label">{{ 'Products'|t }}</div>
+    {{ form.items }}
+  </div>
+  <div class="customer-order__information-wrapper">
+    <div class="customer-order__wrapper-label">{{ 'Confirmation'|t }}</div>
+    {{ form.actions }}
+    {{ form.information }}
+  </div>
+</div>
