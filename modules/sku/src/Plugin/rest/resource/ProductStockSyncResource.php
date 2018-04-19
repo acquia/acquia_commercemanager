@@ -84,7 +84,7 @@ class ProductStockSyncResource extends ResourceBase {
    * @return \Drupal\rest\ResourceResponse
    *   HTTP Response object.
    */
-  public function post(array $stock = []) {
+  public function post(array $stock) {
     $storeId = '';
     $requestHeaders = $this->currentRequest->headers;
     if ($requestHeaders->has('X-ACM-UUID')) {

@@ -113,7 +113,7 @@ class CategorySyncResource extends ResourceBase {
    * @return \Drupal\rest\ResourceResponse
    *   HTTP Response.
    */
-  public function post(array $categories = []) {
+  public function post(array $categories) {
     $storeId = '';
     $requestHeaders = $this->currentRequest->headers;
     if ($requestHeaders->has('X-ACM-UUID')) {
