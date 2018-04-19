@@ -91,7 +91,7 @@ class ProductSyncResource extends ResourceBase {
    * @return \Drupal\rest\ResourceResponse
    *   HTTP Response object.
    */
-  public function post(array $products = []) {
+  public function post(array $products) {
     $storeId = '';
     $requestHeaders = $this->currentRequest->headers;
     if ($requestHeaders->has('X-ACM-UUID')) {
