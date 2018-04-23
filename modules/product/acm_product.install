@@ -43,7 +43,7 @@ function acm_product_install() {
  * Implements hook_uninstall().
  */
 function acm_product_uninstall() {
-  // Add permissions into ACM role.
+  // Remove permissions from ACM role.
   $role = Role::load('acm');
   if (!is_null($role)) {
     $permissions = [
