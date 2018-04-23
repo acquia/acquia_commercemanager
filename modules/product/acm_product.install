@@ -5,6 +5,8 @@
  * Contains install hooks for acm_product.
  */
 
+use Drupal\user\Entity\Role;
+
 /**
  * Implements hook_install().
  */
@@ -15,4 +17,77 @@ function acm_product_install() {
     ->set('category_vid', 'acm_product_category')
     ->set('category_field_name', 'field_category')
     ->save();
+
+  // Add permissions into ACM role.
+  $role = Role::load('acm');
+  if (!is_null($role)) {
+    $permissions = [
+      'create acm_product content',
+      'delete acm_product revisions',
+      'delete any acm_product content',
+      'delete own acm_product content',
+      'edit any acm_product content',
+      'edit own acm_product content',
+      'revert acm_product revisions',
+      'view acm_product revisions',
+    ];
+
+    foreach ($permissions as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function acm_product_uninstall() {
+  // Add permissions into ACM role.
+  $role = Role::load('acm');
+  if (!is_null($role)) {
+    $permissions = [
+      'create acm_product content',
+      'delete acm_product revisions',
+      'delete any acm_product content',
+      'delete own acm_product content',
+      'edit any acm_product content',
+      'edit own acm_product content',
+      'revert acm_product revisions',
+      'view acm_product revisions',
+    ];
+
+    foreach ($permissions as $permission) {
+      if ($role->hasPermission($permission)) {
+        $role->grantPermission($permission);
+      }
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Add product-related permissions to ACM role.
+ */
+function acm_update_8000() {
+  $role = Role::load('acm');
+  if (!is_null($role)) {
+    $permissions = [
+      'create acm_product content',
+      'delete acm_product revisions',
+      'delete any acm_product content',
+      'delete own acm_product content',
+      'edit any acm_product content',
+      'edit own acm_product content',
+      'revert acm_product revisions',
+      'view acm_product revisions',
+    ];
+
+    foreach ($permissions as $permission) {
+      if (!$role->hasPermission($permission)) {
+        $role->grantPermission($permission);
+      }
+    }
+    $role->save();
+  }
 }

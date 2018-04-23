@@ -5,12 +5,18 @@
  * Contains install hooks for acm.
  */
 
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
 function acm_install() {
   // Create empty ACM role.
   try {
-    $role = \Drupal\user\Entity\Role::create(['id' => 'acm', 'label' => 'ACM']);
+    $role = Role::create(['id' => 'acm', 'label' => 'ACM']);
     $role->save();
-  } catch (\Exception $e) {
+  }
+  catch (\Exception $e) {
     \Drupal::logger('acm')->info('ACM role already exists');
   }
 }
@@ -28,9 +34,10 @@ function acm_update_8001() {
  */
 function acm_update_8002() {
   try {
-    $role = \Drupal\user\Entity\Role::create(['id' => 'acm', 'label' => 'ACM']);
+    $role = Role::create(['id' => 'acm', 'label' => 'ACM']);
     $role->save();
-  } catch (\Exception $e) {
+  }
+  catch (\Exception $e) {
     \Drupal::logger('acm')->info('ACM role already exists');
   }
 }
