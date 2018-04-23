@@ -59,7 +59,7 @@ function acm_product_uninstall() {
 
     foreach ($permissions as $permission) {
       if ($role->hasPermission($permission)) {
-        $role->grantPermission($permission);
+        $role->revokePermission($permission);
       }
     }
     $role->save();
