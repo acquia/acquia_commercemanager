@@ -5,10 +5,39 @@
  * Contains install hooks for acm.
  */
 
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function acm_install() {
+  // Create empty ACM role.
+  try {
+    $role = Role::create(['id' => 'acm', 'label' => 'ACM']);
+    $role->save();
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('acm')->info('ACM role already exists');
+  }
+}
+
 /**
  * Delete ACM ID global config.
  */
 function acm_update_8001() {
   \Drupal::configFactory()
     ->getEditable('acm_commerce.connector')->clear('acm_id')->delete();
+}
+
+/**
+ * Create empty ACM role.
+ */
+function acm_update_8002() {
+  try {
+    $role = Role::create(['id' => 'acm', 'label' => 'ACM']);
+    $role->save();
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('acm')->info('ACM role already exists');
+  }
 }
