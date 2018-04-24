@@ -102,7 +102,6 @@ function acm_promotion_update_8001() {
   }
 }
 
-
 /**
  * Add taxonomy-related and product REST-related permissions to ACM role.
  */
