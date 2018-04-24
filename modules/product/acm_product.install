@@ -69,7 +69,7 @@ function acm_product_uninstall() {
 /**
  * Add product-related permissions to ACM role.
  */
-function acm_update_8000() {
+function acm_product_update_8000() {
   $role = Role::load('acm');
   if (!is_null($role)) {
     $permissions = [
