@@ -67,7 +67,7 @@ class Configurable extends SKUPluginBase {
         // Sort config options before pushing them to the select list based on
         // the config.
         if ($hasSortableOptions) {
-          $sorted_options = $this->sortConfigOptions($options, $attribute_code);
+          $sorted_options = self::sortConfigOptions($options, $attribute_code);
         }
         else {
           // Use this in case the attribute is not sortable as per the config.
@@ -81,7 +81,7 @@ class Configurable extends SKUPluginBase {
           '#weight' => $configurable_weights[$attribute_code],
           '#required' => TRUE,
           '#ajax' => [
-            'callback' => [$this, 'configurableAjaxCallback'],
+            'callback' => [get_class($this), 'configurableAjaxCallback'],
             'progress' => [
               'type' => 'throbber',
               'message' => NULL,
