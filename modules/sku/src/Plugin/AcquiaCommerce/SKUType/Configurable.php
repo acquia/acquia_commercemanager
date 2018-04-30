@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Link;
 use Drupal\acm_sku\AddToCartErrorEvent;
+use Drupal\node\Entity\Node;
 
 /**
  * Defines the configurable SKU type.
@@ -643,9 +644,11 @@ class Configurable extends SKUPluginBase {
 
     if (!$asString) {
       $display_node = $this->getDisplayNode($parent_sku);
-      $url = $display_node->toUrl();
-      $link = Link::fromTextAndUrl($cartName, $url);
-      $cartName = $link->toRenderable();
+      if ($display_node instanceof Node) {
+        $url = $display_node->toUrl();
+        $link = Link::fromTextAndUrl($cartName, $url);
+        $cartName = $link->toRenderable();
+      }
     }
 
     return $cartName;

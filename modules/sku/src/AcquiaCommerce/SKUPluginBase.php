@@ -163,9 +163,11 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
     $cartName = $sku->label();
     if (!$asString) {
       $display_node = $this->getDisplayNode($sku);
-      $url = $display_node->toUrl();
-      $link = Link::fromTextAndUrl($cartName, $url);
-      $cartName = $link->toRenderable();
+      if ($display_node instanceof Node) {
+        $url = $display_node->toUrl();
+        $link = Link::fromTextAndUrl($cartName, $url);
+        $cartName = $link->toRenderable();
+      }
     }
     return $cartName;
   }
