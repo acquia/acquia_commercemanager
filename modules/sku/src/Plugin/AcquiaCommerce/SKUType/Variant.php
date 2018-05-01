@@ -526,6 +526,9 @@ class Variant extends SKUPluginBase {
         $cartName = $link->toRenderable();
       }
     }
+    else {
+      \Drupal::logger('acq_sku')->info('Parent product for the sku: @sku seems to be unavailable.', ['@sku' => $sku->getSku()]);
+    }
 
     return $cartName;
   }
