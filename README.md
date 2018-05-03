@@ -13,7 +13,7 @@ systems as the source of truth for eCommerce data in these experiences.
 ## Installation
 Module can be installed using Composer:
 ```
-composer require drupal/acquia_commercemanager
+composer require acquia/commerce-manager
 ```
 
 If you don't want to use Composer, you can install Acquia Commerce Manager
@@ -21,7 +21,8 @@ the traditional way by downloading a tarball from
 Acquia Commerce Manager's [GitHub releases page](
 https://github.com/acquia/commerce-manager/releases
 ). Please note that this tarball doesn't include all necessary dependencies
-and Composer is recommended way of installation.
+and Composer is recommended way of installation. When installing using Composer, 
+make sure that you have also Drupal composer in your composer.json.
 
 ## Configuration
 For module installation and configuration please follow [Acquia Knowledgebase](
