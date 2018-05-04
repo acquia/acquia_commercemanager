@@ -650,7 +650,7 @@ class Configurable extends SKUPluginBase {
         $cartName = $link->toRenderable();
       }
       else {
-        \Drupal::logger('acq_sku')->info('Parent product for the sku: @sku seems to be unavailable.', ['@sku' => $sku->getSku()]);
+        \Drupal::logger('acm_sku')->info('Parent product for the sku: @sku seems to be unavailable.', ['@sku' => $sku->getSku()]);
       }
     }
 
