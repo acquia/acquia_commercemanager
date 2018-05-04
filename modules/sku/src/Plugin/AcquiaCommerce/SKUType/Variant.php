@@ -10,6 +10,7 @@ use Drupal\acm_sku\Entity\SKUTypeInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\node\Entity\Node;
 
 /**
  * Defines the Variant SKU type.
@@ -510,17 +511,23 @@ class Variant extends SKUPluginBase {
       $label_parts[$label_key] = sprintf('%s: %s', $attribute_label, $attribute['value']);
     }
 
+    $cartName = $sku->label();
     $display_node = $this->getDisplayNode($sku);
-    $cartName = sprintf(
-      '%s (%s)',
-      $display_node->label(),
-      implode(', ', $label_parts)
-    );
+    if ($display_node instanceof Node) {
+      $cartName = sprintf(
+        '%s (%s)',
+        $display_node->label(),
+        implode(', ', $label_parts)
+      );
 
-    if (!$asString) {
-      $url = $display_node->toUrl();
-      $link = Link::fromTextAndUrl($cartName, $url);
-      $cartName = $link->toRenderable();
+      if (!$asString) {
+        $url = $display_node->toUrl();
+        $link = Link::fromTextAndUrl($cartName, $url);
+        $cartName = $link->toRenderable();
+      }
+    }
+    else {
+      \Drupal::logger('acm_sku')->info('Parent product for the sku: @sku seems to be unavailable.', ['@sku' => $sku->getSku()]);
     }
 
     return $cartName;
