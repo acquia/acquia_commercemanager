@@ -624,7 +624,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
 
           $data['file'] = File::load($data['fid']);
           if (empty($data['file'])) {
-            \Drupal::logger('acq_sku')->error('Empty file object for fid @fid on sku "@sku"', ['@fid' => $data['fid'], '@sku' => $this->getSku()]);
+            \Drupal::logger('sku')->error('Empty file object for fid @fid on sku "@sku"', ['@fid' => $data['fid'], '@sku' => $this->getSku()]);
             continue;
           }
 
