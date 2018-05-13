@@ -139,7 +139,7 @@ abstract class PaymentMethodBase extends PluginBase implements PaymentMethodInte
    */
   public function buildPaymentForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
     $pane_form['cc_number'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('Credit Card Number'),
       '#default_value' => '',
       '#required' => TRUE,
