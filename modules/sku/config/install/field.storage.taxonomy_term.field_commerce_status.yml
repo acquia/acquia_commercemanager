@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - taxonomy
+id: taxonomy_term.field_commerce_status
+field_name: field_commerce_status
+entity_type: taxonomy_term
+type: list_integer
+settings:
+  allowed_values:
+    -
+      value: 1
+      label: Enabled
+    -
+      value: 0
+      label: Disabled
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

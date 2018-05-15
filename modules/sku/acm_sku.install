@@ -264,3 +264,35 @@ function acm_sku_update_8105() {
     $role->save();
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add field to store commerce category status.
+ */
+function acm_sku_update_8106() {
+  $config_path = drupal_get_path('module', 'acm_sku') . '/config/install/';
+
+  $storage_yaml = Yaml::parse(file_get_contents($config_path . 'field.storage.taxonomy_term.field_commerce_status.yml'));
+
+  // Some issue with array conversion in allowed values, we handle
+  // exception with workaround for now. We'll re-save it later.
+  $storage_yaml['settings']['allowed_values'] = [];
+
+  // Create field storage config.
+  FieldStorageConfig::create($storage_yaml)->save();
+
+  // Reload config from yaml.
+  $storage_yaml = Yaml::parse(file_get_contents($config_path . 'field.storage.taxonomy_term.field_commerce_status.yml'));
+
+  // Update config in DB.
+  \Drupal::configFactory()->getEditable('field.storage.taxonomy_term.field_commerce_status')->setData($storage_yaml)->save();
+
+  // Load field storage config and save again.
+  $field_storage = FieldStorageConfig::loadByName($storage_yaml['entity_type'], $storage_yaml['field_name']);
+  $field_storage->save();
+
+  // Save the Field Config.
+  $field_yaml = Yaml::parse(file_get_contents($config_path . 'field.field.taxonomy_term.acm_product_category.field_commerce_status.yml'));
+  FieldConfig::create($field_yaml)->save();
+}
