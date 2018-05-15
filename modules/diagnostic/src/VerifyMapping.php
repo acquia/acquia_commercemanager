@@ -78,6 +78,22 @@ class VerifyMapping implements VerifyMappingInterface {
 
     $this->debugLogger("Did call 'verify' function");
 
+    // Fetch the ACM_UUID (which one?)
+
+    // Fetch the locale for that ACM_UUID
+
+    // Base currency is meaningless, unfortunately.
+    // Could fetch the symbol from the config...
+
+    // This URL
+
+    // Connector URL
+
+    // Description (site description in locale?)
+
+    // Ping the middleware: can we connect?
+
+
     // TEST DATA FOR NOW
     $response = [
       "acm_uuid" => "anything",
