@@ -90,8 +90,7 @@ class VerifyMappingResource extends ResourceBase {
       $plugin_definition,
       $container->getParameter('serializer.formats'),
       $container->get('logger.factory')->get('acm'),
-      //use the container to get the model (or something, service maybe) like this:
-      // MIRO -- PLEASE HELP. I think this bit is set up wrong
+      //use the container to get the class (or 'service' maybe) like this:
       $container->get('acm_diagnostic.verify_mapping'),
       $container->get('request_stack')->getCurrentRequest()
     );

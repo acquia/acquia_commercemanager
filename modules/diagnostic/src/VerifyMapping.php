@@ -56,8 +56,7 @@ class VerifyMapping implements VerifyMappingInterface {
     $this->logger = $logger_factory->get('acm');
     $this->i18nHelper = $i18nHelper;
     $this->configFactory = $config_factory;
-    //$this->configFactory->get('acm.connector')->get('debug');
-    $this->debug = true;
+    $this->debug = $this->configFactory->get('acm.connector')->get('debug');
   }
 
   /**
@@ -72,7 +71,6 @@ class VerifyMapping implements VerifyMappingInterface {
     if ($this->debug) {
       $this->logger->debug($message, $context);
     }
-
   }
 
   public function verify($acmUuid = "") {
@@ -111,7 +109,6 @@ class VerifyMapping implements VerifyMappingInterface {
     $locale = \Drupal::languageManager()->getCurrentLanguage()->getId();
     $currency = \Drupal::service('repository.currency')->get($configAcmCurrency->get('currency_code'), $locale, 'en');
     $response['base_currency'] = $currency->getCurrencyCode()." (".$currency->getName().")";
-
 
     // Description (site description in locale?)
     $configSystemSite = $this->configFactory->get('system.site');
