@@ -9,3 +9,4 @@ services:
       - '@logger.factory'
       - '@acm.i18n_helper'
       - '@config.factory'
+      - '@language_manager'
