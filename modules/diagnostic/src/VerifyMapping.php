@@ -24,7 +24,6 @@ class VerifyMapping implements VerifyMappingInterface {
    */
   private $i18nHelper;
 
-
   /**
    * Drupal Config Factory Instance.
    *
@@ -56,7 +55,9 @@ class VerifyMapping implements VerifyMappingInterface {
   ) {
     $this->logger = $logger_factory->get('acm');
     $this->i18nHelper = $i18nHelper;
-    $this->debug = true;//$this->configFactory->get('acm.connector')->get('debug');
+    $this->configFactory = $config_factory;
+    //$this->configFactory->get('acm.connector')->get('debug');
+    $this->debug = true;
   }
 
   /**
@@ -77,36 +78,55 @@ class VerifyMapping implements VerifyMappingInterface {
   public function verify($acmUuid = "") {
 
     $this->debugLogger("Did call 'verify' function");
+    $systemAdvice = "";
 
-    // Fetch the ACM_UUID (which one?)
+    $response = [];
+    $response['acm_uuid'] = $acmUuid;
+    // Is this disingenuous? YES. only return acm_uuid.
+    // Drupal does no concept of store_id.
+    //$response['store_id'] = $acmUuid;
 
-    // Fetch the locale for that ACM_UUID
+    $response['locale'] = $this->i18nHelper->getLangcodeFromStoreId($acmUuid);
+
+    //$systemAdvice .= "The current language of this endpoint is: ";
+    //$this->languageManager->getCurrentLanguage()->getId();
+    //$acm_uuid = $this->i18nHelper->getStoreIdFromLangcode();
+
+    // This URL.
+    // urlGenerator is a service. consider:
+    // getContainer()->get('url_generator')
+    $response['system_api_url'] = \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+
+    // Connector URL.
+    $configAcmConnector = $this->configFactory->get('acm.connector');
+    $response['connector_api_url'] = $configAcmConnector->get('url');
+
+    // Deeper (considered sensitive information. do no send).
+    //$configAcmConnector->get('hmac_id');
 
     // Base currency is meaningless, unfortunately.
-    // Could fetch the symbol from the config...
+    // But we can fetch the symbol from the config...
+    $configAcmCurrency = $this->configFactory->get('acm.currency');
+    // Get currency with the correct locale.
+    $locale = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $currency = \Drupal::service('repository.currency')->get($configAcmCurrency->get('currency_code'), $locale, 'en');
+    $response['base_currency'] = $currency->getCurrencyCode()." (".$currency->getName().")";
 
-    // This URL
-
-    // Connector URL
 
     // Description (site description in locale?)
+    $configSystemSite = $this->configFactory->get('system.site');
 
+    // Translations? Is the config locale aware?
+    $description  = $configSystemSite->get('name');
+    $description .= " (".$configSystemSite->get('slogan').").";
+    $response['description'] = $description;
+
+    // TODO (malachy): Add in the loop back to test connection to the commerce connector
     // Ping the middleware: can we connect?
+    $systemAdvice .= "\nThe connection back to the middle was not tested";
+    $response['passed_verification'] = true;
 
-
-    // TEST DATA FOR NOW
-    $response = [
-      "acm_uuid" => "anything",
-      "system_api_url" => "https://example.com",
-      "connector_api_url" => "https://example.com",
-      "store_id" => 3,
-      "store_code" => "some_store_code",
-      "locale" => "us_EN",
-      "base_currency" => "USD",
-      "description" => "Any description at all.",
-      "system_advice" => "Leave it.",
-      "passed_verification" => true
-    ];
+    $response['system_advice'] = $systemAdvice;
 
     return $response;
   }

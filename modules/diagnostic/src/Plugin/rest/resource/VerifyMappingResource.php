@@ -4,7 +4,7 @@ namespace Drupal\acm_diagnostic\Plugin\rest\resource;
 
 use Drupal\acm_diagnostic\VerifyMappingInterface;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -102,8 +102,8 @@ class VerifyMappingResource extends ResourceBase {
    *
    * Handle Connector GET some verification of the mapping.
    *
-   * @return \Drupal\rest\ResourceResponse
-   *   HTTP Response object.
+   * @return \Drupal\rest\ModifiedResourceResponse
+   *   Uncached HTTP Response object.
    */
   public function get() {
     $storeId = '';
@@ -114,26 +114,12 @@ class VerifyMappingResource extends ResourceBase {
 
     \Drupal::logger('acm_diagnostic')->info("Verifying mapping for acm_uuid " . $storeId . ".");
 
-    // Return an array from the model that is going to do the verification:
-    // HERE (like this:
+    // Return an array from the model that does the verification.
     $response = $this->verifyMapping->verify($storeId);
-    // BUT FOR NOW just use this test array
-    $response = [
-      "acm_uuid" => "anything",
-      "system_api_url" => "https://example.com",
-      "connector_api_url" => "https://example.com",
-      "store_id" => 3,
-      "store_code" => "some_store_code",
-      "website_id" => 1,
-      "website_code" => "some_website_code",
-      "locale" => "us_EN",
-      "case_currency" => "USD",
-      "description" => "Any description at all.",
-      "system_advice" => "Leave it.",
-      "passed_verification" => true
-    ];
 
-    return (new ResourceResponse($response));
+    // Drupal's ModifiedResourceResponse is for non-cached content.
+    // We don't want to cache the verification
+    return (new ModifiedResourceResponse($response));
   }
 
 }
