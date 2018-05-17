@@ -2,6 +2,11 @@
 
 namespace Drupal\acm_diagnostic;
 
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\acm\I18nHelper;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+
 /**
  * Class VerifyMapping.
  *
@@ -32,6 +37,13 @@ class VerifyMapping implements VerifyMappingInterface {
   private $configFactory;
 
   /**
+   * Language Manager service.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * True if you want extra logging for debugging.
    *
    * @var bool
@@ -47,15 +59,19 @@ class VerifyMapping implements VerifyMappingInterface {
    *   Instance of I18nHelper service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $languageManager
+   *  Language Manager service.
    */
   public function __construct(
-    \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory,
-    \Drupal\acm\I18nHelper $i18nHelper,
-    \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+    LoggerChannelFactoryInterface $logger_factory,
+    I18nHelper $i18nHelper,
+    ConfigFactoryInterface $config_factory,
+    LanguageManagerInterface $languageManager
   ) {
     $this->logger = $logger_factory->get('acm');
     $this->i18nHelper = $i18nHelper;
     $this->configFactory = $config_factory;
+    $this->languageManager = $languageManager;
     $this->debug = $this->configFactory->get('acm.connector')->get('debug');
   }
 
@@ -73,6 +89,15 @@ class VerifyMapping implements VerifyMappingInterface {
     }
   }
 
+  /**
+   * Verifies a mapping by inspecting various configurations and
+   * sending a request out to the Commerce Connector
+   *
+   * @param string $acmUuid
+   *   The ACM_UUID of the configuration to verify
+   *
+   * @return array
+   */
   public function verify($acmUuid = "") {
 
     $this->debugLogger("Did call 'verify' function");
@@ -80,15 +105,29 @@ class VerifyMapping implements VerifyMappingInterface {
 
     $response = [];
     $response['acm_uuid'] = $acmUuid;
-    // Is this disingenuous? YES. only return acm_uuid.
-    // Drupal does no concept of store_id.
-    //$response['store_id'] = $acmUuid;
 
     $response['locale'] = $this->i18nHelper->getLangcodeFromStoreId($acmUuid);
 
-    //$systemAdvice .= "The current language of this endpoint is: ";
-    //$this->languageManager->getCurrentLanguage()->getId();
-    //$acm_uuid = $this->i18nHelper->getStoreIdFromLangcode();
+    $locale = $this->languageManager->getCurrentLanguage()->getId();
+    $systemAdvice .= "The current language of this endpoint is: ";
+    $systemAdvice .= $locale.".";
+    $acm_uuid = $this->i18nHelper->getStoreIdFromLangcode();
+
+    if ($acm_uuid !== $response['acm_uuid']) {
+      $systemAdvice .= "\nThe ACM_UUID associated with the language of the";
+      $systemAdvice .= " Drupal URL, '".$acm_uuid."', does not match the";
+      $systemAdvice .= " ACM_UUID of the header";
+      $systemAdvice .= " sent from Commerce Middleware, ";
+      $systemAdvice .= $response['acm_uuid'].".";
+    }
+
+    if ($locale !== $response['locale']){
+      $systemAdvice .= "\nThe language of the";
+      $systemAdvice .= " Drupal URL, '".$locale."', does not match the";
+      $systemAdvice .= " language defined by the ACM_UUID";
+      $systemAdvice .= " sent from Commerce Middleware, ";
+      $systemAdvice .= $response['acm_uuid'].".";
+    }
 
     // This URL.
     // urlGenerator is a service. consider:
@@ -106,7 +145,6 @@ class VerifyMapping implements VerifyMappingInterface {
     // But we can fetch the symbol from the config...
     $configAcmCurrency = $this->configFactory->get('acm.currency');
     // Get currency with the correct locale.
-    $locale = \Drupal::languageManager()->getCurrentLanguage()->getId();
     $currency = \Drupal::service('repository.currency')->get($configAcmCurrency->get('currency_code'), $locale, 'en');
     $response['base_currency'] = $currency->getCurrencyCode()." (".$currency->getName().")";
 

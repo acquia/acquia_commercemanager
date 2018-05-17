@@ -54,7 +54,7 @@ class VerifyMappingResource extends ResourceBase {
    *   The available serialization formats.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param VerifyMappingInterface $verify_mapping
+   * @param \Drupal\acm_diagnostic\VerifyMappingInterface $verify_mapping
    *   A Verify Mapping instance.
    * @param \Symfony\Component\HttpFoundation\Request $current_request
    *   The current request.
@@ -65,7 +65,7 @@ class VerifyMappingResource extends ResourceBase {
     $plugin_definition,
     array $serializer_formats,
     LoggerInterface $logger,
-    // inject the model that will do the verification
+    // Inject the model that will do the verification.
     VerifyMappingInterface $verify_mapping,
     Request $current_request
   ) {
@@ -90,7 +90,7 @@ class VerifyMappingResource extends ResourceBase {
       $plugin_definition,
       $container->getParameter('serializer.formats'),
       $container->get('logger.factory')->get('acm'),
-      //use the container to get the class (or 'service' maybe) like this:
+      // Use the container to get the class (or 'service' maybe) like this:
       $container->get('acm_diagnostic.verify_mapping'),
       $container->get('request_stack')->getCurrentRequest()
     );
@@ -117,7 +117,7 @@ class VerifyMappingResource extends ResourceBase {
     $response = $this->verifyMapping->verify($storeId);
 
     // Drupal's ModifiedResourceResponse is for non-cached content.
-    // We don't want to cache the verification
+    // We don't want to cache the verification.
     return (new ModifiedResourceResponse($response));
   }
 
