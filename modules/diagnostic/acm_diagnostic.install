@@ -86,7 +86,6 @@ function acm_diagnostic_uninstall() {
   }
 }
 
-
 /**
  * Add taxonomy-related and product REST-related permissions to ACM role.
  */

@@ -10,16 +10,14 @@ namespace Drupal\acm_diagnostic;
 interface VerifyMappingInterface {
 
   /**
-   * verifyMapping.
+   * Verifies the commerce connector mapping by checking the configuration.
    *
-   * Verifies the commerce connector mapping by checking the configuration
-   *
-   * @return array Array of results.
-   *   Array of results.
-   *
-   * @internal param string $acmUuid
+   * @param string $acmUuId
    *   Optional ACM UUID of the mapping to be checked, otherwise uses the
    *   X-ACM-UUID header
+   *
+   * @return array
+   * Array of results.
    */
   public function verify($acmUuId = '');
 
