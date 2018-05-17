@@ -90,9 +90,9 @@ class VerifyMapping implements VerifyMappingInterface {
   }
 
   /**
-   * Verifies a mapping by inspecting various configurations
+   * Verifies a mapping by inspecting various configurations.
    *
-   * and sending a request out to the Commerce Connector.
+   * And sending a request out to the Commerce Connector.
    *
    * @param string $acmUuid
    *   The ACM_UUID of the configuration to verify.
@@ -128,7 +128,7 @@ class VerifyMapping implements VerifyMappingInterface {
     if ($acm_uuid !== $response['acm_uuid']) {
       $passedSoFar = FALSE;
       $systemAdvice .= "\nThe ACM_UUID associated with the language of the";
-      $systemAdvice .= " Drupal URL, '".$acm_uuid."', does not match the";
+      $systemAdvice .= " Drupal URL, '" . $acm_uuid . "', does not match the";
       $systemAdvice .= " ACM_UUID of the header";
       $systemAdvice .= " sent from Commerce Middleware, ";
       $systemAdvice .= $response['acm_uuid'] . ".";
@@ -159,7 +159,7 @@ class VerifyMapping implements VerifyMappingInterface {
     // Currency information.
     $configAcmCurrency = $this->configFactory->get('acm.currency');
     $currency = \Drupal::service('repository.currency')->get($configAcmCurrency->get('currency_code'), $locale, 'en');
-    $response['base_currency'] = $currency->getCurrencyCode() . " (".$currency->getName() . ")";
+    $response['base_currency'] = $currency->getCurrencyCode() . " (" . $currency->getName() . ")";
 
     // Description (site description in locale?)
     $configSystemSite = $this->configFactory->get('system.site');

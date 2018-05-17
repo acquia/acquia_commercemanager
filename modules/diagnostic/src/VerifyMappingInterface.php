@@ -14,10 +14,10 @@ interface VerifyMappingInterface {
    *
    * @param string $acmUuId
    *   Optional ACM UUID of the mapping to be checked, otherwise uses the
-   *   X-ACM-UUID header
+   *   X-ACM-UUID header.
    *
    * @return array
-   * Array of results.
+   *   Array of results.
    */
   public function verify($acmUuId = '');
 
