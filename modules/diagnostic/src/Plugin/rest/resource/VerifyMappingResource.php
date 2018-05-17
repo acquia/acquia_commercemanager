@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @package Drupal\acm_diagnostic\Plugin
  *
- * @ingroup acm_sku
+ * @ingroup acm_diagnostic
  *
  * @RestResource(
  *   id = "acm_verifymapping",
@@ -98,7 +98,7 @@ class VerifyMappingResource extends ResourceBase {
   }
 
   /**
-   * Post.
+   * Get.
    *
    * Handle Connector GET some verification of the mapping.
    *
