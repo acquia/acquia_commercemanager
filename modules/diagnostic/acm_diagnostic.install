@@ -5,6 +5,8 @@
  * Install, update, and uninstall functions.
  */
 
+use Drupal\user\Entity\Role;
+
 /**
  * Implements hook_requirements().
  */
