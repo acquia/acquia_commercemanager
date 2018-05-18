@@ -159,7 +159,7 @@ class VerifyMapping implements VerifyMappingInterface {
     // Currency information.
     $configAcmCurrency = $this->configFactory->get('acm.currency');
     $currency = \Drupal::service('repository.currency')->get($configAcmCurrency->get('currency_code'), $locale, 'en');
-    $response['base_currency'] = $currency->getCurrencyCode() . " (" . $currency->getName() . ")";
+    $response['default_currency'] = $currency->getCurrencyCode() . " (" . $currency->getName() . ")";
 
     // Description (site description in locale?)
     $configSystemSite = $this->configFactory->get('system.site');
