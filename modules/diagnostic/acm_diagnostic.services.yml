@@ -2,3 +2,11 @@ services:
   plugin.manager.acm_diagnostic_requirements:
     class: Drupal\acm_diagnostic\CommerceRequirementManager
     parent: default_plugin_manager
+
+  acm_diagnostic.verify_mapping:
+    class: Drupal\acm_diagnostic\VerifyMapping
+    arguments:
+      - '@logger.factory'
+      - '@acm.i18n_helper'
+      - '@config.factory'
+      - '@language_manager'

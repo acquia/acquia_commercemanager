@@ -3,3 +3,5 @@ description: Runs diagnostic checks on the Drupal site environment to ensure con
 package: Commerce
 type: module
 core: 8.x
+dependencies:
+  - acm:acm
