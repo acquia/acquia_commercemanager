@@ -45,7 +45,7 @@ class CustomerDeleteResource extends ResourceBase {
 
     $email = $data['email'];
     /* @var \Drupal\user\Entity\User $user */
-    $user = user_load_by_mail($email);
+    $user = $this->myUserLoadByMail($email);
     // If there is user with given email.
     if ($user) {
       try {
@@ -65,6 +65,13 @@ class CustomerDeleteResource extends ResourceBase {
       $response['success'] = (bool) (FALSE);
       return (new ResourceResponse($response));
     }
+  }
+
+  /**
+   * Wrapper around user_load_by_mail to allow for stubbing during testing.
+   */
+  public function myUserLoadByMail($email) {
+    return user_load_by_mail($email);
   }
 
 }
