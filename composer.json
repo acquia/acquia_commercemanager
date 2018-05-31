@@ -18,7 +18,7 @@
     },
     "require": {
         "commerceguys/intl": "~0.7",
-        "drupal/address": "~1.0",
+        "drupal/address": "^1.4.0",
         "drupal/field_group": "^1.0@RC",
         "drupal/key_value_field": "~1.0",
         "acquia/http-hmac-php": "~3.2",

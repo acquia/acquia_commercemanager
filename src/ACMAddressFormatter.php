@@ -3,7 +3,7 @@
 namespace Drupal\acm;
 
 use CommerceGuys\Addressing\AddressFormat\AddressFormat;
-use CommerceGuys\Addressing\LocaleHelper;
+use CommerceGuys\Addressing\Locale;
 use Drupal\address\FieldHelper;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Element;
@@ -148,7 +148,7 @@ class ACMAddressFormatter {
       // Remember the original value so that it can be used for $parents.
       $original_values[$field] = $values[$field];
       // Replace the value with the expected code.
-      $use_local_name = LocaleHelper::match('en', $subdivision->getLocale());
+      $use_local_name = Locale::match('en', $subdivision->getLocale());
       $values[$field] = $use_local_name ? $subdivision->getLocalCode() : $subdivision->getCode();
       if (!$subdivision->hasChildren()) {
         // The current subdivision has no children, stop.
@@ -182,7 +182,7 @@ class ACMAddressFormatter {
     $locale = $element['locale']['#value'];
     // Add the country to the bottom or the top of the format string,
     // depending on whether the format is minor-to-major or major-to-minor.
-    if (LocaleHelper::match($address_format->getLocale(), $locale)) {
+    if (Locale::match($address_format->getLocale(), $locale)) {
       $format_string = '%country' . "\n" . $address_format->getLocalFormat();
     }
     else {
