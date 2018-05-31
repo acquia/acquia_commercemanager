@@ -147,6 +147,7 @@ final class ClientFactory {
       'headers' => [
         'X-ACM-UUID' => $acm_uuid,
       ],
+      'http_errors' => FALSE,
     ];
 
     return $this->clientFactory->fromOptions($clientConfig);
