@@ -588,13 +588,13 @@ class APIWrapper implements APIWrapperInterface {
     }
     catch (CustomerNotFoundException $e) {
       if ($throwCustomerNotFound) {
-         throw $e;
+        throw $e;
       }
       else {
         // Implies we are testing if a customer email address exists
         // in the ecommerce app.
         // In which case we prevent exceptions being re-thrown.
-        // Instead we just return the initial $customer = []
+        // Instead we just return the initial $customer = [].
       }
     }
     catch (ConnectorException $e) {
