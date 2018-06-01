@@ -407,7 +407,7 @@ class APIWrapper implements APIWrapperInterface {
     try {
       // Try to get the customer but don't throw exceptions.
       /** @var array $existingCustomer */
-      $existingCustomer = $this->getCustomer($customer['email']);
+      $existingCustomer = $this->getCustomer($customer['email'], FALSE);
       if (!empty($existingCustomer)) {
         $customer['customer_id'] = $existingCustomer['customer_id'];
       }
@@ -573,7 +573,7 @@ class APIWrapper implements APIWrapperInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCustomer($email) {
+  public function getCustomer($email, $throwCustomerNotFound = TRUE) {
     $endpoint = $this->apiVersion . "/agent/customer/$email";
 
     $doReq = function ($client, $opt) use ($endpoint) {
@@ -581,12 +581,21 @@ class APIWrapper implements APIWrapperInterface {
     };
 
     $customer = [];
+    $exception = NULL;
 
     try {
       $customer = $this->tryAgentRequest($doReq, 'getCustomer', 'customer');
     }
     catch (CustomerNotFoundException $e) {
-      // It's not unusual. Do nothing.
+      if ($throwCustomerNotFound) {
+         throw $e;
+      }
+      else {
+        // Implies we are testing if a customer email address exists
+        // in the ecommerce app.
+        // In which case we prevent exceptions being re-thrown.
+        // Instead we just return the initial $customer = []
+      }
     }
     catch (ConnectorException $e) {
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
