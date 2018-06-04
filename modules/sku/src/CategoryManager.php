@@ -365,6 +365,9 @@ class CategoryManager implements CategoryManagerInterface {
         $this->results['created']++;
       }
 
+      // Store status of category.
+      $term->get('field_commerce_status')->setValue((int) $category['is_active']);
+
       $term->get('field_category_include_menu')->setValue($category['in_menu']);
       $term->get('description')->setValue($category['description']);
 
@@ -372,6 +375,9 @@ class CategoryManager implements CategoryManagerInterface {
       $config = \Drupal::config('acm.connector');
       $text_format = $config->get('text_format') ?: 'rich_text';
       $term->setFormat($text_format);
+
+      // Invoke the alter hook to allow all modules to update the term.
+      \Drupal::moduleHandler()->alter('acq_sku_commerce_category', $term, $category, $parent);
 
       try {
         $term->save();
