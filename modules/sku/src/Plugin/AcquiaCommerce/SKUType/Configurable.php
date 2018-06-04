@@ -589,18 +589,20 @@ class Configurable extends SKUPluginBase {
   /**
    * Get attribute value from key-value field.
    *
-   * @param \Drupal\acm_sku\Entity\SKU $sku
-   *   The object of product.
+   * @param int|\Drupal\acm_sku\Entity\SKUInterface $sku
+   *   Entity id of the SKU.
    * @param string $key
    *   Name of attribute.
    *
    * @return string|null
    *   Value of field or null if empty.
    */
-  public function getAttributeValue(SKU $sku, $key) {
+  public function getAttributeValue($sku, $key) {
+    $id = $sku instanceof SKUInterface ? $sku->id() : $sku;
+
     $query = \Drupal::database()->select('acm_sku__attributes', 'acm_sku__attributes');
     $query->addField('acm_sku__attributes', 'attributes_value');
-    $query->condition("acm_sku__attributes.entity_id", $sku->id());
+    $query->condition("acm_sku__attributes.entity_id", $id);
     $query->condition("acm_sku__attributes.attributes_key", $key);
     return $query->execute()->fetchField();
   }

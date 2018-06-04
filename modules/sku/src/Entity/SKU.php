@@ -97,9 +97,20 @@ class SKU extends ContentEntityBase implements SKUInterface {
    */
   public static function loadFromSku($sku, $langcode = '', $log_not_found = TRUE, $create_translation = FALSE) {
 
+    $skus_static_cache = &drupal_static(__FUNCTION__, []);
+
     $is_multilingual = \Drupal::languageManager()->isMultilingual();
     if ($is_multilingual && empty($langcode)) {
       $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    }
+
+    $static_cache_sku_identifier = $sku . ':' . $langcode;
+
+    // Check if data is available in static cache, return from there.
+    // If create translation is true, it means we are doing product sync.
+    // For this case we don't want to use any static cache.
+    if (isset($skus_static_cache[$static_cache_sku_identifier]) && !$create_translation) {
+      return $skus_static_cache[$static_cache_sku_identifier];
     }
 
     $storage = \Drupal::entityTypeManager()->getStorage('acm_sku');
@@ -143,6 +154,9 @@ class SKU extends ContentEntityBase implements SKUInterface {
         throw new \Exception(new FormattableMarkup('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]), 404);
       }
     }
+
+    // Set value in static variable.
+    $skus_static_cache[$static_cache_sku_identifier] = $sku_entity;
 
     return $sku_entity;
   }
