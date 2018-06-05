@@ -46,21 +46,30 @@ function drush_acm_sku_position_position_sync($position_type = 'position') {
       continue;
     }
 
-    // Find the magento commerce id from the term. Skip if not found.
+    // Find the commerce id from the term. Skip if not found.
     $commerce_id = Term::load($term->tid)->get('field_commerce_id')->value;
     if (!$commerce_id) {
       continue;
     }
 
-    // Get product position for this category from Magento.
-    $response = \Drupal::service('acm.api')->getProductPosition($commerce_id);
-    if (!is_array($response)) {
+    // Get product position for this category from commerce backend.
+    try {
+      $response = \Drupal::service('acm.api')->getProductPosition($commerce_id);
+      if (!is_array($response)) {
+        continue;
+      }
+    }
+    catch (\Exception $e) {
+      drush_print(dt('Exception while fetching position for category @name (tid: @tid). The category probably does not exist in commerce backend', [
+        '@name' => $term->name,
+        '@tid' => $term->tid,
+      ]));
       continue;
     }
 
     // Skip sync if error is found in the response for a particular category.
     if (is_array($response) && isset($response['message'])) {
-      drush_print(dt("Error in position sync for @name (tid: @tid). Response: @message", [
+      drush_print(dt('Error in position sync for @name (tid: @tid). Response: @message', [
         '@name' => $term->name,
         '@tid' => $term->tid,
         '@message' => $response['message'],
@@ -69,7 +78,7 @@ function drush_acm_sku_position_position_sync($position_type = 'position') {
     }
 
     // Start product position sync for this category.
-    drush_print(dt("Product position sync for @name (tid: @tid) in progress...", [
+    drush_print(dt('Product position sync for @name (tid: @tid) in progress...', [
       '@name' => $term->name,
       '@tid' => $term->tid,
     ]));
