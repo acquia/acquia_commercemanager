@@ -94,6 +94,7 @@ services:
 
   repository.currency:
     class: CommerceGuys\Intl\Currency\CurrencyRepository
+
   repository.number_format:
     class: CommerceGuys\Intl\NumberFormat\NumberFormatRepository
 
