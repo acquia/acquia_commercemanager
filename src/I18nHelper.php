@@ -2,7 +2,7 @@
 
 namespace Drupal\acm;
 
-use CommerceGuys\Intl\Formatter\NumberFormatter;
+use CommerceGuys\Intl\Formatter\CurrencyFormatter;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 
@@ -118,11 +118,13 @@ class I18nHelper {
 
     // Get currency with the correct locale.
     $locale = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    $currency = \Drupal::service('repository.currency')->get($config->get('currency_code'), $locale, 'en');
-    $numberFormat = \Drupal::service('repository.number_format')->get($locale);
-    $currencyFormatter = new NumberFormatter($numberFormat, NumberFormatter::CURRENCY);
+    $currency = \Drupal::service('repository.currency');
+    $numberFormat = \Drupal::service('repository.number_format');
+    $currencyFormatter = new CurrencyFormatter($numberFormat, $currency, ['locale' => $locale]);
 
-    return $currencyFormatter->formatCurrency($price, $currency);
+    $currencyCode = $currency->get($config->get('currency_code'))->getCurrencyCode();
+
+    return $currencyFormatter->format($price, $currencyCode);
   }
 
 }
