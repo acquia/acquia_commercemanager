@@ -112,6 +112,18 @@ function acm_sku_drush_command() {
     ],
   ];
 
+  $commands['clear-linked-skus-cache'] = [
+    'description' => 'Clear linked SKUs cache.',
+    'aliases'     => ['acclsc'],
+    'options'     => [
+      'sku' => 'SKU to clean linked skus cache of.',
+    ],
+    'examples'    => [
+      'drush accsc' => 'Clear linked SKUs cache for all SKUs.',
+      'drush accsc --sku=SKU' => 'Clear linked SKUs cache for particular SKU.',
+    ],
+  ];
+
   return ($commands);
 }
 
@@ -621,4 +633,33 @@ function drush_acm_sku_commerce_cats_remove_duplicates() {
   }
 
   drush_print(dt('Done.'));
+}
+
+/**
+ * Implements drush clear-linked-skus-cache command.
+ */
+function drush_acm_sku_clear_linked_skus_cache() {
+  // Check if we are asked to clear cache of specific SKU.
+  if ($sku = drush_get_option('sku', '')) {
+    if ($sku_entity = SKU::loadFromSku($sku)) {
+      Cache::invalidateTags([
+        'acq_sku:linked_skus:' . $sku_entity->id(),
+        'acq_sku:' . $sku_entity->id(),
+      ]);
+
+      drush_print(dt('Invalidated linked SKUs cache for @sku.', [
+        '@sku' => $sku,
+      ]));
+    }
+
+    return;
+  }
+
+  if (!drush_confirm(dt('Are you sure you want to clear linked SKUs cache for all SKUs?'))) {
+    return drush_user_abort();
+  }
+
+  \Drupal::service('cache.linked_skus')->deleteAll();
+
+  drush_print(dt('Cleared all linked SKUs cache.'));
 }

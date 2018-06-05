@@ -63,7 +63,14 @@ services:
     class: Drupal\acm_sku\AcmSkuLinkedSku
     arguments:
       - '@acm.api'
-      - '@cache.default'
+      - '@cache.linked_skus'
       - '@config.factory'
       - '@language_manager'
       - '@logger.factory'
+
+  cache.linked_skus:
+    class: Drupal\Core\Cache\CacheInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [linked_skus]
