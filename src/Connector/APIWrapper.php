@@ -573,7 +573,7 @@ class APIWrapper implements APIWrapperInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCustomer($email, $throwRouteException = TRUE) {
+  public function getCustomer($email, $throwCustomerNotFound = TRUE) {
     $endpoint = $this->apiVersion . "/agent/customer/$email";
 
     $doReq = function ($client, $opt) use ($endpoint) {
@@ -581,26 +581,27 @@ class APIWrapper implements APIWrapperInterface {
     };
 
     $customer = [];
+    $exception = NULL;
 
     try {
       $customer = $this->tryAgentRequest($doReq, 'getCustomer', 'customer');
     }
-    catch (ConnectorException $e) {
-      if ($throwRouteException) {
-        throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
+    catch (CustomerNotFoundException $e) {
+      if ($throwCustomerNotFound) {
+        throw $e;
       }
       else {
         // Implies we are testing if a customer email address exists
         // in the ecommerce app.
         // In which case we prevent exceptions being re-thrown.
-        // because a) It most likely means the customer doesn't exist and
-        // b) We can't throw RouteException because acm_exception is listening
-        // for RouteException events which notifies the end user (undesirable)
-        // TODO: Consider tighter logic by analysing $e->getMessage()
-        // because other exceptions are possible here. Alternatively consider
-        // a different Commerce Connector response for 'customer does not
-        // exist yet' ("loadCustomer: No results found.").
+        // Instead we just return the initial $customer = [].
       }
+    }
+    catch (ConnectorException $e) {
+      throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
+    }
+    catch (\Exception $e) {
+      throw new \Exception($e->getMessage(), $e->getCode(), $e);
     }
 
     return $customer;

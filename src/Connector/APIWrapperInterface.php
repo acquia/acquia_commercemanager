@@ -261,16 +261,16 @@ interface APIWrapperInterface {
    *
    * @param string $email
    *   Customer Email.
-   * @param bool $throwRouteException
+   * @param bool $throwCustomerNotFound
    *   Flag to throw exception or not. Default true.
    *
    * @return array
-   *   Customer array.
+   *   Customer array. Empty if email does not exist in eCommerce system
    *
    * @throws \Drupal\acm\Connector\RouteException
    *   Failed request exception.
    */
-  public function getCustomer($email, $throwRouteException = TRUE);
+  public function getCustomer($email, $throwCustomerNotFound = TRUE);
 
   /**
    * Gets customer orders by email.
