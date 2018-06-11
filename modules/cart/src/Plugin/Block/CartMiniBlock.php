@@ -85,7 +85,6 @@ class CartMiniBlock extends BlockBase implements ContainerFactoryPluginInterface
       // update cart call.
       $cache_tags = Cache::mergeTags($cache_tags, [
         'cart:' . $cart->id(),
-        'mini_cart:' . $cart->id(),
       ]);
     }
 
