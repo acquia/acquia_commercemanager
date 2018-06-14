@@ -157,11 +157,15 @@ trait AgentRequestTrait {
         break;
 
       case 500:
-        if (array_key_exists('code', $response) &&
-            $response['code'] == CustomerNotFoundException::CUSTOMER_NOT_FOUND_CODE) {
-          // Are we logging here? CustomerNotFound is routine so
-          // we choose not to log this exception.
-          $exception = new CustomerNotFoundException($response['message'], $response['code']);
+        if (array_key_exists('code', $response)) {
+          if ($response['code'] == CustomerNotFoundException::CUSTOMER_NOT_FOUND_CODE) {
+            // Are we logging here? CustomerNotFound is routine so
+            // we choose not to log this exception.
+            $exception = new CustomerNotFoundException($response['message'], $response['code']);
+          }
+          else {
+            $exception = new ConnectorException($response['message'], $response['code']);
+          }
         }
         else {
           $exception = new ConnectorException($result->getBody(), $result->getStatusCode());

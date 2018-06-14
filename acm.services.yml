@@ -3,9 +3,17 @@ services:
     class: Drupal\acm\Connector\ClientFactory
     arguments: ['@http_client_factory', '@config.factory', '@acm.i18n_helper']
 
+  acm.api_helper:
+    class: Drupal\acm\APIHelper
+
   acm.agent_api:
     class: Drupal\acm\Connector\APIWrapper
-    arguments: ['@acm.client_factory', '@config.factory', '@logger.factory', '@acm.i18n_helper']
+    arguments:
+      - '@acm.client_factory'
+      - '@config.factory'
+      - '@logger.factory'
+      - '@acm.i18n_helper'
+      - '@acm.api_helper'
 
   acm.ingest_api:
     class: Drupal\acm\Connector\IngestAPIWrapper

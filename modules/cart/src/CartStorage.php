@@ -373,7 +373,14 @@ class CartStorage implements CartInterface, CartStorageInterface {
     }
 
     $cart_id = $cart->id();
-    $response = $this->apiWrapper->associateCart($cart_id, $customer_id);
+
+    try {
+      $response = $this->apiWrapper->associateCart($cart_id, $customer_id);
+    }
+    catch (\Exception $e) {
+      $this->restoreCart($cart->id());
+      throw $e;
+    }
 
     // If the association worked and the API returned a new cart ID, set our
     // cart ID to the new one.

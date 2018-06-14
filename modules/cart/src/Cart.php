@@ -105,7 +105,7 @@ class Cart implements CartInterface {
    */
   public function customerId() {
     if (isset($this->cart, $this->cart->customer_id)) {
-      return $this->cart->customer_id;
+      return (string) $this->cart->customer_id;
     }
     return NULL;
   }
@@ -418,7 +418,12 @@ class Cart implements CartInterface {
   public function getShippingMethod() {
     // If cart is not updated yet and we are reading from session.
     if (isset($this->cart, $this->cart->carrier)) {
-      return $this->cart->carrier;
+      $method = (array) $this->cart->carrier;
+
+      // V2 onwards, we will have empty structure available all the time.
+      if (!empty($method['carrier_code']) && !empty($method['method_code'])) {
+        return $method;
+      }
     }
 
     if (isset($this->cart, $this->cart->extension, $this->cart->extension['shipping_method'])) {
@@ -434,8 +439,12 @@ class Cart implements CartInterface {
   public function getShippingMethodAsString() {
     // If cart is not updated yet and we are reading from session.
     if (isset($this->cart, $this->cart->carrier)) {
-      $method = $this->cart->carrier;
-      return implode(',', [$method['carrier_code'], $method['method_code']]);
+      $method = (array) $this->cart->carrier;
+
+      // V2 onwards, we will have empty structure available all the time.
+      if (!empty($method['carrier_code']) && !empty($method['method_code'])) {
+        return implode(',', [$method['carrier_code'], $method['method_code']]);
+      }
     }
 
     if (isset($this->cart, $this->cart->extension, $this->cart->extension['shipping_method'])) {
