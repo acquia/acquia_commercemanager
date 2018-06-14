@@ -61,7 +61,7 @@ class APIHelper {
    * @return array
    *   Cleaned cart address.
    */
-  public function cleanCartAddress($address) {
+  public function cleanCartAddress(array $address) {
     $address = (array) $address;
     // @TODO: Convert cart address extension to array.
     return $this->cleanAddress($address);

@@ -53,6 +53,8 @@ class APIWrapper implements APIWrapperInterface {
    *   LoggerChannelFactory object.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   I18nHelper object.
+   * @param \Drupal\acm\APIHelper $helper
+   *   API Helper service object.
    */
   public function __construct(ClientFactory $client_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper, APIHelper $helper) {
     $this->clientFactory = $client_factory;
@@ -159,6 +161,9 @@ class APIWrapper implements APIWrapperInterface {
     // Check if there's a customer ID and remove it if it's empty.
     if (isset($cart->customer_id) && empty($cart->customer_id)) {
       unset($cart->customer_id);
+    }
+    else {
+      $cart->customer_id = (int) $cart->customer_id;
     }
 
     // Check if there's a customer email and remove it if it's empty.
