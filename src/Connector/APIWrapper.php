@@ -2,6 +2,7 @@
 
 namespace Drupal\acm\Connector;
 
+use Drupal\acm\APIHelper;
 use Drupal\acm\I18nHelper;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -35,6 +36,13 @@ class APIWrapper implements APIWrapperInterface {
   private $routeEvents = TRUE;
 
   /**
+   * API Helper service object.
+   *
+   * @var \Drupal\acm\APIHelper
+   */
+  private $helper;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\acm\Connector\ClientFactory $client_factory
@@ -45,11 +53,14 @@ class APIWrapper implements APIWrapperInterface {
    *   LoggerChannelFactory object.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   I18nHelper object.
+   * @param \Drupal\acm\APIHelper $helper
+   *   API Helper service object.
    */
-  public function __construct(ClientFactory $client_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper) {
+  public function __construct(ClientFactory $client_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper, APIHelper $helper) {
     $this->clientFactory = $client_factory;
     $this->apiVersion = $config_factory->get('acm.connector')->get('api_version');
     $this->logger = $logger_factory->get('acm_sku');
+    $this->helper = $helper;
 
     // We always use the current language id to get store id. If required
     // function calling the api wrapper will pass different store id to
@@ -151,6 +162,9 @@ class APIWrapper implements APIWrapperInterface {
     if (isset($cart->customer_id) && empty($cart->customer_id)) {
       unset($cart->customer_id);
     }
+    else {
+      $cart->customer_id = (int) $cart->customer_id;
+    }
 
     // Check if there's a customer email and remove it if it's empty.
     if (isset($cart->customer_email) && empty($cart->customer_email)) {
@@ -167,6 +181,8 @@ class APIWrapper implements APIWrapperInterface {
     $items = $cart->items;
     if ($items) {
       foreach ($items as $key => &$item) {
+        $cart->items[$key]['qty'] = (int) $item['qty'];
+
         if (array_key_exists('name', $item)) {
           $originalItemsNames[$key] = $item['name'];
 
@@ -175,16 +191,15 @@ class APIWrapper implements APIWrapperInterface {
             continue;
           }
 
-          $plugin_manager = \Drupal::service('plugin.manager.sku');
-          $plugin = $plugin_manager->pluginInstanceFromType($item['product_type']);
           $sku = SKU::loadFromSku($item['sku']);
 
-          if (empty($sku) || empty($plugin)) {
-            $cart->items[$key]['name'] = "";
+          if ($sku instanceof SKU) {
+            $plugin = $sku->getPluginInstance();
+            $cart->items[$key]['name'] = $plugin->cartName($sku, $item, TRUE);
             continue;
           }
 
-          $cart->items[$key]['name'] = $plugin->cartName($sku, $item, TRUE);
+          $cart->items[$key]['name'] = "";
         }
       }
     }
@@ -271,8 +286,8 @@ class APIWrapper implements APIWrapperInterface {
 
     $doReq = function ($client, $opt) use ($endpoint, $customer_id, $cart_id) {
       $opt['json'] = [
-        'customer_id' => $customer_id,
-        'cart_id' => $cart_id,
+        'customer_id' => (int) $customer_id,
+        'cart_id' => (string) $cart_id,
       ];
       return ($client->post($endpoint, $opt));
     };
@@ -456,6 +471,9 @@ class APIWrapper implements APIWrapperInterface {
 
       // Invoke the alter hook to allow all modules to update the customer data.
       \Drupal::moduleHandler()->alter('acm_update_customer_api_request', $opt);
+
+      // Do some cleanup.
+      $opt['json']['customer'] = $this->helper->cleanCustomerData($opt['json']['customer']);
 
       return ($client->post($endpoint, $opt));
     };
@@ -892,10 +910,16 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function subscribeNewsletter($email) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . '/agent/newsletter/subscribe';
 
-    $doReq = function ($client, $opt) use ($endpoint, $email) {
-      $opt['form_params']['email'] = $email;
+    $doReq = function ($client, $opt) use ($endpoint, $email, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['email'] = $email;
+      }
+      else {
+        $opt['json']['customer']['email'] = $email;
+      }
 
       return ($client->post($endpoint, $opt));
     };

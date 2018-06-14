@@ -115,7 +115,7 @@ class Cart implements CartInterface {
    */
   public function customerId() {
     if (isset($this->cart, $this->cart->customer_id)) {
-      return $this->cart->customer_id;
+      return (string) $this->cart->customer_id;
     }
     return NULL;
   }
