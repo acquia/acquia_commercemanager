@@ -76,6 +76,16 @@ class Cart implements CartInterface {
       $cart->billing = $current_billing;
     }
 
+    if (isset($cart->carrier)) {
+      // We use it as array internally everywhere, even set as array.
+      $cart->carrier = (array) $cart->carrier;
+
+      // If carrier is with empty structure, we remove it.
+      if (empty($cart->carrier['carrier_code'])) {
+        unset($cart->carrier);
+      }
+    }
+
     $this->cart = $cart;
     $this->updateCartItemsCount();
   }
