@@ -207,44 +207,17 @@ class APIWrapper implements APIWrapperInterface {
     // Cart extensions must always be objects and not arrays.
     // @TODO: Move this normalization to \Drupal\acm_cart\Cart::__construct and \Drupal\acm_cart\Cart::updateCartObject.
     if (isset($cart->carrier)) {
-      if (isset($cart->carrier->extension)) {
-        if (!is_object($cart->carrier->extension)) {
-          $cart->carrier->extension = (object) $cart->carrier->extension;
-        }
-      }
-      elseif (array_key_exists('extension', $cart->carrier)) {
-        if (!is_object($cart->carrier['extension'])) {
-          $cart->carrier['extension'] = (object) $cart->carrier['extension'];
-        }
-      }
+      $cart->carrier = $this->helper->normaliseExtension($cart->carrier);
     }
 
     // Cart constructor sets cart to any object passed in,
     // circumventing ->setBilling() so trap any wayward extension[] here.
     // @TODO: Move this normalization to \Drupal\acm_cart\Cart::__construct and \Drupal\acm_cart\Cart::updateCartObject.
     if (isset($cart->billing)) {
-      if (isset($cart->billing->extension)) {
-        if (!is_object($cart->billing->extension)) {
-          $cart->billing->extension = (object) $cart->billing->extension;
-        }
-      }
-      elseif (array_key_exists('extension', $cart->billing)) {
-        if (!is_object($cart->billing['extension'])) {
-          $cart->billing['extension'] = (object) $cart->billing['extension'];
-        }
-      }
+      $cart->billing = $this->helper->cleanCartAddress($cart->billing);
     }
     if (isset($cart->shipping)) {
-      if (isset($cart->shipping->extension)) {
-        if (!is_object($cart->shipping->extension)) {
-          $cart->shipping->extension = (object) $cart->shipping->extension;
-        }
-      }
-      elseif (array_key_exists('extension', $cart->shipping)) {
-        if (!is_object($cart->shipping['extension'])) {
-          $cart->shipping['extension'] = (object) $cart->shipping['extension'];
-        }
-      }
+      $cart->shipping = $this->helper->cleanCartAddress($cart->shipping);
     }
 
     $doReq = function ($client, $opt) use ($endpoint, $cart) {
@@ -357,16 +330,7 @@ class APIWrapper implements APIWrapperInterface {
     // Cart constructor sets cart to any object passed in,
     // circumventing ->setBilling() so trap any wayward extension[] here.
     if (isset($address)) {
-      if (isset($address->extension)) {
-        if (!is_object($address->extension)) {
-          $address->extension = (object) $address->extension;
-        }
-      }
-      elseif (array_key_exists('extension', $address)) {
-        if (!is_object($address['extension'])) {
-          $address['extension'] = (object) $address['extension'];
-        }
-      }
+      $address = $this->helper->cleanCartAddress($address);
     }
 
     $doReq = function ($client, $opt) use ($endpoint, $address, $customer_id) {
