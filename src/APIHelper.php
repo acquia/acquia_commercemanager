@@ -28,7 +28,7 @@ class APIHelper {
     if (isset($customer['addresses'])) {
       foreach ($customer['addresses'] as $delta => $address) {
         $address = (array) $address;
-        $customer['addresses'][$delta] = $this->cleanAddress($address);
+        $customer['addresses'][$delta] = $this->cleanCustomerAddress($address);
       }
     }
 
@@ -55,16 +55,22 @@ class APIHelper {
   /**
    * Get cleaned cart address.
    *
-   * @param array $address
-   *   Cart address.
+   * @param mixed $address
+   *   Cart address object/array.
    *
    * @return array
    *   Cleaned cart address.
    */
-  public function cleanCartAddress(array $address) {
+  public function cleanCartAddress($address) {
     $address = (array) $address;
-    // @TODO: Convert cart address extension to array.
-    return $this->cleanAddress($address);
+
+    $address = $this->cleanAddress($address);
+
+    if (isset($address['customer_address_id'])) {
+      $address['customer_address_id'] = (int) $address['customer_address_id'];
+    }
+
+    return $address;
   }
 
   /**
@@ -89,7 +95,31 @@ class APIHelper {
       $address['default_shipping'] = (bool) $address['default_shipping'];
     }
 
-    return $address;
+    return $this->normaliseExtension($address);
+  }
+
+  /**
+   * Extensions must always be objects and not arrays.
+   *
+   * @param mixed $data
+   *   Array/Object data.
+   *
+   * @return array
+   *   Data in same type but with extension as object.
+   */
+  public function normaliseExtension($data) {
+    if (is_object($data)) {
+      if (isset($data->extension)) {
+        $data->extension = (object) $data->extension;
+      }
+    }
+    elseif (is_array($data)) {
+      if (isset($data['extension'])) {
+        $data['extension'] = (object) $data['extension'];
+      }
+    }
+
+    return $data;
   }
 
 }
