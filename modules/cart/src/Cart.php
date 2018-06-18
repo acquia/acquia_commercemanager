@@ -68,6 +68,10 @@ class Cart implements CartInterface {
    *   The cart.
    */
   public function updateCartObject($cart) {
+    if (isset($cart->customer_id)) {
+      $cart->customer_id = (string) $cart->customer_id;
+    }
+
     // Some ecommerce backends, like hybris, don't save the billing like they
     // do with shipping. So if a billing was set we don't want it to be
     // overwritten when the API response comes back.

@@ -89,7 +89,7 @@ class APIWrapper implements APIWrapperInterface {
           $opt['form_params']['customer_id'] = $customer_id;
         }
         else {
-          $opt['json']['customer_id'] = (int) $customer_id;
+          $opt['json']['customer_id'] = (string) $customer_id;
         }
       }
       return ($client->post($endpoint, $opt));
@@ -161,9 +161,6 @@ class APIWrapper implements APIWrapperInterface {
     // Check if there's a customer ID and remove it if it's empty.
     if (isset($cart->customer_id) && empty($cart->customer_id)) {
       unset($cart->customer_id);
-    }
-    else {
-      $cart->customer_id = (int) $cart->customer_id;
     }
 
     // Check if there's a customer email and remove it if it's empty.
@@ -259,7 +256,7 @@ class APIWrapper implements APIWrapperInterface {
 
     $doReq = function ($client, $opt) use ($endpoint, $customer_id, $cart_id) {
       $opt['json'] = [
-        'customer_id' => (int) $customer_id,
+        'customer_id' => (string) $customer_id,
         'cart_id' => (string) $cart_id,
       ];
       return ($client->post($endpoint, $opt));
@@ -570,6 +567,7 @@ class APIWrapper implements APIWrapperInterface {
 
     try {
       $customer = $this->tryAgentRequest($doReq, 'getCustomer', 'customer');
+      $customer = $this->helper->cleanCustomerData($customer);
     }
     catch (CustomerNotFoundException $e) {
       if ($throwCustomerNotFound) {
