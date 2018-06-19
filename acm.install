@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -39,5 +40,20 @@ function acm_update_8002() {
   }
   catch (\Exception $e) {
     \Drupal::logger('acm')->info('ACM role already exists');
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Create new configuration - acm.commerce_users.
+ */
+function acm_update_8003() {
+  $config = \Drupal::configFactory()->getEditable('acm.commerce_users');
+
+  if (empty($config->getRawData())) {
+    $config_path = drupal_get_path('module', 'acm') . '/config/install/acm.commerce_users.yml';
+    $data = Yaml::parse((file_get_contents($config_path)));
+    $config->setData($data)->save(TRUE);
   }
 }
