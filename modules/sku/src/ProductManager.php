@@ -68,6 +68,13 @@ class ProductManager implements ProductManagerInterface {
   private $i18nHelper;
 
   /**
+   * SKU Fields Manager.
+   *
+   * @var \Drupal\acm_sku\SKUFieldsManager
+   */
+  private $skuFieldsManager;
+
+  /**
    * True if you want extra logging for debugging.
    *
    * @var bool
@@ -99,8 +106,10 @@ class ProductManager implements ProductManagerInterface {
    *   Product Options Manager service instance.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
+   * @param \Drupal\acm_sku\SKUFieldsManager $sku_fields_manager
+   *   SKU Fields Manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper, SKUFieldsManager $sku_fields_manager) {
     $this->entityManager = $entity_type_manager;
     $this->queryFactory = $query_factory;
     $this->configFactory = $config_factory;
@@ -112,6 +121,7 @@ class ProductManager implements ProductManagerInterface {
       ->get('debug');
     $this->debugDir = $this->configFactory->get('acm.connector')
       ->get('debug_dir');
+    $this->skuFieldsManager = $sku_fields_manager;
   }
 
   /**
@@ -823,45 +833,46 @@ class ProductManager implements ProductManagerInterface {
    *   If the complex data structure is unset and no item can be set.
    */
   private function updateFields($parent, SKU $sku, array $values) {
-    $additionalFields = \Drupal::config('acm_sku.base_field_additions')
-      ->getRawData();
+    $additionalFields = $this->skuFieldsManager->getFieldAdditions();
 
-    // Loop through all the attributes available for this particular SKU.
-    foreach ($values as $key => $value) {
-      // Check if attribute is required by us.
-      if (isset($additionalFields[$key])) {
-        $field = $additionalFields[$key];
+    // Filter fields for the parent requested.
+    $additionalFields = array_filter($additionalFields, function ($field) use ($parent) {
+      return ($field['parent'] == $parent);
+    });
 
-        if ($field['parent'] != $parent) {
-          continue;
-        }
+    // Loop through all the fields we want to read from product data.
+    foreach ($additionalFields as $key => $field) {
+      $source = isset($field['source']) ? $field['source'] : $key;
 
-        $field_key = 'attr_' . $key;
+      if (!isset($values[$source])) {
+        continue;
+      }
 
-        switch ($field['type']) {
-          case 'attribute':
-            $value = $field['cardinality'] != 1 ? explode(',', $value) : [$value];
-            foreach ($value as $index => $val) {
-              if ($term = $this->productOptionsManager->loadProductOptionByOptionId($key, $val, $sku->language()
-                ->getId())) {
-                $sku->{$field_key}->set($index, $term->getName());
-              }
-              else {
-                $sku->{$field_key}->set($index, $val);
-              }
+      $value = $values[$source];
+      $field_key = 'attr_' . $key;
+
+      switch ($field['type']) {
+        case 'attribute':
+          $value = $field['cardinality'] != 1 ? explode(',', $value) : [$value];
+          foreach ($value as $index => $val) {
+            if ($term = $this->productOptionsManager->loadProductOptionByOptionId($source, $val, $sku->language()->getId())) {
+              $sku->{$field_key}->set($index, $term->getName());
             }
-            break;
+            else {
+              $sku->{$field_key}->set($index, $val);
+            }
+          }
+          break;
 
-          case 'string':
-            $value = $field['cardinality'] != 1 ? explode(',', $value) : $value;
-            $sku->{$field_key}->setValue($value);
-            break;
+        case 'string':
+          $value = $field['cardinality'] != 1 ? explode(',', $value) : $value;
+          $sku->{$field_key}->setValue($value);
+          break;
 
-          case 'text_long':
-            $value = isset($field['serialize']) ? serialize($value) : $value;
-            $sku->{$field_key}->setValue($value);
-            break;
-        }
+        case 'text_long':
+          $value = !empty($field['serialize']) ? serialize($value) : $value;
+          $sku->{$field_key}->setValue($value);
+          break;
       }
     }
   }
