@@ -158,16 +158,6 @@ class APIWrapper implements APIWrapperInterface {
   public function updateCart($cart_id, $cart) {
     $endpoint = $this->apiVersion . "/agent/cart/$cart_id";
 
-    // Check if there's a customer ID and remove it if it's empty.
-    if (isset($cart->customer_id) && empty($cart->customer_id)) {
-      unset($cart->customer_id);
-    }
-
-    // Check if there's a customer email and remove it if it's empty.
-    if (isset($cart->customer_email) && empty($cart->customer_email)) {
-      unset($cart->customer_email);
-    }
-
     // Check $item['name'] is a string because in the cart we
     // store name as a 'renderable link object' with a type,
     // a url, and a title. We only want to pass title to the
@@ -201,32 +191,13 @@ class APIWrapper implements APIWrapperInterface {
       }
     }
 
-    // Cart extensions must always be objects and not arrays.
-    // @TODO: Move this normalization to \Drupal\acm_cart\Cart::__construct and \Drupal\acm_cart\Cart::updateCartObject.
-    if (isset($cart->carrier)) {
-      $cart->carrier = $this->helper->normaliseExtension($cart->carrier);
-    }
-    // Remove shipping address if carrier not set.
-    else {
-      unset($cart->shipping);
-    }
-
-    // Cart constructor sets cart to any object passed in,
-    // circumventing ->setBilling() so trap any wayward extension[] here.
-    // @TODO: Move this normalization to \Drupal\acm_cart\Cart::__construct and \Drupal\acm_cart\Cart::updateCartObject.
-    if (isset($cart->billing)) {
-      $cart->billing = $this->helper->cleanCartAddress($cart->billing);
-    }
-    if (isset($cart->shipping)) {
-      $cart->shipping = $this->helper->cleanCartAddress($cart->shipping);
-    }
+    // Clean up cart data.
+    $cart = $this->helper->cleanCart($cart);
 
     $doReq = function ($client, $opt) use ($endpoint, $cart) {
       $opt['json'] = $cart;
       return ($client->post($endpoint, $opt));
     };
-
-    $cart = [];
 
     try {
       Cache::invalidateTags(['cart:' . $cart_id]);
