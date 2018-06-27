@@ -122,4 +122,62 @@ class APIHelper {
     return $data;
   }
 
+  /**
+   * Clean up cart data.
+   *
+   * @param object $cart
+   *   Cart object.
+   *
+   * @return object
+   *   Cleaned cart object.
+   */
+  public function cleanCart($cart) {
+    // Check if there's a customer ID and remove it if it's empty.
+    if (isset($cart->customer_id) && empty($cart->customer_id)) {
+      unset($cart->customer_id);
+    }
+    elseif (isset($cart->customer_id)) {
+      $cart->customer_id = (string) $cart->customer_id;
+    }
+
+    // Check if there's a customer email and remove it if it's empty.
+    if (isset($cart->customer_email) && empty($cart->customer_email)) {
+      unset($cart->customer_email);
+    }
+
+    // Don't tell conductor our stored totals for no reason.
+    if (isset($cart->totals)) {
+      unset($cart->totals);
+    }
+
+    // Cart extensions must always be objects and not arrays.
+    if (isset($cart->carrier)) {
+      $cart->carrier = $this->normaliseExtension($cart->carrier);
+    }
+    // Remove shipping address if carrier not set.
+    else {
+      unset($cart->shipping);
+    }
+
+    // Cart constructor sets cart to any object passed in,
+    // circumventing ->setBilling() so trap any wayward extension[] here.
+    if (isset($cart->billing)) {
+      $cart->billing = $this->cleanCartAddress($cart->billing);
+      // @TODO: Check why removing this is required.
+      if (isset($cart->billing['address_id'])) {
+        unset($cart->billing['address_id']);
+      }
+    }
+    if (isset($cart->shipping)) {
+      $cart->shipping = $this->cleanCartAddress($cart->shipping);
+    }
+
+    // Never send response_message back.
+    if (isset($cart->response_message)) {
+      unset($cart->response_message);
+    }
+
+    return $cart;
+  }
+
 }
