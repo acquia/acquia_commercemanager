@@ -163,13 +163,18 @@ class APIHelper {
     // circumventing ->setBilling() so trap any wayward extension[] here.
     if (isset($cart->billing)) {
       $cart->billing = $this->cleanCartAddress($cart->billing);
-      // @TODO: Check why removing this is required.
+      // Never send address_id in API request, it confuses Magento.
       if (isset($cart->billing['address_id'])) {
         unset($cart->billing['address_id']);
       }
     }
+
     if (isset($cart->shipping)) {
       $cart->shipping = $this->cleanCartAddress($cart->shipping);
+      // Never send address_id in API request, it confuses Magento.
+      if (isset($cart->shipping['address_id'])) {
+        unset($cart->shipping['address_id']);
+      }
     }
 
     // Never send response_message back.
