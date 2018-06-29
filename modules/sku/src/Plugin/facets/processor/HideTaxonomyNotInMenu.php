@@ -2,6 +2,7 @@
 
 namespace Drupal\acq_sku\Plugin\facets\processor;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -41,6 +42,13 @@ class HideTaxonomyNotInMenu extends ProcessorPluginBase implements BuildProcesso
   protected $entityTypeManager;
 
   /**
+   * The connector config object.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $connectorConfig;
+
+  /**
    * Constructs a new object.
    *
    * @param array $configuration
@@ -53,12 +61,15 @@ class HideTaxonomyNotInMenu extends ProcessorPluginBase implements BuildProcesso
    *   The language manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LanguageManagerInterface $language_manager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LanguageManagerInterface $language_manager, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->languageManager = $language_manager;
     $this->entityTypeManager = $entity_type_manager;
+    $this->connectorConfig = $config_factory->get('acm.connector');
   }
 
   /**
@@ -70,7 +81,8 @@ class HideTaxonomyNotInMenu extends ProcessorPluginBase implements BuildProcesso
       $plugin_id,
       $plugin_definition,
       $container->get('language_manager'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('config.factory')
     );
   }
 
@@ -123,7 +135,7 @@ class HideTaxonomyNotInMenu extends ProcessorPluginBase implements BuildProcesso
 
           // Display the term if included in menu and status is enabled.
           if (($term instanceof TermInterface) &&
-            ($term->bundle() == 'acm_product_category') &&
+            ($term->bundle() == $this->connectorConfig->get('category_vid')) &&
             ($term->get('field_category_include_menu')->getString()) &&
             ($term->get('field_commerce_status')->getString())) {
             continue;
