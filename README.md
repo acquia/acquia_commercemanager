@@ -24,6 +24,8 @@ https://github.com/acquia/commerce-manager/releases
 and Composer is recommended way of installation. When installing using Composer, 
 make sure that you have also Drupal composer in your composer.json.
 
+From version 1.5.0, we require at least PHP 7.1.
+
 ## Configuration
 For module installation and configuration please follow [Acquia Knowledgebase](
 https://docs.acquia.com/commerce/install/modules
