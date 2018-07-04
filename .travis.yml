@@ -58,8 +58,8 @@ jobs:
         # The core phpunit seems to require a themes directory.
         - mkdir themes
       script:
-        - mkdir -p ../tests/logs
+        - mkdir -p build/logs
         # Run behat tests.
-        - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover ../tests/logs/clover.xml
+        - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover build/logs/clover.xml
       after_success:
         - travis_retry ../bin/php-coveralls -v
