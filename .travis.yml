@@ -58,9 +58,9 @@ jobs:
         # The core phpunit seems to require a themes directory.
         - mkdir themes
       script:
-        - mkdir -p build/logs
+        - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
         # Run behat tests.
-        - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover build/logs/clover.xml
+        - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs/clover.xml
       after_success:
         - pwd
         - cd modules/contrib/acm
