@@ -61,5 +61,5 @@ jobs:
         - mkdir -p ../tests/logs
         # Run behat tests.
         - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover ../tests/logs/clover.xml
-      after_script:
+      after_success:
         - travis_retry ../vendor/bin/coveralls -v
