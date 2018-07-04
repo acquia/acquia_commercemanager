@@ -62,4 +62,4 @@ jobs:
         # Run behat tests.
         - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover ../tests/logs/clover.xml
       after_success:
-        - travis_retry ../bin/coveralls -v
+        - travis_retry ../bin/php-coveralls -v
