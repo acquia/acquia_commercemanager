@@ -65,6 +65,7 @@
         <directory suffix="Test.php">./</directory>
         <directory suffix="TestBase.php">./</directory>
         <directory suffix="Interface.php">./</directory>
+        <directory prefix="Mock">./</directory>
       </exclude>
      </whitelist>
   </filter>
