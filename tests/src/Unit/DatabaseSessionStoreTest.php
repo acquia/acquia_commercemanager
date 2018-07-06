@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\acm\Unit;
 
-use Drupal\Core\TempStore\PrivateTempStoreTest;
+use Drupal\Tests\Core\TempStore\PrivateTempStoreTest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
