@@ -36,23 +36,22 @@ install:
   # see https://github.com/drupal-composer/drupal-project/issues/175
   - composer config --unset repositories.0
   - composer config repositories.drupal composer https://packages.drupal.org/8
-  - mkdir -p docroot/modules/contrib
-  - mv ../acm docroot/modules/contrib
+  - mkdir -p modules/contrib
+  - mv ../acm modules/contrib
   - composer require commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'~3.8' php-coveralls/php-coveralls
   - cat composer.json
   - composer install
   # Install drupal.
-  - cd docroot
-  - ../bin/drush --verbose site-install lightning install_configure_form.enable_update_status_module=NULL --db-url=mysql://root:@127.0.0.1/drupal --yes
+  - ./vendor/bin/drush --verbose site-install lightning install_configure_form.enable_update_status_module=NULL --db-url=mysql://root:@127.0.0.1/drupal --yes
   # Enable the acm suite of modules.
-  - ../bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
+  - ./vendor/bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
   # The core phpunit seems to require a themes directory.
   - mkdir themes
 script:
   - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
   # Run behat tests.
-  - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs/clover.xml
+  - ./vendor/bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs/clover.xml
 after_success:
   - pwd
   - cd modules/contrib/acm
-  - travis_retry $TRAVIS_BUILD_DIR/drupal/bin/php-coveralls -v
+  - travis_retry $TRAVIS_BUILD_DIR/drupal/vendor/bin/php-coveralls -v
