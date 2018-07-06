@@ -30,7 +30,7 @@ install:
   - mv `ls -A | grep -v "^acm$"` ./acm
   - composer clearcache
   - composer self-update
-  - composer create-project acquia/lightning-project:8.3.* drupal --no-interaction --no-install
+  - composer create-project drupal/drupal:${DRUPAL} drupal --no-interaction --no-install
   # Add packages required by acm.
   - cd drupal
   # see https://github.com/drupal-composer/drupal-project/issues/175
@@ -38,7 +38,7 @@ install:
   - composer config repositories.drupal composer https://packages.drupal.org/8
   - mkdir -p docroot/modules/contrib
   - mv ../acm docroot/modules/contrib
-  - composer require commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'>=2.0@RC' php-coveralls/php-coveralls
+  - composer require commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'~3.8' php-coveralls/php-coveralls
   - cat composer.json
   - composer install
   # Install drupal.
