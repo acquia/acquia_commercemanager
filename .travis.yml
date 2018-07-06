@@ -63,7 +63,6 @@ jobs:
         - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
         # Run behat tests.
         - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs/clover.xml
-      after_success:
         - pwd
         - cd modules/contrib/acm
         - travis_retry $TRAVIS_BUILD_DIR/drupal/bin/php-coveralls -v
