@@ -4,9 +4,9 @@ php:
   - 7.1
 
 env:
-  - DRUPAL="^8.5"
-  - DRUPAL="8.5.x-dev"
-  - DRUPAL="8.6.x-dev"
+  - DRUPAL=^8.5
+  - DRUPAL=8.5.x-dev
+  - DRUPAL=8.6.x-dev
 
 mysql:
   database: drupal
@@ -19,7 +19,8 @@ stages:
 
 jobs:
   include:
-    - script:
+    - stage: cs
+      script:
         # items for phpcs
         - composer global require drupal/coder ^8.2@stable
         - export PATH="$PATH:$HOME/.composer/vendor/bin"
@@ -31,7 +32,8 @@ jobs:
         # debug
         - composer global config bin-dir --absolute
         - phpcs --standard=Drupal .
-    - script:
+    - stage: test
+      script:
         # Create the MySQL database and add a user for testing.
         - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
         - export SIMPLETEST_DB="mysql://testing:testing@localhost/testing"
