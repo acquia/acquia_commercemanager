@@ -49,7 +49,7 @@ install:
 script:
   - mkdir -p $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs
   # Run behat tests.
-  - ./vendor/bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs/clover.xml
+  - ./vendor/bin/phpunit -c modules/contrib/acm/phpunit.xml modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs/clover.xml
 after_success:
   - pwd
   - cd modules/contrib/acm
