@@ -9,14 +9,10 @@ mysql:
   username: root
   encoding: utf8
 
-# Define stages
-stages:
-  - cs
-  - test
-
 jobs:
   include:
     - stage: cs
+      php: 7.1
       before_install:
         # items for phpcs
         - composer global require drupal/coder ^8.2@stable
@@ -30,8 +26,8 @@ jobs:
         - composer global config bin-dir --absolute
       install: skip
       script: phpcs --standard=Drupal .
-      php: 7.1
     - stage: test
+      php: 7.1
       install:
         # Create the MySQL database and add a user for testing.
         - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
@@ -67,8 +63,8 @@ jobs:
         - pwd
         - cd modules/contrib/acm
         - travis_retry $TRAVIS_BUILD_DIR/drupal/bin/php-coveralls -v
-      php: 7.1
     - stage: test
+      php: 7.2
       install:
         # Create the MySQL database and add a user for testing.
         - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
@@ -100,5 +96,3 @@ jobs:
         - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
         # Run behat tests.
         - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v
-      php: 7.2
-
