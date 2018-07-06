@@ -45,10 +45,8 @@ install:
   - ./vendor/bin/drush --verbose site-install --db-url=mysql://root:@127.0.0.1/drupal --yes
   # Enable the acm suite of modules.
   - ./vendor/bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
-  # The core phpunit seems to require a themes directory.
-  - mkdir themes
 script:
-  - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
+  - mkdir -p $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs
   # Run behat tests.
   - ./vendor/bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs/clover.xml
 after_success:
