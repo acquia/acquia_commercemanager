@@ -30,6 +30,7 @@ jobs:
         - composer global config bin-dir --absolute
       install: skip
       script: phpcs --standard=Drupal .
+      php: 7.1
     - stage: test
       install:
         # Create the MySQL database and add a user for testing.
@@ -66,3 +67,42 @@ jobs:
         - pwd
         - cd modules/contrib/acm
         - travis_retry $TRAVIS_BUILD_DIR/drupal/bin/php-coveralls -v
+      php: 7.1
+    - stage: test
+      install:
+        # Create the MySQL database and add a user for testing.
+        - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
+        - export SIMPLETEST_DB="mysql://testing:testing@localhost/testing"
+        # first clone everything also into a subfolder, via a parent build folder
+        - mkdir acm
+        - mv `ls -A | grep -v "^acm$"` ./acm
+        - composer clearcache
+        - composer self-update
+        - composer create-project acquia/lightning-project:8.3.* drupal --no-interaction --no-install
+        # Add packages required by acm.
+        - cd drupal
+        # see https://github.com/drupal-composer/drupal-project/issues/175
+        - composer config --unset repositories.0
+        - composer config repositories.drupal composer https://packages.drupal.org/8
+        - mkdir -p docroot/modules/contrib
+        - mv ../acm docroot/modules/contrib
+        - composer require commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'>=2.0@RC' php-coveralls/php-coveralls
+        - cat composer.json
+        - composer install
+        # Install drupal.
+        - cd docroot
+        - ../bin/drush --verbose site-install lightning install_configure_form.enable_update_status_module=NULL --db-url=mysql://root:@127.0.0.1/drupal --yes
+        # Enable the acm suite of modules.
+        - ../bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
+        # The core phpunit seems to require a themes directory.
+        - mkdir themes
+      script:
+        - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
+        # Run behat tests.
+        - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs/clover.xml
+      after_success:
+        - pwd
+        - cd modules/contrib/acm
+        - travis_retry $TRAVIS_BUILD_DIR/drupal/bin/php-coveralls -v
+      php: 7.2
+
