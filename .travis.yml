@@ -28,7 +28,7 @@ jobs:
       script: phpcs --standard=Drupal .
     - stage: test
       php: 7.1
-      install:
+      script:
         # Create the MySQL database and add a user for testing.
         - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
         - export SIMPLETEST_DB="mysql://testing:testing@localhost/testing"
@@ -55,7 +55,6 @@ jobs:
         - ../bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
         # The core phpunit seems to require a themes directory.
         - mkdir themes
-      script:
         - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
         # Run behat tests.
         - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v --coverage-clover $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs/clover.xml
@@ -65,7 +64,7 @@ jobs:
         - travis_retry $TRAVIS_BUILD_DIR/drupal/bin/php-coveralls -v
     - stage: test
       php: 7.2
-      install:
+      script:
         # Create the MySQL database and add a user for testing.
         - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
         - export SIMPLETEST_DB="mysql://testing:testing@localhost/testing"
@@ -92,7 +91,6 @@ jobs:
         - ../bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
         # The core phpunit seems to require a themes directory.
         - mkdir themes
-      script:
         - mkdir -p $TRAVIS_BUILD_DIR/drupal/docroot/modules/contrib/acm/tests/logs
         # Run behat tests.
         - ../bin/phpunit -c core/phpunit.xml.dist modules/contrib/acm --debug -v
