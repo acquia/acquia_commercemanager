@@ -42,7 +42,7 @@ install:
   - cat composer.json
   - composer install
   # Install drupal.
-  - ./vendor/bin/drush --verbose site-install install_configure_form.enable_update_status_module=NULL --db-url=mysql://root:@127.0.0.1/drupal --yes
+  - ./vendor/bin/drush --verbose site-install --db-url=mysql://root:@127.0.0.1/drupal --yes
   # Enable the acm suite of modules.
   - ./vendor/bin/drush en -y acm acm_cart acm_checkout acm_customer acm_diagnostic acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
   # The core phpunit seems to require a themes directory.
