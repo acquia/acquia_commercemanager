@@ -4,6 +4,7 @@
 https://travis-ci.org/acquia/commerce-manager.svg?branch=master
 )](https://travis-ci.org/acquia/commerce-manager)
 
+[![Coverage Status](https://coveralls.io/repos/github/acquia/commerce-manager/badge.svg?branch=8.x-1.x)](https://coveralls.io/github/acquia/commerce-manager?branch=8.x-1.x)
 ## Summary
 The Acquia Commerce Manager Drupal module enables site builders to use tools
 and templates in Drupal to rapidly build commerce experiences. It connects
