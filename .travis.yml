@@ -38,7 +38,7 @@ install:
   - composer config repositories.drupal composer https://packages.drupal.org/8
   - mkdir -p modules/contrib
   - mv ../acm modules/contrib
-  - composer require drush/drush commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'~3.8' php-coveralls/php-coveralls
+  - composer require drush/drush commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^1.0@RC drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'~3.8' drupal/inline_entity_form php-coveralls/php-coveralls
   - cat composer.json
   - composer install
   # Install drupal.
