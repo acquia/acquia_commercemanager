@@ -45,8 +45,13 @@ class Configurable extends SKUPluginBase {
     ];
 
     $configurables = unserialize($sku->field_configurable_attributes->getString());
-    $configurable_form_settings = \Drupal::service('config.factory')->get('acm_sku.configurable_form_settings');
-    $configurable_weights = $configurable_form_settings->get('attribute_weights');
+
+    /** @var \Drupal\acm_sku\CartFormHelper $helper */
+    $helper = \Drupal::service('acm_sku.cart_form_helper');
+
+    $configurable_weights = $helper->getConfigurableAttributeWeights(
+      $sku->get('attribute_set')->getString()
+    );
 
     foreach ($configurables as $configurable) {
       $attribute_code = $configurable['code'];
@@ -60,14 +65,9 @@ class Configurable extends SKUPluginBase {
       // Sort the options.
       if (!empty($options)) {
 
-        $hasSortableOptions = (
-          $configurable_form_settings->get('sortable_options')
-          && in_array($attribute_code, $configurable_form_settings->get('sortable_options'))
-        );
-
         // Sort config options before pushing them to the select list based on
         // the config.
-        if ($hasSortableOptions) {
+        if ($helper->isAttributeSortable($attribute_code)) {
           $sorted_options = self::sortConfigOptions($options, $attribute_code);
         }
         else {
@@ -106,7 +106,7 @@ class Configurable extends SKUPluginBase {
       '#type' => 'number',
       '#default_value' => 1,
       '#required' => TRUE,
-      '#access' => $configurable_form_settings->get('show_quantity'),
+      '#access' => $helper->showQuantity(),
       '#size' => 2,
       '#attributes' => [
         'min' => '0',
@@ -203,7 +203,10 @@ class Configurable extends SKUPluginBase {
     $dynamic_parts = &$form['ajax'];
 
     $configurables = $form_state->getValue('configurables');
-    $configurable_form_settings = \Drupal::service('config.factory')->get('acm_sku.configurable_form_settings');
+
+    /** @var \Drupal\acm_sku\CartFormHelper $helper */
+    $helper = \Drupal::service('acm_sku.cart_form_helper');
+
     $tree = $form_state->get('tree');
     $tree_pointer = &$tree['options'];
 
@@ -219,13 +222,9 @@ class Configurable extends SKUPluginBase {
     }
 
     if ($tree_pointer instanceof SKU) {
-      $plugin = $tree_pointer->getPluginInstance();
+      $view_builder = \Drupal::entityTypeManager()->getViewBuilder('acm_sku');
 
-      $view_builder = \Drupal::entityTypeManager()
-        ->getViewBuilder('acm_sku');
-
-      $view = $view_builder
-        ->view($tree_pointer);
+      $view = $view_builder->view($tree_pointer);
 
       // Block add to cart render because Form API won't allow AJAX Formception.
       $view['#no_add_to_cart'] = TRUE;
@@ -246,14 +245,9 @@ class Configurable extends SKUPluginBase {
           $options[$value['value_id']] = $value['label'];
         }
 
-        $hasSortableOptions = (
-          $configurable_form_settings->get('sortable_options')
-          && in_array($key, $configurable_form_settings->get('sortable_options'))
-        );
-
         // Sort config options before pushing them to the select list based on
         // the config.
-        if ($hasSortableOptions) {
+        if ($helper->isAttributeSortable($key)) {
           // Make sure the first element in the list is the empty option.
           $sorted_options = [
             '' => $dynamic_parts['configurables'][$key]['#options'][''],
@@ -385,7 +379,10 @@ class Configurable extends SKUPluginBase {
     $configuredSkuEntity->field_configurable_attributes->value =
       serialize($product['extension']['configurable_product_options']);
 
-    $this->extractConfigurableOptions($product['extension']['configurable_product_options']);
+    $this->extractConfigurableOptions(
+      $configuredSkuEntity->get('attribute_set')->getString(),
+      $product['extension']['configurable_product_options']
+    );
 
     $simpleSkuValues = [];
     $skippedAtLeastOneSimple = FALSE;
@@ -493,7 +490,12 @@ class Configurable extends SKUPluginBase {
       $tree['configurables'][$configurable['code']] = $configurable;
     }
 
-    $configurable_weights = \Drupal::service('config.factory')->get('acm_sku.configurable_form_settings')->get('attribute_weights');
+    /** @var \Drupal\acm_sku\CartFormHelper $helper */
+    $helper = \Drupal::service('acm_sku.cart_form_helper');
+
+    $configurable_weights = $helper->getConfigurableAttributeWeights(
+      $sku->get('attribute_set')->getString()
+    );
 
     // Sort configurables based on the config.
     uasort($tree['configurables'], function ($a, $b) use ($configurable_weights) {
@@ -664,23 +666,25 @@ class Configurable extends SKUPluginBase {
    *
    * Extract new configurable options during import and store them.
    *
+   * @param string $attribute_set
+   *   Attribute set.
    * @param array $configurable_options
    *   Array with configurable options.
    */
-  protected function extractConfigurableOptions(array $configurable_options) {
+  protected function extractConfigurableOptions($attribute_set, array $configurable_options) {
+    /** @var \Drupal\acm_sku\CartFormHelper $helper */
+    $helper = \Drupal::service('acm_sku.cart_form_helper');
+
     // Load existing options.
-    $existing_options = \Drupal::configFactory()
-      ->get('acm_sku.configurable_form_settings')
-      ->get('attribute_weights');
+    $existing_options = $helper->getConfigurableAttributeWeights($attribute_set);
+
     // Transform incoming options.
     foreach ($configurable_options as $configurable) {
       $existing_options[$configurable['code']] = $configurable['position'];
     }
+
     // Save options.
-    \Drupal::configFactory()
-      ->getEditable('acm_sku.configurable_form_settings')
-      ->set('attribute_weights', $existing_options)
-      ->save();
+    $helper->setConfigurableAttributeWeights($attribute_set, $existing_options);
   }
 
   /**
