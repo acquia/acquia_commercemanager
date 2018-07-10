@@ -1,6 +1,6 @@
 storage_type: 'session'
-use_ecomm_sessions: 0
-use_ecomm_pass_reset: 0
+use_ecomm_sessions: false
+use_ecomm_pass_reset: false
 ecomm_forgot_password_path: '/forgottenpassword'
 external_registration_path: '/register'
 external_login_path: '/login'
