@@ -31,14 +31,6 @@ acm.configuration.store:
   requirements:
     _permission: 'access commerce administration pages'
 
-acm.configuration.store:
-  path: '/admin/commerce/config/store-settings'
-  defaults:
-    _form: '\Drupal\acm\Form\StoreSettingsForm'
-    _title: 'Store Settings'
-  requirements:
-    _permission: 'access commerce administration pages'
-
 acm.configuration.commerce_users:
   path: '/admin/commerce/config/commerce-users'
   defaults:

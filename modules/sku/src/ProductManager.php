@@ -6,7 +6,6 @@ use Drupal\acm\I18nHelper;
 use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Cache\Cache;
@@ -24,13 +23,6 @@ class ProductManager implements ProductManagerInterface {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private $entityManager;
-
-  /**
-   * Drupal Entity Query Factory.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryFactory
-   */
-  private $queryFactory;
 
   /**
    * Drupal Config Factory Instance.
@@ -87,8 +79,6 @@ class ProductManager implements ProductManagerInterface {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
-   *   The query factory.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
@@ -100,9 +90,8 @@ class ProductManager implements ProductManagerInterface {
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper) {
     $this->entityManager = $entity_type_manager;
-    $this->queryFactory = $query_factory;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');
     $this->categoryRepo = $cat_repo;
@@ -183,7 +172,12 @@ class ProductManager implements ProductManagerInterface {
 
     $node = $this->entityManager->getStorage('node')->create($node_values);
 
-    $node->setPublished($config->get('product_publish'));
+    if ($config->get('product_publish')) {
+      $node->setPublished();
+    }
+    else {
+      $node->setUnpublished();
+    }
 
     // Invoke the alter hook to allow all modules to update the node.
     \Drupal::moduleHandler()->alter('acm_sku_product_node', $node, $product);
@@ -229,7 +223,12 @@ class ProductManager implements ProductManagerInterface {
     }
     $node->{$sku_field_name} = [$product['sku']];
 
-    $node->setPublished($config->get('product_publish'));
+    if ($config->get('product_publish')) {
+      $node->setPublished();
+    }
+    else {
+      $node->setUnpublished();
+    }
 
     // Invoke the alter hook to allow all modules to update the node.
     \Drupal::moduleHandler()
@@ -322,7 +321,7 @@ class ProductManager implements ProductManagerInterface {
         continue;
       }
 
-      $query = $this->queryFactory->get('acm_sku_type')
+      $query = $this->entityManager->getStorage('acm_sku_type')->getQuery()
         ->condition('id', $product['type'])
         ->count();
 
@@ -362,7 +361,7 @@ class ProductManager implements ProductManagerInterface {
         continue;
       }
 
-      $query = $this->queryFactory->get('acm_sku')
+      $query = $this->entityManager->getStorage('acm_sku')->getQuery()
         ->condition('sku', $product['sku']);
       $sku_ids = $query->execute();
 
@@ -403,7 +402,7 @@ class ProductManager implements ProductManagerInterface {
         try {
           // Un-publish if node available.
           if ($node = $plugin->getDisplayNode($sku, FALSE, FALSE)) {
-            $node->setPublished(FALSE);
+            $node->setUnpublished();
             $node->save();
           }
         }

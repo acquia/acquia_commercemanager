@@ -7,7 +7,7 @@ field_name: field_grouped_skus
 entity_type: acm_sku
 type: sku
 settings:
-  max_length: '255'
+  max_length: 255
   is_ascii: false
   case_sensitive: false
 module: acm_sku

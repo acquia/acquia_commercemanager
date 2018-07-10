@@ -1,4 +1,3 @@
-uuid: a095d51c-18ba-4c9d-bbfe-7372df38b34b
 langcode: en
 status: true
 dependencies:
@@ -7,8 +6,7 @@ dependencies:
     - node.type.acm_product
   module:
     - text
-_core:
-  default_config_hash: ByYUusWdIV1NuCPcyyPpdQgDtZqqPDef1vjRg5rQ5Xo
+    - node
 id: node.acm_product.body
 field_name: body
 entity_type: node
