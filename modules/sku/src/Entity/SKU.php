@@ -745,7 +745,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
 
           // Try to download again if download flag is set to true.
           if ($download) {
-            return $this->processMediaItem($data, $update_sku, TRUE);
+            return $this->processMediaItem($update_sku, $data, TRUE);
           }
         }
       }
