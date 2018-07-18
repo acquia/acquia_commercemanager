@@ -179,6 +179,12 @@ class APIHelper {
       unset($cart->response_message);
     }
 
+    // When we remove an item from cart, we have to reset the keys to have
+    // proper indexed array.
+    if (isset($cart->items)) {
+      $cart->items = array_values($cart->items);
+    }
+
     return $cart;
   }
 
