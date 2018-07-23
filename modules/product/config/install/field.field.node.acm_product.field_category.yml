@@ -1,4 +1,3 @@
-uuid: 117e4e77-16a4-4056-8b10-901e5c20ee51
 langcode: en
 status: true
 dependencies:
@@ -6,8 +5,6 @@ dependencies:
     - field.storage.node.field_category
     - node.type.acm_product
     - taxonomy.vocabulary.acm_product_category
-_core:
-  default_config_hash: _h27OCN72ifuaws2941uTz0lw4_2L4HOXqLXmCOcXuU
 id: node.acm_product.field_category
 field_name: field_category
 entity_type: node

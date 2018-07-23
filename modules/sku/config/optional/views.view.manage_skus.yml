@@ -642,22 +642,7 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
-              advanced_page_creator: '0'
-              advanced_page_reviewer: '0'
-              media_creator: '0'
-              acm_product_creator: '0'
-              media_manager: '0'
-              acm_product_reviewer: '0'
-              acm_promotion_creator: '0'
-              acm_promotion_reviewer: '0'
-              department_page_creator: '0'
-              department_page_reviewer: '0'
-              webmaster: '0'
-              reviewer: '0'
-              store_creator: '0'
-              store_reviewer: '0'
             reduce: false
-            argument: ''
           is_grouped: false
           group_info:
             label: ''
@@ -698,20 +683,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
-              advanced_page_creator: '0'
-              advanced_page_reviewer: '0'
-              media_creator: '0'
-              acm_product_creator: '0'
-              media_manager: '0'
-              acm_product_reviewer: '0'
-              acm_promotion_creator: '0'
-              acm_promotion_reviewer: '0'
-              department_page_creator: '0'
-              department_page_reviewer: '0'
-              webmaster: '0'
-              reviewer: '0'
-              store_creator: '0'
-              store_reviewer: '0'
             reduce: false
           is_grouped: false
           group_info:
