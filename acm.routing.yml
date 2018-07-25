@@ -47,5 +47,14 @@ acm.configuration.commerce_users:
   requirements:
     _permission: 'access commerce administration pages'
 
+acm.configuration.purge_queue:
+  path: '/admin/commerce/config/purge-queue'
+  defaults:
+    _form: '\Drupal\acm\Form\PurgeQueueForm'
+    _title: 'Purge Queue'
+    _description: 'Perform purging of site queue.'
+  requirements:
+    _version_access_check: 'TRUE'
+
 route_callbacks:
   - 'acm.route_subscriber:routes'
