@@ -328,4 +328,18 @@ class TestAPIWrapper extends APIWrapper {
    */
   public function updateStoreContext($store_id){}
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getQueueStatus(): int {
+    return 5;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function purgeQueue(): bool {
+    return TRUE;
+  }
+
 }

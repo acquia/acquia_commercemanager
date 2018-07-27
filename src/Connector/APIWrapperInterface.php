@@ -448,4 +448,26 @@ interface APIWrapperInterface {
    */
   public function systemWatchdog();
 
+  /**
+   * Get number of items in site specific queue.
+   *
+   * @return int
+   *   Number of items in queue.
+   *
+   * @throws \Exception
+   *   Failed request exception.
+   */
+  public function getQueueStatus(): int;
+
+  /**
+   * Purge items in site specific queue.
+   *
+   * @return bool
+   *   Success of operation.
+   *
+   * @throws \Exception
+   *   Failed request exception.
+   */
+  public function purgeQueue(): bool;
+
 }
