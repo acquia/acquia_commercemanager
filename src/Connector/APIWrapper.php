@@ -1014,4 +1014,54 @@ class APIWrapper implements APIWrapperInterface {
     return $result;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getQueueStatus(): int {
+    if ($this->apiVersion != 'v2') {
+      $this->logger->error('This feature is available only for v2. Current version is @version', ['@version' => $this->apiVersion]);
+      return -1;
+    }
+
+    $endpoint = $this->apiVersion . "/agent/queue/total";
+
+    $doReq = function ($client, $opt) use ($endpoint) {
+      return ($client->get($endpoint, $opt));
+    };
+
+    try {
+      $result = $this->tryAgentRequest($doReq, 'getQueueStatus');
+    }
+    catch (ConnectorException $e) {
+      throw new \Exception($e->getMessage(), $e->getCode());
+    }
+
+    return (int) $result['total'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function purgeQueue(): bool {
+    if ($this->apiVersion != 'v2') {
+      $this->logger->error('This feature is available only for v2.');
+      return FALSE;
+    }
+
+    $endpoint = $this->apiVersion . "/agent/queue/purge";
+
+    $doReq = function ($client, $opt) use ($endpoint) {
+      return ($client->post($endpoint, $opt));
+    };
+
+    try {
+      $this->tryAgentRequest($doReq, 'purgeQueue');
+    }
+    catch (ConnectorException $e) {
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
 }
