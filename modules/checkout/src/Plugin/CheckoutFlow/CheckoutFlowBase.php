@@ -364,13 +364,13 @@ abstract class CheckoutFlowBase extends PluginBase implements CheckoutFlowInterf
         // panes after this have access to it. This would be useful in the case
         // of a "Completion" pane wanting to show order details.
         if (isset($request->cookies)) {
-          $request->cookies->set('Drupal_visitor_order_id', $order_id);
-          $request->cookies->set('Drupal_visitor_order_timestamp', $timestamp);
+          $request->cookies->set('Drupal_visitor_acm_order_id', $order_id);
+          $request->cookies->set('Drupal_visitor_acm_order_timestamp', $timestamp);
         }
 
         user_cookie_save([
-          'order_id' => $order_id,
-          'order_timestamp' => $timestamp,
+          'acm_order_id' => $order_id,
+          'acm_order_timestamp' => $timestamp,
         ]);
       }
     }
