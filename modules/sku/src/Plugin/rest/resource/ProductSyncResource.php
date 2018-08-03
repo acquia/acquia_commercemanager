@@ -4,7 +4,7 @@ namespace Drupal\acm_sku\Plugin\rest\resource;
 
 use Drupal\acm_sku\ProductManagerInterface;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,7 +88,7 @@ class ProductSyncResource extends ResourceBase {
    * @param array $products
    *   Product / SKU Data.
    *
-   * @return \Drupal\rest\ResourceResponse
+   * @return \Drupal\rest\ModifiedResourceResponse
    *   HTTP Response object.
    */
   public function post(array $products) {
@@ -101,7 +101,7 @@ class ProductSyncResource extends ResourceBase {
     \Drupal::logger('acm_sku')->info("Updating products for acm_uuid " . $storeId . ".");
 
     $response = $this->productManager->synchronizeProducts($products, $storeId);
-    return (new ResourceResponse($response));
+    return (new ModifiedResourceResponse($response));
   }
 
 }

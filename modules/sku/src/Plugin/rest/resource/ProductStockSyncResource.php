@@ -4,7 +4,7 @@ namespace Drupal\acm_sku\Plugin\rest\resource;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -81,7 +81,7 @@ class ProductStockSyncResource extends ResourceBase {
    * @param array $stock
    *   Stock Data.
    *
-   * @return \Drupal\rest\ResourceResponse
+   * @return \Drupal\rest\ModifiedResourceResponse
    *   HTTP Response object.
    */
   public function post(array $stock) {
@@ -91,7 +91,7 @@ class ProductStockSyncResource extends ResourceBase {
       $storeId = $requestHeaders->get('X-ACM-UUID');
     }
     $response = $this->productManager->synchronizeStockData($stock, $storeId);
-    return (new ResourceResponse($response));
+    return (new ModifiedResourceResponse($response));
   }
 
 }
