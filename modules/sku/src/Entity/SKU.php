@@ -699,7 +699,9 @@ class SKU extends ContentEntityBase implements SKUInterface {
 
         $media_item = $this->processMediaItem($update_sku, $data, $download);
 
-        if ($media_item && in_array(self::SWATCH_IMAGE_ROLE, $media_item['roles'])) {
+        if ($media_item
+            && isset($media_item['roles'])
+            && in_array(self::SWATCH_IMAGE_ROLE, $media_item['roles'])) {
           $this->swatchData = $media_item;
           break;
         }
