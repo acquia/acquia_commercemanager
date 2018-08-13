@@ -1,8 +1,9 @@
+uuid: d2e76b0b-1437-477d-93f0-93df98984e79
 langcode: en
 status: true
 dependencies:
   module:
-  - node
+    - node
 id: node.field_coupon_code
 field_name: field_coupon_code
 entity_type: node
