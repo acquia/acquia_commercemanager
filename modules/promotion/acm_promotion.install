@@ -127,3 +127,37 @@ function acm_promotion_update_8002() {
     $role->save();
   }
 }
+
+/**
+ * Create 'Coupon code' field.
+ */
+function acm_promotion_update_8003() {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  $storages = $entityTypeManager->getStorage('field_storage_config')
+    ->loadByProperties(['id' => 'node.field_coupon_code']);
+  if (empty($storages)) {
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_coupon_code',
+      'entity_type' => 'node',
+      'type' => 'string',
+      'cardinality' => '-1',
+      'translatable' => TRUE,
+    ]);
+    $storage->save();
+  }
+  else {
+    $storage = reset($storages);
+  }
+
+  $fields = $entityTypeManager->getStorage('field_config')
+    ->loadByProperties(['id' => 'node.acm_promotion.field_coupon_code']);
+  if (empty($fields)) {
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'acm_promotion',
+      'label' => 'Coupon code',
+      'required' => FALSE,
+      'translatable' => FALSE,
+    ])->save();
+  }
+}
