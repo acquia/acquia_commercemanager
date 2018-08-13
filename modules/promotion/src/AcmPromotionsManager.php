@@ -336,6 +336,10 @@ class AcmPromotionsManager {
     if (isset($promotion_label_languages[$site_default_langcode])) {
       $promotion_node->get('field_acm_promotion_label')->setValue($promotion_label_languages[$site_default_langcode]);
     }
+
+    // Set promotion coupon code.
+    $promotion_node->get('field_coupon_code')->setValue($promotion['coupon_code']);
+
     // Set the Promotion skus.
     $skus = [];
     foreach ($promotion['products'] as $product) {
