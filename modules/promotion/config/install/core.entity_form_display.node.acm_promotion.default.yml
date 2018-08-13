@@ -2,36 +2,36 @@ langcode: en
 status: true
 dependencies:
   config:
-  - field.field.node.acm_promotion.field_acm_promotion_action
-  - field.field.node.acm_promotion.field_acm_promotion_always_on
-  - field.field.node.acm_promotion.field_acm_promotion_data
-  - field.field.node.acm_promotion.field_acm_promotion_description
-  - field.field.node.acm_promotion.field_acm_promotion_disc_type
-  - field.field.node.acm_promotion.field_acm_promotion_discount
-  - field.field.node.acm_promotion.field_acm_promotion_label
-  - field.field.node.acm_promotion.field_acm_promotion_rule_id
-  - field.field.node.acm_promotion.field_acm_promotion_type
-  - field.field.node.acm_promotion.field_coupon_code
-  - field.field.node.acm_promotion.field_skus
-  - node.type.acm_promotion
+    - field.field.node.acm_promotion.field_acm_promotion_action
+    - field.field.node.acm_promotion.field_acm_promotion_always_on
+    - field.field.node.acm_promotion.field_acm_promotion_data
+    - field.field.node.acm_promotion.field_acm_promotion_description
+    - field.field.node.acm_promotion.field_acm_promotion_disc_type
+    - field.field.node.acm_promotion.field_acm_promotion_discount
+    - field.field.node.acm_promotion.field_acm_promotion_label
+    - field.field.node.acm_promotion.field_acm_promotion_rule_id
+    - field.field.node.acm_promotion.field_acm_promotion_type
+    - field.field.node.acm_promotion.field_coupon_code
+    - field.field.node.acm_promotion.field_skus
+    - node.type.acm_promotion
   module:
-  - acm_sku
-  - field_group
-  - path
-  - text
+    - acm_sku
+    - field_group
+    - path
+    - text
 third_party_settings:
   field_group:
     group_acquia_commerce:
       children:
-      - field_acm_promotion_rule_id
-      - translation
-      - field_acm_promotion_label
-      - field_acm_promotion_disc_type
-      - field_acm_promotion_discount
-      - field_acm_promotion_action
-      - field_acm_promotion_data
-      - field_acm_promotion_type
-      - field_skus
+        - field_acm_promotion_rule_id
+        - translation
+        - field_acm_promotion_label
+        - field_acm_promotion_disc_type
+        - field_acm_promotion_discount
+        - field_acm_promotion_action
+        - field_acm_promotion_data
+        - field_acm_promotion_type
+        - field_skus
       parent_name: ''
       weight: 14
       format_type: details
