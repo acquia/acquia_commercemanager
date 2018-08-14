@@ -475,22 +475,35 @@ class Configurable extends SKUPluginBase {
       return $cache[$sku->language()->getId()][$sku->id()];
     }
 
-    $tree = ['parent' => $sku];
-
-    foreach ($sku->field_configured_skus as $child_sku) {
-      $child_sku = SKU::loadFromSku($child_sku->getString());
-      if ($child_sku) {
-        $tree['products'][$child_sku->getSku()] = $child_sku;
-      }
-    }
+    $tree = [
+      'parent' => $sku,
+      'products' => self::getChildren($sku),
+      'combinations' => [],
+    ];
 
     $configurables = unserialize(
-      $sku->field_configurable_attributes->getString()
+      $sku->get('field_configurable_attributes')->getString()
     );
 
     $tree['configurables'] = [];
     foreach ($configurables as $configurable) {
       $tree['configurables'][$configurable['code']] = $configurable;
+    }
+
+    $configurable_codes = array_keys($tree['configurables']);
+
+    foreach ($tree['products'] ?? [] as $sku_code => $sku_entity) {
+      $attributes = $sku_entity->get('attributes')->getValue();
+      $attributes = array_column($attributes, 'value', 'key');
+      foreach ($configurable_codes as $code) {
+        $value = $attributes[$code] ?? '';
+
+        if (empty($value)) {
+          continue;
+        }
+
+        $tree['combinations']['by_sku'][$sku_code][$code] = $value;
+      }
     }
 
     $configurable_weights = \Drupal::service('config.factory')->get('acm_sku.configurable_form_settings')->get('attribute_weights');
@@ -564,26 +577,21 @@ class Configurable extends SKUPluginBase {
    * @return \Drupal\acm_sku\Entity\SKU
    *   Reference to SKU in existing tree.
    */
-  public static function &findProductInTreeWithConfig(array &$tree, array $config) {
-    $response = NULL;
+  public static function findProductInTreeWithConfig(array $tree, array $config) {
     if (isset($tree['products'])) {
-      $child_skus = array_keys($tree['products']);
-      $query = \Drupal::database()->select('acm_sku_field_data', 'acm_sku');
-      $query->addField('acm_sku', 'sku');
-      if (!empty($child_skus)) {
-        $query->condition('sku', $child_skus, 'IN');
-      }
+      $attributes = [];
       foreach ($config as $key => $value) {
-        $query->join('acm_sku__attributes', $key, "acm_sku.id = $key.entity_id");
-        $query->condition("$key.attributes_key", $key);
-        $query->condition("$key.attributes_value", $value);
+        $attributes[$key] = $value;
       }
-      $sku = $query->execute()->fetchField();
-      return $tree['products'][$sku];
+
+      foreach ($tree['combinations']['by_sku'] as $sku => $sku_attributes) {
+        if (count(array_intersect_assoc($sku_attributes, $attributes)) === count($sku_attributes)) {
+          return $tree['products'][$sku];
+        }
+      }
     }
-    else {
-      return $response;
-    }
+
+    return NULL;
   }
 
   /**
@@ -747,6 +755,32 @@ class Configurable extends SKUPluginBase {
     }
 
     return $sorted_options;
+  }
+
+  /**
+   * Wrapper function to get available children for a configurable SKU.
+   *
+   * @param \Drupal\acq_sku\Entity\SKU $sku
+   *   Configurable SKU.
+   *
+   * @return array
+   *   Full loaded child SKUs.
+   */
+  public static function getChildren(SKU $sku) {
+    $children = [];
+
+    foreach ($sku->get('field_configured_skus')->getValue() as $child) {
+      if (empty($child['value'])) {
+        continue;
+      }
+
+      $child_sku = SKU::loadFromSku($child['value']);
+      if ($child_sku instanceof SKU) {
+        $children[$child_sku->getSKU()] = $child_sku;
+      }
+    }
+
+    return $children;
   }
 
 }
