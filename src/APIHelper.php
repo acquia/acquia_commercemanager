@@ -26,6 +26,8 @@ class APIHelper {
     }
 
     if (isset($customer['addresses'])) {
+      // When deleting an address need to re-index array.
+      $customer['addresses'] = array_values($customer['addresses']);
       foreach ($customer['addresses'] as $delta => $address) {
         $address = (array) $address;
         $customer['addresses'][$delta] = $this->cleanCustomerAddress($address);
