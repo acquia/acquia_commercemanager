@@ -185,6 +185,10 @@ class APIHelper {
     // proper indexed array.
     if (isset($cart->items)) {
       $cart->items = array_values($cart->items);
+
+      foreach ($cart->items as &$item) {
+        $item['sku'] = (string) $item['sku'];
+      }
     }
 
     return $cart;
