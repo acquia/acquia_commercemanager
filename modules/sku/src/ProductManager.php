@@ -393,6 +393,12 @@ class ProductManager implements ProductManagerInterface {
         elseif ($node->hasTranslationChanges()) {
           $this->updateNodeTranslation($node, $product, $langcode);
         }
+
+        // Alias for the product if path auto enabled.
+        if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
+          $node->path->pathauto = 1;
+        }
+
         // Invoke the alter hook to allow all modules to update the node.
         \Drupal::moduleHandler()
           ->alter('acm_sku_product_node', $node, $product, $langcode);
