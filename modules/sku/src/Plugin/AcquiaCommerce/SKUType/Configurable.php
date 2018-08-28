@@ -697,13 +697,9 @@ class Configurable extends SKUPluginBase {
 
     foreach ($sku->get('field_configured_skus') as $child_sku) {
       try {
-        $child_sku_entity = SKU::loadFromSku($child_sku->getString());
-
-        if ($child_sku_entity instanceof SKU) {
-          $child_stock = (int) $this->getStock($child_sku_entity, $reset);
-
-          $quantities[$child_sku_entity->getSku()] = $child_stock;
-        }
+        $child_sku = $child_sku->getString();
+        $child_stock = (int) $this->getStock($child_sku, $reset);
+        $quantities[$child_sku] = $child_stock;
       }
       catch (\Exception $e) {
         // Child SKU might be deleted or translation not available.
