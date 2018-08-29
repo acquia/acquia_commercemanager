@@ -51,7 +51,7 @@ class ProductManagerTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the synchronizeProdycts method with no data passed.
+   * Tests the synchronizeProducts method with no data passed.
    *
    * @covers ::synchronizeProducts
    */
@@ -62,7 +62,7 @@ class ProductManagerTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the synchronizeProdycts method with simple product data passed.
+   * Tests the synchronizeProducts method with simple product data passed.
    *
    * @covers ::synchronizeProducts
    */
@@ -166,6 +166,7 @@ class ProductManagerTest extends BrowserTestBase {
     $nodes = $this->container->get('entity_type.manager')
       ->getStorage("node")
       ->loadByProperties(["title" => "Sac de marin Joute"]);
+    // Fetch the first element of the array $nodes.
     $node = reset($nodes);
     $this->assertNotNull($node);
     $this->assertSame($node->get("title")->value, "Sac de marin Joute");
@@ -186,6 +187,7 @@ class ProductManagerTest extends BrowserTestBase {
     $skus = $this->container->get('entity_type.manager')
       ->getStorage("acm_sku")
       ->loadByProperties(["sku" => "24-MB01"]);
+    // Fetch the first element of the array $skus.
     $sku = reset($skus);
     $this->assertNotNull($sku);
     $this->assertSame($sku->get("sku")->value, "24-MB01");
@@ -203,7 +205,8 @@ class ProductManagerTest extends BrowserTestBase {
   }
 
   /**
-   * Tests the synchronizeProdycts method with simple product data passed.
+   * Tests the synchronizeProducts method with simple product data passed.
+   * Here we add categories and extension attributes into the data passed in.
    *
    * @covers ::synchronizeProducts
    */
@@ -347,6 +350,7 @@ class ProductManagerTest extends BrowserTestBase {
     $nodes = $this->container->get('entity_type.manager')
       ->getStorage("node")
       ->loadByProperties(["title" => "Joust Duffle Bag"]);
+    // Fetch the first element of the array $nodes.
     $node = reset($nodes);
     $this->assertNotNull($node);
     $this->assertSame($node->get("title")->value, "Joust Duffle Bag");
@@ -357,6 +361,7 @@ class ProductManagerTest extends BrowserTestBase {
     $nodes = $this->container->get('entity_type.manager')
       ->getStorage("node")
       ->loadByProperties(["title" => "Field Messenger"]);
+    // Fetch the first element of the array $nodes.
     $node = reset($nodes);
     $this->assertNotNull($node);
     $this->assertSame($node->get("title")->value, "Field Messenger");
@@ -367,6 +372,7 @@ class ProductManagerTest extends BrowserTestBase {
     $skus = $this->container->get('entity_type.manager')
       ->getStorage("acm_sku")
       ->loadByProperties(["sku" => "24-MB02"]);
+    // Fetch the first element of the array $skus.
     $sku = reset($skus);
     $this->assertNotNull($sku);
     $this->assertSame($sku->get("sku")->value, "24-MB02");

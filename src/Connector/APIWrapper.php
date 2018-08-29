@@ -56,7 +56,13 @@ class APIWrapper implements APIWrapperInterface {
    * @param \Drupal\acm\APIHelper $helper
    *   API Helper service object.
    */
-  public function __construct(ClientFactory $client_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper, APIHelper $helper) {
+  public function __construct(
+    ClientFactory $client_factory,
+    ConfigFactoryInterface $config_factory,
+    LoggerChannelFactory $logger_factory,
+    I18nHelper $i18nHelper,
+    APIHelper $helper
+  ) {
     $this->clientFactory = $client_factory;
     $this->apiVersion = $config_factory->get('acm.connector')->get('api_version');
     $this->logger = $logger_factory->get('acm_sku');
@@ -124,7 +130,6 @@ class APIWrapper implements APIWrapperInterface {
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
     }
 
-    return NULL;
   }
 
   /**
@@ -426,11 +431,19 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function deleteCustomerAddress($customer_id, $address_id) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/address/delete";
 
-    $doReq = function ($client, $opt) use ($endpoint, $customer_id, $address_id) {
-      $opt['form_params']['customer_id'] = $customer_id;
-      $opt['form_params']['address_id'] = $address_id;
+    $doReq = function ($client, $opt) use ($endpoint, $customer_id, $address_id, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['customer_id'] = $customer_id;
+        $opt['form_params']['address_id'] = $address_id;
+      }
+      else {
+        $opt['json']['customer_id'] = (string) $customer_id;
+        $opt['json']['address_id'] = $address_id;
+      }
+
       return ($client->post($endpoint, $opt));
     };
 
@@ -473,14 +486,21 @@ class APIWrapper implements APIWrapperInterface {
   }
 
   /**
+   * Please note this is not a V2 endpoint.
+   *
    * {@inheritdoc}
    */
   public function resetCustomerPassword($email) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/resetpass/get";
 
-    $doReq = function ($client, $opt) use ($endpoint, $email) {
-      $opt['form_params']['email'] = $email;
-
+    $doReq = function ($client, $opt) use ($endpoint, $email, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['email'] = $email;
+      }
+      else {
+        $opt['json']['email'] = $email;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -503,11 +523,16 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function authenticateCustomer($email, $password) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/$email";
 
-    $doReq = function ($client, $opt) use ($endpoint, $password) {
-      $opt['form_params']['password'] = $password;
-
+    $doReq = function ($client, $opt) use ($endpoint, $password, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['password'] = $password;
+      }
+      else {
+        $opt['json']['password'] = $password;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -590,12 +615,18 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function getCustomerToken($email, $password) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/token/get";
 
-    $doReq = function ($client, $opt) use ($endpoint, $email, $password) {
-      $opt['form_params']['email'] = $email;
-      $opt['form_params']['password'] = $password;
-
+    $doReq = function ($client, $opt) use ($endpoint, $email, $password, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['email'] = $email;
+        $opt['form_params']['password'] = $password;
+      }
+      else {
+        $opt['json']['email'] = $email;
+        $opt['json']['password'] = $password;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -615,10 +646,16 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function getCurrentCustomer($token = NULL) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer-by-token";
 
-    $doReq = function ($client, $opt) use ($endpoint, $token) {
-      $opt['form_params']['token'] = $token;
+    $doReq = function ($client, $opt) use ($endpoint, $token, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['token'] = $token;
+      }
+      else {
+        $opt['json']['token'] = $token;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -808,7 +845,7 @@ class APIWrapper implements APIWrapperInterface {
     $products = [];
 
     try {
-      $products = $this->tryAgentRequest($doReq, 'productFullSync', 'products', $skus, $acm_uuid);
+      $products = $this->tryAgentRequest($doReq, 'productFullSync', 'products', $acm_uuid);
     }
     catch (ConnectorException $e) {
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
