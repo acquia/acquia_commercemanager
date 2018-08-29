@@ -48,7 +48,7 @@ class MockAPIWrapper extends TestAPIWrapper {
       'shippable' => TRUE,
       'cart_id' => $this->generateCartId(),
       'store_id' => 987,
-      'customer_id' => 1,
+      'customer_id' => $customer_id,
       'customer_email' => 'test@test.com',
       'totals' => 999.99,
     ];
