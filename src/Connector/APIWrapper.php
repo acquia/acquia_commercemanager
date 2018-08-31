@@ -486,8 +486,6 @@ class APIWrapper implements APIWrapperInterface {
   }
 
   /**
-   * Please note this is not a V2 endpoint.
-   *
    * {@inheritdoc}
    */
   public function resetCustomerPassword($email) {
