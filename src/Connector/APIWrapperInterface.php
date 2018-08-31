@@ -223,6 +223,7 @@ interface APIWrapperInterface {
 
   /**
    * Requests a password reset.
+   * Please note this is not a V2 endpoint.
    *
    * @param string $email
    *   The email of the customer who wants to reset their password. An email
