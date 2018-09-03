@@ -206,6 +206,7 @@ class ProductManagerTest extends BrowserTestBase {
 
   /**
    * Tests the synchronizeProducts method with simple product data passed.
+   *
    * Here we add categories and extension attributes into the data passed in.
    *
    * @covers ::synchronizeProducts
