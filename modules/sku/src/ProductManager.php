@@ -825,42 +825,61 @@ class ProductManager implements ProductManagerInterface {
     $additionalFields = \Drupal::config('acm_sku.base_field_additions')
       ->getRawData();
 
-    // Loop through all the attributes available for this particular SKU.
-    foreach ($values as $key => $value) {
-      // Check if attribute is required by us.
-      if (isset($additionalFields[$key])) {
-        $field = $additionalFields[$key];
+    // Filter fields for the parent requested.
+    $additionalFields = array_filter($additionalFields, function ($field) use ($parent) {
+      return ($field['parent'] == $parent);
+    });
 
-        if ($field['parent'] != $parent) {
-          continue;
-        }
+    // Loop through all the fields we want to read from product data.
+    foreach ($additionalFields as $key => $field) {
+      $source = isset($field['source']) ? $field['source'] : $key;
 
-        $field_key = 'attr_' . $key;
+      // Field key.
+      $field_key = 'attr_' . $key;
 
-        switch ($field['type']) {
-          case 'attribute':
+      switch ($field['type']) {
+        case 'attribute':
+          // If attribute is not coming in response, then unset it.
+          if (!isset($values[$source])) {
+            $sku->{$field_key}->set(0, NULL);
+          }
+          else {
+            $value = $values[$source];
             $value = $field['cardinality'] != 1 ? explode(',', $value) : [$value];
             foreach ($value as $index => $val) {
-              if ($term = $this->productOptionsManager->loadProductOptionByOptionId($key, $val, $sku->language()
-                ->getId())) {
+              if ($term = $this->productOptionsManager->loadProductOptionByOptionId($source, $val, $sku->language()->getId())) {
                 $sku->{$field_key}->set($index, $term->getName());
               }
               else {
                 $sku->{$field_key}->set($index, $val);
               }
             }
-            break;
+          }
+          break;
 
-          case 'string':
+        case 'string':
+          // If attribute is not coming in response, then unset it.
+          if (!isset($values[$source])) {
+            $sku->{$field_key}->setValue(NULL);
+          }
+          else {
+            $value = $values[$source];
             $value = $field['cardinality'] != 1 ? explode(',', $value) : $value;
             $sku->{$field_key}->setValue($value);
-            break;
+          }
+          break;
 
-          case 'text_long':
-            $value = isset($field['serialize']) ? serialize($value) : $value;
+        case 'text_long':
+          // If attribute is not coming in response, then unset it.
+          if (!isset($values[$source])) {
+            $sku->{$field_key}->setValue(NULL);
+          }
+          else {
+            $value = $values[$source];
+            $value = !empty($field['serialize']) ? serialize($value) : $value;
             $sku->{$field_key}->setValue($value);
-            break;
-        }
+          }
+          break;
       }
     }
   }
