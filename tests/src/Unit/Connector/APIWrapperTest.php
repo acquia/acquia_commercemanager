@@ -43,7 +43,7 @@ class APIWrapperTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    // Define some things
+    // Define some things.
     // Arbitrary.
     $this->storeId = '3';
     // The current version.
@@ -64,15 +64,7 @@ class APIWrapperTest extends UnitTestCase {
       ->setMethods(['post', 'get'])
       ->getMock();
 
-    // Mock the client factory FINAL CLASS (good luck with that)
-    // Invoke some PHP Voodo but you must run `sudo pecl install uopz` first
-    // http://php.net/manual/en/book.uopz.php
-    // So we must checkexistence of \uopz_flags()
-    // and skip all these tests if it is not available.
-    if (!function_exists("\uopz_flags")) {
-      $this->markTestSkipped("Cannot unit test APIWrapper without pecl uopz.");
-    }
-    \uopz_flags(ClientFactory::class, NULL, 0);
+    // Mock the client factory.
     $this->clientFactoryMock = $this->getMockBuilder(ClientFactory::class)
       ->disableOriginalConstructor()
       ->setMethods(['createClient'])

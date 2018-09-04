@@ -16,7 +16,7 @@ use GuzzleHttp\HandlerStack;
  *
  * @ingroup acm
  */
-final class ClientFactory {
+class ClientFactory {
 
   /**
    * Guzzle HttpClient Factory.
