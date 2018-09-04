@@ -394,7 +394,10 @@ class ProductManager implements ProductManagerInterface {
           $this->updateNodeTranslation($node, $product, $langcode);
         }
 
-        // Alias for the product if path auto enabled.
+        // We doing this because when the translation of node is created by
+        // addTranslation(), pathauto alias is not created for the translated
+        // version.
+        // @see https://www.drupal.org/project/pathauto/issues/2995829.
         if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
           $node->path->pathauto = 1;
         }
