@@ -224,6 +224,8 @@ interface APIWrapperInterface {
   /**
    * Requests a password reset.
    *
+   * Please note this is not a V2 endpoint.
+   *
    * @param string $email
    *   The email of the customer who wants to reset their password. An email
    *   will then be sent out from the ecommerce backend with a password reset
