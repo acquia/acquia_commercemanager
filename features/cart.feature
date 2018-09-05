@@ -2,42 +2,35 @@
 Feature: Test basket page
 
   Background:
-    Given I am on a configurable product
+    Given I am an anonymous user
+    And I am on a simple product page
     And I wait for the page to load
-    When I select a size for the product
-    And I wait for AJAX to finish
-    When I press "Add to basket"
-    And I wait for AJAX to finish
+    Then I should see "Joust Duffle Bag" in the "content"
+    When I press "Add to cart"
+    And I wait for the page to load
 
   Scenario:  As a Guest
   I should be able to see the products added to basket
-    When I go to "/en/cart"
+    When I go to "/cart"
     And I wait for the page to load
-    And I should see the link for configurable product
-    Then I should see the button "checkout securely"
-    And I should see "Basket ("
+    And I should see the link for simple product
+    Then I should see the button "Checkout"
     Then I should see "Product"
     And I should see "Quantity"
-    Then I should see "Unit Price"
-    And I should see "subtotal"
-    Then I should see "Available delivery options"
-    Then I should see "Order Total"
-    And I should see "(Before Delivery)"
-    Then I should see the link "continue shopping" in ".edit-actions.form-actions.js-form-wrapper.form-wrapper" section
-    And I should see "Add a promotional code"
-    And I should be able to see the footer
-    When I click the label for "#edit-continue-shopping-mobile"
-    And I wait for the page to load
-    Then the url should match "/en"
+    And I should see "Subtotal"
+    Then I should see "Grand total"
+    And I should see "Coupon code"
 
   Scenario: As a Guest
   I should be able to add more quantity
   and remove products from the basket
-    When I go to "/en/cart"
+    When I go to "/cart"
     And I wait for the page to load
-    When I select 2 from dropdown
-    And I wait for AJAX to finish
+    When I enter 2 for "edit-cart-24-mb01-quantity"
+    And I press "Update"
+    And I wait for the page to load
     Then I should see the price doubled for the product
-    When I follow "remove"
+    When I enter 0 for "edit-cart-24-mb01-quantity"
+    And I press "Update"
     And I wait for the page to load
-    Then I should see "The product has been removed from your basket."
+    Then I should see "There are no products in your cart yet."
