@@ -26,8 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ProductStockSyncResource extends ResourceBase
-{
+class ProductStockSyncResource extends ResourceBase {
 
   /**
    * Drupal Config Factory Instance.
@@ -65,6 +64,10 @@ class ProductStockSyncResource extends ResourceBase
    *   The config factory.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
+   * @param ProductManagerInterface $product_manager
+   *   The product manager
+   * @param Request $current_request
+   *   The current request
    */
   public function __construct(array $configuration,
                               $plugin_id,

@@ -68,15 +68,15 @@ class ProductSyncResource extends ResourceBase {
     ProductManagerInterface $product_manager,
     Request $current_request
   ) {
-      parent::__construct(
+    parent::__construct(
         $configuration,
         $plugin_id,
         $plugin_definition,
         $serializer_formats,
         $logger
       );
-      $this->productManager = $product_manager;
-      $this->currentRequest = $current_request;
+    $this->productManager = $product_manager;
+    $this->currentRequest = $current_request;
   }
 
   /**
