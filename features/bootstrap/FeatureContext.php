@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Behat\Behat\Context\SnippetAcceptingContext;
