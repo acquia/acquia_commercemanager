@@ -59,10 +59,24 @@ class ProductSyncResource extends ResourceBase {
    * @param \Symfony\Component\HttpFoundation\Request $current_request
    *   The current request.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, array $serializer_formats, LoggerInterface $logger, ProductManagerInterface $product_manager, Request $current_request) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
-    $this->productManager = $product_manager;
-    $this->currentRequest = $current_request;
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    array $serializer_formats,
+    LoggerInterface $logger,
+    ProductManagerInterface $product_manager,
+    Request $current_request
+  ) {
+      parent::__construct(
+        $configuration,
+        $plugin_id,
+        $plugin_definition,
+        $serializer_formats,
+        $logger
+      );
+      $this->productManager = $product_manager;
+      $this->currentRequest = $current_request;
   }
 
   /**

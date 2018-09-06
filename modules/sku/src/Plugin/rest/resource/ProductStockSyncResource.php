@@ -2,6 +2,8 @@
 
 namespace Drupal\acm_sku\Plugin\rest\resource;
 
+use Drupal\acm_sku\ProductManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
@@ -24,7 +26,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ProductStockSyncResource extends ResourceBase {
+class ProductStockSyncResource extends ResourceBase
+{
 
   /**
    * Drupal Config Factory Instance.
@@ -32,6 +35,20 @@ class ProductStockSyncResource extends ResourceBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   private $configFactory;
+
+  /**
+   * A Product Manager instance.
+   *
+   * @var \Drupal\acm_sku\ProductManagerInterface
+   */
+  private $productManager;
+
+  /**
+   * Current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  private $currentRequest;
 
   /**
    * Construct.
@@ -54,8 +71,19 @@ class ProductStockSyncResource extends ResourceBase {
                               $plugin_definition,
                               array $serializer_formats,
                               ConfigFactoryInterface $config_factory,
-                              LoggerInterface $logger) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
+                              LoggerInterface $logger,
+                              ProductManagerInterface $product_manager,
+                              Request $current_request
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $serializer_formats,
+      $logger
+    );
+    $this->productManager = $product_manager;
+    $this->currentRequest = $current_request;
     $this->configFactory = $config_factory;
   }
 
@@ -69,7 +97,9 @@ class ProductStockSyncResource extends ResourceBase {
       $plugin_definition,
       $container->getParameter('serializer.formats'),
       $container->get('config.factory'),
-      $container->get('logger.factory')->get('acm')
+      $container->get('logger.factory')->get('acm'),
+      $container->get('acm_sku.product_manager'),
+      $container->get('request_stack')->getCurrentRequest()
     );
   }
 
