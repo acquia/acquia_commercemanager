@@ -505,11 +505,6 @@ class ProductManager implements ProductManagerInterface {
       fwrite($fps, '\n');
     }
 
-    if (!isset($stock['sku']) || !strlen($stock['sku'])) {
-      $this->logger->error('Invalid or empty product SKU.');
-      return (new ResourceResponse($response));
-    }
-
     $langcode = NULL;
 
     // For v1 connector we are going to get store_id from each stock,
@@ -523,38 +518,57 @@ class ProductManager implements ProductManagerInterface {
 
       if (empty($langcode)) {
         // It could be for a different store/website, don't do anything.
-        return (new ResourceResponse($response));
+        return ($response);
       }
     }
 
-    $lock_key = 'synchronizeProduct' . $stock['sku'];
-
-    // Acquire lock to ensure parallel processes are executed one by one.
-    do {
-      $lock_acquired = $lock->acquire($lock_key);
-    } while (!$lock_acquired);
-
-    /** @var \Drupal\acm_sku\Entity\SKU $sku */
-    if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
-      $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
-
-      if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
-        $stock['quantity'] = 0;
-      }
-
-      $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
-
-      if ($quantity != $sku->get('stock')->getString()) {
-        $sku->get('stock')->setValue($quantity);
-        $sku->save();
-
-        // Clear product and forms related to sku.
-        Cache::invalidateTags(['acm_sku:' . $sku->id()]);
-      }
+    // Work with single and array:
+    if (array_key_exists("sku",$stock))
+    {
+      $stockArray = [$stock];
+    }
+    else
+    {
+      $stockArray = $stock;
     }
 
-    // Release the lock.
-    $lock->release($lock_key);
+    foreach($stockArray as $stock) {
+
+      if (!isset($stock['sku']) || !strlen($stock['sku'])) {
+        $this->logger->error('Invalid or empty product SKU.');
+        return ($response);
+      }
+
+      // Acquire lock to ensure parallel processes are executed one by one.
+      // TODO @Malachy: Should we change the key and move outside loop?
+      $lock_key = 'synchronizeProduct' . $stock['sku'];
+      do {
+        $lock_acquired = $lock->acquire($lock_key);
+      } while (!$lock_acquired);
+
+      /** @var \Drupal\acm_sku\Entity\SKU $sku */
+      if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
+        $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
+
+        if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
+          $stock['quantity'] = 0;
+        }
+
+        $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
+
+        if ($quantity != $sku->get('stock')->getString()) {
+          $sku->get('stock')->setValue($quantity);
+          $sku->save();
+
+          // Clear product and forms related to sku.
+          Cache::invalidateTags(['acm_sku:' . $sku->id()]);
+        }
+      }
+
+      // Release the lock.
+      $lock->release($lock_key);
+
+    }
 
     if (isset($fps)) {
       fclose($fps);
@@ -564,7 +578,7 @@ class ProductManager implements ProductManagerInterface {
       'success' => TRUE,
     ];
 
-    return (new ResourceResponse($response));
+    return ($response);
   }
 
   /**
