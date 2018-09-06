@@ -181,14 +181,21 @@ function drush_acm_sku_sync_commerce_products($langcode, $page_size) {
  */
 function drush_acm_sku_sync_commerce_products_test($count = 100) {
   drush_print(dt('Synchronizing @count commerce products for testing / dev...'), ['@count' => $count]);
-  $container = \Drupal::getContainer();
-  $products = $container->get('acm.api')->getProducts($count);
-  $result = $container->get('acm_sku.product_manager')->synchronizeProducts($products);
 
-  drush_print(dt(
-    'Created @created products, updated @updated products.',
-    ['@created' => $result['created'], '@updated' => $result['updated']]
-  ));
+  $container = \Drupal::getContainer();
+
+  $acm_api = $container->get('acm.api');
+  foreach (\Drupal::service('acm.i18n_helper')->getStoreLanguageMapping() as $langcode => $store_id) {
+    $acm_api->updateStoreContext($store_id);
+
+    $products = $acm_api->getProducts($count);
+    $result = $container->get('acm_sku.product_manager')->synchronizeProducts($products);
+
+    drush_print(dt(
+      'Created @created products, updated @updated products.',
+      ['@created' => $result['created'], '@updated' => $result['updated']]
+    ));
+  }
 }
 
 /**
