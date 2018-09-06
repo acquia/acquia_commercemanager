@@ -1,5 +1,6 @@
 <?php
-// phpcs:ignoreFile
+// @codingStandardsIgnoreFile
+// phpcs:ignore
 
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Behat\Behat\Context\SnippetAcceptingContext;
