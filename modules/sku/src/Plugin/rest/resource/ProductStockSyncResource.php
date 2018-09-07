@@ -64,10 +64,10 @@ class ProductStockSyncResource extends ResourceBase {
    *   The config factory.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param ProductManagerInterface $product_manager
-   *   The product manager
-   * @param Request $current_request
-   *   The current request
+   * @param \Drupal\acm_sku\ProductManagerInterface $product_manager
+   *   The product manager.
+   * @param \Symfony\Component\HttpFoundation\Request $current_request
+   *   The current request.
    */
   public function __construct(array $configuration,
                               $plugin_id,
@@ -114,7 +114,7 @@ class ProductStockSyncResource extends ResourceBase {
    * @param array $stock
    *   Stock Data.
    *
-   * @return \Drupal\rest\ResourceResponse
+   * @return \Drupal\rest\ModifiedResourceResponse
    *   HTTP Response object.
    */
   public function post(array $stock) {
