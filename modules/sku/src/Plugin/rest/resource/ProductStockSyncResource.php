@@ -6,7 +6,7 @@ use Drupal\acm_sku\ProductManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -124,7 +124,7 @@ class ProductStockSyncResource extends ResourceBase {
       $storeId = $requestHeaders->get('X-ACM-UUID');
     }
     $response = $this->productManager->synchronizeStockData($stock, $storeId);
-    return (new ResourceResponse($response));
+    return (new ModifiedResourceResponse($response));
   }
 
 }
