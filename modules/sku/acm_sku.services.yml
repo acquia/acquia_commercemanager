@@ -73,3 +73,8 @@ services:
       - { name: cache.bin }
     factory: cache_factory:get
     arguments: [linked_skus]
+
+  acm_sku.product_info_helper:
+    class: Drupal\acm_sku\ProductInfoHelper
+    arguments:
+      - '@event_dispatcher'
