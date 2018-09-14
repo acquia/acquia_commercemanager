@@ -470,27 +470,24 @@ class ProductManager implements ProductManagerInterface {
 
     // Log product import summary.
     if (!empty($this->created_skus)) {
-      $this->logger->info('Created SKUs: @created_skus', ['@created_skus' => implode(',', $this->created_skus)]);
+      $this->logger->info('SKU import, created: @created_skus', ['@created_skus' => implode(',', $this->created_skus)]);
     }
 
     if (!empty($this->deleted_skus)) {
-      $this->logger->info('Deleted SKUs: @deleted_skus', ['@deleted_skus' => implode(',', $this->deleted_skus)])
+      $this->logger->info('SKU import, deleted: @deleted_skus', ['@deleted_skus' => implode(',', $this->deleted_skus)])
     }
 
     if (!empty($this->updated_skus)) {
-      $this->logger->info('Updated SKUs: @updated_skus', ['@updated_skus' => implode(',', $this->updated_skus)])
+      $this->logger->info('SKU import, updated: @updated_skus', ['@updated_skus' => implode(',', $this->updated_skus)])
     }
 
     if (!empty($this->failed_skus)) {
-      $this->logger->error('Failed importing SKUs: @failed_skus', ['@failed_skus' => implode(',', $this->failed_skus)]);
+      $this->logger->error('SKU import, failed: @failed_skus', ['@failed_skus' => implode(',', $this->failed_skus)]);
     }
 
     if (!empty($this->ignored_skus)) {
-      $this->logger->error('Ignored importing SKUs: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignored_skus)])
+      $this->logger->error('SKU import, ignored: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignored_skus)])
     }
-
-
-
 
     return [
       'success' => !$this->failed && ($this->created || $this->updated || $this->ignored || $this->deleted),
@@ -722,7 +719,7 @@ class ProductManager implements ProductManagerInterface {
         'langcode' => $langcode,
       ]);
 
-      $this->crearted_skus[] = $product['sku'];
+      $this->created_skus[] = $product['sku'];
       $this->created++;
     }
 
