@@ -176,12 +176,12 @@ class APIWrapper implements APIWrapperInterface {
         $cart->items[$key]['qty'] = (int) $item['qty'];
 
         if (array_key_exists('name', $item)) {
-          $originalItemsNames[$key] = $item['name'];
-
           if (!isset($item['sku'])) {
             $cart->items[$key]['name'] = "";
             continue;
           }
+
+          $originalItemsNames[$item['sku']] = $item['name'];
 
           $sku = SKU::loadFromSku($item['sku']);
 
@@ -210,13 +210,12 @@ class APIWrapper implements APIWrapperInterface {
     }
     catch (ConnectorException $e) {
       // Restore cart structure.
-      if ($items) {
-        foreach ($items as $key => &$item) {
-          if (array_key_exists('name', $item)) {
-            $cart->items[$key]['name'] = $originalItemsNames[$key];
-          }
+      foreach ($cart->items ?? [] as $key => $item) {
+        if (isset($originalItemsNames[$item['sku']])) {
+          $cart->items[$key]['name'] = $originalItemsNames[$item['sku']];
         }
       }
+
       // Now throw.
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
     }
