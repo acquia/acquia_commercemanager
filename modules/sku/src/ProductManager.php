@@ -474,11 +474,11 @@ class ProductManager implements ProductManagerInterface {
     }
 
     if (!empty($this->deletedSkus)) {
-      $this->logger->info('SKU import, deleted: @deleted_skus', ['@deleted_skus' => implode(',', $this->deletedSkus)])
+      $this->logger->info('SKU import, deleted: @deleted_skus', ['@deleted_skus' => implode(',', $this->deletedSkus)]);
     }
 
     if (!empty($this->updatedSkus)) {
-      $this->logger->info('SKU import, updated: @updated_skus', ['@updated_skus' => implode(',', $this->updatedSkus)])
+      $this->logger->info('SKU import, updated: @updated_skus', ['@updated_skus' => implode(',', $this->updatedSkus)]);
     }
 
     if (!empty($this->failedSkus)) {
@@ -486,7 +486,7 @@ class ProductManager implements ProductManagerInterface {
     }
 
     if (!empty($this->ignoredSkus)) {
-      $this->logger->error('SKU import, ignored: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignoredSkus)])
+      $this->logger->error('SKU import, ignored: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignoredSkus)]);
     }
 
     return [
