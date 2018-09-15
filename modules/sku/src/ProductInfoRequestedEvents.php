@@ -10,6 +10,8 @@ namespace Drupal\acm_sku;
 final class ProductInfoRequestedEvents {
 
   /**
+   * Product info requested.
+   *
    * This event occurs when a user requests specific information related to
    * products through acm_sku.product_info_helper service (ProductInfoHelper).
    *
