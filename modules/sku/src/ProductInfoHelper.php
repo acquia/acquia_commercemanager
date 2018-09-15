@@ -46,7 +46,7 @@ class ProductInfoHelper {
    */
   protected function getValue(SKUInterface $sku, string $field_code, string $context, $value) {
     $event = new ProductInfoRequestedEvent($sku, $field_code, $context, $value);
-    $this->eventDispatcher->dispatch(ProductInfoRequestedEvent::EVENT_NAME, $event);
+    $this->eventDispatcher->dispatch(ProductInfoRequestedEvents::EVENT_NAME, $event);
     return $event->getValue();
   }
 
