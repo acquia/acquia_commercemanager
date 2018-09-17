@@ -6,7 +6,6 @@ use Drupal\acm\I18nHelper;
 use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Cache\Cache;
@@ -24,13 +23,6 @@ class ProductManager implements ProductManagerInterface {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private $entityManager;
-
-  /**
-   * Drupal Entity Query Factory.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryFactory
-   */
-  private $queryFactory;
 
   /**
    * Drupal Config Factory Instance.
@@ -94,8 +86,6 @@ class ProductManager implements ProductManagerInterface {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
-   *   The query factory.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
@@ -109,9 +99,8 @@ class ProductManager implements ProductManagerInterface {
    * @param \Drupal\acm_sku\SKUFieldsManager $sku_fields_manager
    *   SKU Fields Manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper, SKUFieldsManager $sku_fields_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper, SKUFieldsManager $sku_fields_manager) {
     $this->entityManager = $entity_type_manager;
-    $this->queryFactory = $query_factory;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');
     $this->categoryRepo = $cat_repo;
@@ -193,7 +182,12 @@ class ProductManager implements ProductManagerInterface {
 
     $node = $this->entityManager->getStorage('node')->create($node_values);
 
-    $node->setPublished($config->get('product_publish'));
+    if ($config->get('product_publish')) {
+      $node->setPublished();
+    }
+    else {
+      $node->setUnpublished();
+    }
 
     // Invoke the alter hook to allow all modules to update the node.
     \Drupal::moduleHandler()->alter('acm_sku_product_node', $node, $product);
@@ -239,7 +233,12 @@ class ProductManager implements ProductManagerInterface {
     }
     $node->{$sku_field_name} = [$product['sku']];
 
-    $node->setPublished($config->get('product_publish'));
+    if ($config->get('product_publish')) {
+      $node->setPublished();
+    }
+    else {
+      $node->setUnpublished();
+    }
 
     // Invoke the alter hook to allow all modules to update the node.
     \Drupal::moduleHandler()
@@ -332,7 +331,7 @@ class ProductManager implements ProductManagerInterface {
         continue;
       }
 
-      $query = $this->queryFactory->get('acm_sku_type')
+      $query = $this->entityManager->getStorage('acm_sku_type')->getQuery()
         ->condition('id', $product['type'])
         ->count();
 
@@ -372,7 +371,7 @@ class ProductManager implements ProductManagerInterface {
         continue;
       }
 
-      $query = $this->queryFactory->get('acm_sku')
+      $query = $this->entityManager->getStorage('acm_sku')->getQuery()
         ->condition('sku', $product['sku']);
       $sku_ids = $query->execute();
 
@@ -413,7 +412,7 @@ class ProductManager implements ProductManagerInterface {
         try {
           // Un-publish if node available.
           if ($node = $plugin->getDisplayNode($sku, FALSE, FALSE)) {
-            $node->setPublished(FALSE);
+            $node->setUnpublished();
             $node->save();
           }
         }
@@ -516,11 +515,6 @@ class ProductManager implements ProductManagerInterface {
       fwrite($fps, '\n');
     }
 
-    if (!isset($stock['sku']) || !strlen($stock['sku'])) {
-      $this->logger->error('Invalid or empty product SKU.');
-      return (new ResourceResponse($response));
-    }
-
     $langcode = NULL;
 
     // For v1 connector we are going to get store_id from each stock,
@@ -534,38 +528,55 @@ class ProductManager implements ProductManagerInterface {
 
       if (empty($langcode)) {
         // It could be for a different store/website, don't do anything.
-        return (new ResourceResponse($response));
+        return ($response);
       }
     }
 
-    $lock_key = 'synchronizeProduct' . $stock['sku'];
-
-    // Acquire lock to ensure parallel processes are executed one by one.
-    do {
-      $lock_acquired = $lock->acquire($lock_key);
-    } while (!$lock_acquired);
-
-    /** @var \Drupal\acm_sku\Entity\SKU $sku */
-    if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
-      $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
-
-      if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
-        $stock['quantity'] = 0;
-      }
-
-      $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
-
-      if ($quantity != $sku->get('stock')->getString()) {
-        $sku->get('stock')->setValue($quantity);
-        $sku->save();
-
-        // Clear product and forms related to sku.
-        Cache::invalidateTags(['acm_sku:' . $sku->id()]);
-      }
+    // Work with single and array:
+    if (array_key_exists("sku", $stock)) {
+      $stockArray = [$stock];
+    }
+    else {
+      $stockArray = $stock;
     }
 
-    // Release the lock.
-    $lock->release($lock_key);
+    foreach ($stockArray as $stock) {
+
+      if (!isset($stock['sku']) || !strlen($stock['sku'])) {
+        $this->logger->error('Invalid or empty product SKU.');
+        return ($response);
+      }
+
+      // Acquire lock to ensure parallel processes are executed one by one.
+      // TODO @Malachy: Should we change the key and move outside loop?
+      $lock_key = 'synchronizeProduct' . $stock['sku'];
+      do {
+        $lock_acquired = $lock->acquire($lock_key);
+      } while (!$lock_acquired);
+
+      /** @var \Drupal\acm_sku\Entity\SKU $sku */
+      if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
+        $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
+
+        if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
+          $stock['quantity'] = 0;
+        }
+
+        $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
+
+        if ($quantity != $sku->get('stock')->getString()) {
+          $sku->get('stock')->setValue($quantity);
+          $sku->save();
+
+          // Clear product and forms related to sku.
+          Cache::invalidateTags(['acm_sku:' . $sku->id()]);
+        }
+      }
+
+      // Release the lock.
+      $lock->release($lock_key);
+
+    }
 
     if (isset($fps)) {
       fclose($fps);
@@ -575,7 +586,7 @@ class ProductManager implements ProductManagerInterface {
       'success' => TRUE,
     ];
 
-    return (new ResourceResponse($response));
+    return ($response);
   }
 
   /**
@@ -844,34 +855,51 @@ class ProductManager implements ProductManagerInterface {
     foreach ($additionalFields as $key => $field) {
       $source = isset($field['source']) ? $field['source'] : $key;
 
-      if (!isset($values[$source])) {
-        continue;
-      }
-
-      $value = $values[$source];
+      // Field key.
       $field_key = 'attr_' . $key;
 
       switch ($field['type']) {
         case 'attribute':
-          $value = $field['cardinality'] != 1 ? explode(',', $value) : [$value];
-          foreach ($value as $index => $val) {
-            if ($term = $this->productOptionsManager->loadProductOptionByOptionId($source, $val, $sku->language()->getId())) {
-              $sku->{$field_key}->set($index, $term->getName());
-            }
-            else {
-              $sku->{$field_key}->set($index, $val);
+          // If attribute is not coming in response, then unset it.
+          if (!isset($values[$source])) {
+            $sku->{$field_key}->set(0, NULL);
+          }
+          else {
+            $value = $values[$source];
+            $value = $field['cardinality'] != 1 ? explode(',', $value) : [$value];
+            foreach ($value as $index => $val) {
+              if ($term = $this->productOptionsManager->loadProductOptionByOptionId($source, $val, $sku->language()->getId())) {
+                $sku->{$field_key}->set($index, $term->getName());
+              }
+              else {
+                $sku->{$field_key}->set($index, $val);
+              }
             }
           }
           break;
 
         case 'string':
-          $value = $field['cardinality'] != 1 ? explode(',', $value) : $value;
-          $sku->{$field_key}->setValue($value);
+          // If attribute is not coming in response, then unset it.
+          if (!isset($values[$source])) {
+            $sku->{$field_key}->setValue(NULL);
+          }
+          else {
+            $value = $values[$source];
+            $value = $field['cardinality'] != 1 ? explode(',', $value) : $value;
+            $sku->{$field_key}->setValue($value);
+          }
           break;
 
         case 'text_long':
-          $value = !empty($field['serialize']) ? serialize($value) : $value;
-          $sku->{$field_key}->setValue($value);
+          // If attribute is not coming in response, then unset it.
+          if (!isset($values[$source])) {
+            $sku->{$field_key}->setValue(NULL);
+          }
+          else {
+            $value = $values[$source];
+            $value = !empty($field['serialize']) ? serialize($value) : $value;
+            $sku->{$field_key}->setValue($value);
+          }
           break;
       }
     }

@@ -100,6 +100,12 @@ services:
     factory: cache_factory:get
     arguments: [commerce_user]
 
+  acm.version_access_checker:
+    class: Drupal\acm\Access\VersionAccessCheck
+    arguments: ['@current_user', '@config.factory']
+    tags:
+      - { name: access_check, applies_to: _version_access_check }
+
   repository.currency:
     class: CommerceGuys\Intl\Currency\CurrencyRepository
 

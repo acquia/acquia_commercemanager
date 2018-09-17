@@ -56,7 +56,13 @@ class APIWrapper implements APIWrapperInterface {
    * @param \Drupal\acm\APIHelper $helper
    *   API Helper service object.
    */
-  public function __construct(ClientFactory $client_factory, ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper, APIHelper $helper) {
+  public function __construct(
+    ClientFactory $client_factory,
+    ConfigFactoryInterface $config_factory,
+    LoggerChannelFactory $logger_factory,
+    I18nHelper $i18nHelper,
+    APIHelper $helper
+  ) {
     $this->clientFactory = $client_factory;
     $this->apiVersion = $config_factory->get('acm.connector')->get('api_version');
     $this->logger = $logger_factory->get('acm_sku');
@@ -89,7 +95,7 @@ class APIWrapper implements APIWrapperInterface {
           $opt['form_params']['customer_id'] = $customer_id;
         }
         else {
-          $opt['json']['customer_id'] = (int) $customer_id;
+          $opt['json']['customer_id'] = (string) $customer_id;
         }
       }
       return ($client->post($endpoint, $opt));
@@ -124,7 +130,6 @@ class APIWrapper implements APIWrapperInterface {
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
     }
 
-    return NULL;
   }
 
   /**
@@ -158,19 +163,6 @@ class APIWrapper implements APIWrapperInterface {
   public function updateCart($cart_id, $cart) {
     $endpoint = $this->apiVersion . "/agent/cart/$cart_id";
 
-    // Check if there's a customer ID and remove it if it's empty.
-    if (isset($cart->customer_id) && empty($cart->customer_id)) {
-      unset($cart->customer_id);
-    }
-    else {
-      $cart->customer_id = (int) $cart->customer_id;
-    }
-
-    // Check if there's a customer email and remove it if it's empty.
-    if (isset($cart->customer_email) && empty($cart->customer_email)) {
-      unset($cart->customer_email);
-    }
-
     // Check $item['name'] is a string because in the cart we
     // store name as a 'renderable link object' with a type,
     // a url, and a title. We only want to pass title to the
@@ -184,12 +176,12 @@ class APIWrapper implements APIWrapperInterface {
         $cart->items[$key]['qty'] = (int) $item['qty'];
 
         if (array_key_exists('name', $item)) {
-          $originalItemsNames[$key] = $item['name'];
-
           if (!isset($item['sku'])) {
             $cart->items[$key]['name'] = "";
             continue;
           }
+
+          $originalItemsNames[$item['sku']] = $item['name'];
 
           $sku = SKU::loadFromSku($item['sku']);
 
@@ -204,32 +196,13 @@ class APIWrapper implements APIWrapperInterface {
       }
     }
 
-    // Cart extensions must always be objects and not arrays.
-    // @TODO: Move this normalization to \Drupal\acm_cart\Cart::__construct and \Drupal\acm_cart\Cart::updateCartObject.
-    if (isset($cart->carrier)) {
-      $cart->carrier = $this->helper->normaliseExtension($cart->carrier);
-    }
-    // Remove shipping address if carrier not set.
-    else {
-      unset($cart->shipping);
-    }
-
-    // Cart constructor sets cart to any object passed in,
-    // circumventing ->setBilling() so trap any wayward extension[] here.
-    // @TODO: Move this normalization to \Drupal\acm_cart\Cart::__construct and \Drupal\acm_cart\Cart::updateCartObject.
-    if (isset($cart->billing)) {
-      $cart->billing = $this->helper->cleanCartAddress($cart->billing);
-    }
-    if (isset($cart->shipping)) {
-      $cart->shipping = $this->helper->cleanCartAddress($cart->shipping);
-    }
+    // Clean up cart data.
+    $cart = $this->helper->cleanCart($cart);
 
     $doReq = function ($client, $opt) use ($endpoint, $cart) {
       $opt['json'] = $cart;
       return ($client->post($endpoint, $opt));
     };
-
-    $cart = [];
 
     try {
       Cache::invalidateTags(['cart:' . $cart_id]);
@@ -237,13 +210,12 @@ class APIWrapper implements APIWrapperInterface {
     }
     catch (ConnectorException $e) {
       // Restore cart structure.
-      if ($items) {
-        foreach ($items as $key => &$item) {
-          if (array_key_exists('name', $item)) {
-            $cart->items[$key]['name'] = $originalItemsNames[$key];
-          }
+      foreach ($cart->items ?? [] as $key => $item) {
+        if (isset($originalItemsNames[$item['sku']])) {
+          $cart->items[$key]['name'] = $originalItemsNames[$item['sku']];
         }
       }
+
       // Now throw.
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
     }
@@ -259,7 +231,7 @@ class APIWrapper implements APIWrapperInterface {
 
     $doReq = function ($client, $opt) use ($endpoint, $customer_id, $cart_id) {
       $opt['json'] = [
-        'customer_id' => (int) $customer_id,
+        'customer_id' => (string) $customer_id,
         'cart_id' => (string) $cart_id,
       ];
       return ($client->post($endpoint, $opt));
@@ -458,11 +430,19 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function deleteCustomerAddress($customer_id, $address_id) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/address/delete";
 
-    $doReq = function ($client, $opt) use ($endpoint, $customer_id, $address_id) {
-      $opt['form_params']['customer_id'] = $customer_id;
-      $opt['form_params']['address_id'] = $address_id;
+    $doReq = function ($client, $opt) use ($endpoint, $customer_id, $address_id, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['customer_id'] = $customer_id;
+        $opt['form_params']['address_id'] = $address_id;
+      }
+      else {
+        $opt['json']['customer_id'] = (string) $customer_id;
+        $opt['json']['address_id'] = $address_id;
+      }
+
       return ($client->post($endpoint, $opt));
     };
 
@@ -508,11 +488,16 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function resetCustomerPassword($email) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/resetpass/get";
 
-    $doReq = function ($client, $opt) use ($endpoint, $email) {
-      $opt['form_params']['email'] = $email;
-
+    $doReq = function ($client, $opt) use ($endpoint, $email, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['email'] = $email;
+      }
+      else {
+        $opt['json']['email'] = $email;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -535,11 +520,16 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function authenticateCustomer($email, $password) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/$email";
 
-    $doReq = function ($client, $opt) use ($endpoint, $password) {
-      $opt['form_params']['password'] = $password;
-
+    $doReq = function ($client, $opt) use ($endpoint, $password, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['password'] = $password;
+      }
+      else {
+        $opt['json']['password'] = $password;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -570,6 +560,7 @@ class APIWrapper implements APIWrapperInterface {
 
     try {
       $customer = $this->tryAgentRequest($doReq, 'getCustomer', 'customer');
+      $customer = $this->helper->cleanCustomerData($customer);
     }
     catch (CustomerNotFoundException $e) {
       if ($throwCustomerNotFound) {
@@ -621,12 +612,18 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function getCustomerToken($email, $password) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer/token/get";
 
-    $doReq = function ($client, $opt) use ($endpoint, $email, $password) {
-      $opt['form_params']['email'] = $email;
-      $opt['form_params']['password'] = $password;
-
+    $doReq = function ($client, $opt) use ($endpoint, $email, $password, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['email'] = $email;
+        $opt['form_params']['password'] = $password;
+      }
+      else {
+        $opt['json']['email'] = $email;
+        $opt['json']['password'] = $password;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -646,10 +643,16 @@ class APIWrapper implements APIWrapperInterface {
    * {@inheritdoc}
    */
   public function getCurrentCustomer($token = NULL) {
+    $versionInClosure = $this->apiVersion;
     $endpoint = $this->apiVersion . "/agent/customer-by-token";
 
-    $doReq = function ($client, $opt) use ($endpoint, $token) {
-      $opt['form_params']['token'] = $token;
+    $doReq = function ($client, $opt) use ($endpoint, $token, $versionInClosure) {
+      if ($versionInClosure === 'v1') {
+        $opt['form_params']['token'] = $token;
+      }
+      else {
+        $opt['json']['token'] = $token;
+      }
       return ($client->post($endpoint, $opt));
     };
 
@@ -839,7 +842,7 @@ class APIWrapper implements APIWrapperInterface {
     $products = [];
 
     try {
-      $products = $this->tryAgentRequest($doReq, 'productFullSync', 'products', $skus, $acm_uuid);
+      $products = $this->tryAgentRequest($doReq, 'productFullSync', 'products', $acm_uuid);
     }
     catch (ConnectorException $e) {
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());
@@ -1043,6 +1046,56 @@ class APIWrapper implements APIWrapperInterface {
     }
 
     return $result;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getQueueStatus(): int {
+    if ($this->apiVersion != 'v2') {
+      $this->logger->error('This feature is available only for v2. Current version is @version', ['@version' => $this->apiVersion]);
+      return -1;
+    }
+
+    $endpoint = $this->apiVersion . "/agent/queue/total";
+
+    $doReq = function ($client, $opt) use ($endpoint) {
+      return ($client->get($endpoint, $opt));
+    };
+
+    try {
+      $result = $this->tryAgentRequest($doReq, 'getQueueStatus');
+    }
+    catch (ConnectorException $e) {
+      throw new \Exception($e->getMessage(), $e->getCode());
+    }
+
+    return (int) $result['total'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function purgeQueue(): bool {
+    if ($this->apiVersion != 'v2') {
+      $this->logger->error('This feature is available only for v2.');
+      return FALSE;
+    }
+
+    $endpoint = $this->apiVersion . "/agent/queue/purge";
+
+    $doReq = function ($client, $opt) use ($endpoint) {
+      return ($client->post($endpoint, $opt));
+    };
+
+    try {
+      $this->tryAgentRequest($doReq, 'purgeQueue');
+    }
+    catch (ConnectorException $e) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
 }

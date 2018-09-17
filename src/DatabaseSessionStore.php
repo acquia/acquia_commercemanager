@@ -6,8 +6,8 @@ use Drupal\acm\User\AccountProxyInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\user\PrivateTempStore;
-use Drupal\user\TempStoreException;
+use Drupal\Core\TempStore\PrivateTempStore;
+use Drupal\Core\TempStore\TempStoreException;
 
 /**
  * Stores and retrieves temporary data for a given owner.
@@ -69,7 +69,7 @@ class DatabaseSessionStore extends PrivateTempStore implements SessionStoreInter
   /**
    * {@inheritdoc}
    *
-   * Overrides \Drupal\user\PrivateTempStore::get().
+   * Overrides \Drupal\Core\TempStore\PrivateTempStore::get().
    */
   public function get($key, $default = NULL) {
     $value = parent::get($key);
@@ -84,9 +84,9 @@ class DatabaseSessionStore extends PrivateTempStore implements SessionStoreInter
   /**
    * {@inheritdoc}
    *
-   * Overrides \Drupal\user\PrivateTempStore::set().
+   * Overrides \Drupal\Core\TempStore\PrivateTempStore::set().
    *
-   * @throws \Drupal\user\TempStoreException
+   * @throws \Drupal\Core\TempStore\TempStoreException
    *   Thrown when a lock for the backend storage could not be acquired.
    */
   public function set($key, $value, $expire = NULL) {
@@ -121,7 +121,7 @@ class DatabaseSessionStore extends PrivateTempStore implements SessionStoreInter
    * @param string $owner_id
    *   The store owner to associate this user to.
    *
-   * @throws \Drupal\user\TempStoreException
+   * @throws \Drupal\Core\TempStore\TempStoreException
    *   Thrown when a lock for the backend storage could not be acquired.
    */
   protected function setOwnerReference($uid, $owner_id) {
@@ -148,7 +148,7 @@ class DatabaseSessionStore extends PrivateTempStore implements SessionStoreInter
    * @param string $uid
    *   The user id to relate to the current store.
    *
-   * @throws \Drupal\user\TempStoreException
+   * @throws \Drupal\Core\TempStore\TempStoreException
    *   Thrown when a lock for the backend storage could not be acquired.
    */
   protected function getOwnerReference($uid) {
@@ -161,7 +161,7 @@ class DatabaseSessionStore extends PrivateTempStore implements SessionStoreInter
   /**
    * {@inheritdoc}
    *
-   * Overrides \Drupal\user\PrivateTempStore::getOwner().
+   * Overrides \Drupal\Core\TempStore\PrivateTempStore::getOwner().
    */
   protected function getOwner() {
     $uid = NULL;

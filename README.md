@@ -4,6 +4,9 @@
 https://travis-ci.org/acquia/commerce-manager.svg?branch=master
 )](https://travis-ci.org/acquia/commerce-manager)
 
+[![Coverage Status](
+https://coveralls.io/repos/github/acquia/commerce-manager/badge.svg?branch=8.x-1.x
+)](https://coveralls.io/github/acquia/commerce-manager?branch=8.x-1.x)
 ## Summary
 The Acquia Commerce Manager Drupal module enables site builders to use tools
 and templates in Drupal to rapidly build commerce experiences. It connects
@@ -23,6 +26,8 @@ https://github.com/acquia/commerce-manager/releases
 ). Please note that this tarball doesn't include all necessary dependencies
 and Composer is recommended way of installation. When installing using Composer, 
 make sure that you have also Drupal composer in your composer.json.
+
+From version 1.5.0, we require at least PHP 7.1.
 
 ## Configuration
 For module installation and configuration please follow [Acquia Knowledgebase](

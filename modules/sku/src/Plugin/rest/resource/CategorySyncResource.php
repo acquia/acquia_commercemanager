@@ -5,7 +5,7 @@ namespace Drupal\acm_sku\Plugin\rest\resource;
 use Drupal\acm_sku\CategoryManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\rest\Plugin\ResourceBase;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -110,7 +110,7 @@ class CategorySyncResource extends ResourceBase {
    * @param array $categories
    *   Category data for update.
    *
-   * @return \Drupal\rest\ResourceResponse
+   * @return \Drupal\rest\ModifiedResourceResponse
    *   HTTP Response.
    */
   public function post(array $categories) {
@@ -121,7 +121,7 @@ class CategorySyncResource extends ResourceBase {
     }
 
     if (!$this->categoryVid) {
-      return (new ResourceResponse(['success' => FALSE]));
+      return (new ModifiedResourceResponse(['success' => FALSE]));
     }
 
     $response = $this->categoryManager->synchronizeCategory(
@@ -132,7 +132,7 @@ class CategorySyncResource extends ResourceBase {
 
     $response['success'] = (bool) (($response['created'] > 0) || ($response['updated'] > 0));
 
-    return (new ResourceResponse($response));
+    return (new ModifiedResourceResponse($response));
   }
 
 }

@@ -1,0 +1,8 @@
+storage_type: 'session'
+use_ecomm_sessions: false
+use_ecomm_pass_reset: false
+ecomm_forgot_password_path: '/forgottenpassword'
+external_registration_path: '/register'
+external_login_path: '/login'
+external_logout_path: '/logout'
+customer_pages_plugin: ''

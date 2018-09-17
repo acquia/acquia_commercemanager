@@ -17,6 +17,7 @@
         "source": "https://github.com/acquia/commerce-manager"
     },
     "require": {
+        "php": "^7.1",
         "commerceguys/intl": "~1.0",
         "drupal/address": "^1.4.0",
         "drupal/field_group": "^1.0@RC",
@@ -25,5 +26,18 @@
         "acquia/http-hmac-php": "~3.2",
         "drupal/pcb": "~1.0",
         "drupal/simple_oauth": "^3"
+    },
+    "require-dev": {
+        "behat/behat": "3.5.*",
+        "behat/mink-goutte-driver": "*",
+        "behat/mink-browserkit-driver": "*",
+        "behat/mink-extension": "*",
+        "behat/mink-selenium2-driver": "*",
+        "behat/mink": "*",
+        "drupal/drupal-extension": "3.4.*",
+        "drupal/drupal-driver": "*",
+        "jakoch/phantomjs-installer": "*",
+        "se/selenium-server-standalone": "3.4.0",
+        "emuse/behat-html-formatter": "^0.1.0"
     }
 }

@@ -26,6 +26,8 @@ class APIHelper {
     }
 
     if (isset($customer['addresses'])) {
+      // When deleting an address need to re-index array.
+      $customer['addresses'] = array_values($customer['addresses']);
       foreach ($customer['addresses'] as $delta => $address) {
         $address = (array) $address;
         $customer['addresses'][$delta] = $this->cleanCustomerAddress($address);
@@ -68,6 +70,11 @@ class APIHelper {
 
     if (isset($address['customer_address_id'])) {
       $address['customer_address_id'] = (int) $address['customer_address_id'];
+    }
+
+    // Never send address_id in API request, it confuses Magento.
+    if (isset($address['address_id'])) {
+      unset($address['address_id']);
     }
 
     return $address;
@@ -120,6 +127,71 @@ class APIHelper {
     }
 
     return $data;
+  }
+
+  /**
+   * Clean up cart data.
+   *
+   * @param object $cart
+   *   Cart object.
+   *
+   * @return object
+   *   Cleaned cart object.
+   */
+  public function cleanCart($cart) {
+    // Check if there's a customer ID and remove it if it's empty.
+    if (isset($cart->customer_id) && empty($cart->customer_id)) {
+      unset($cart->customer_id);
+    }
+    elseif (isset($cart->customer_id)) {
+      $cart->customer_id = (string) $cart->customer_id;
+    }
+
+    // Check if there's a customer email and remove it if it's empty.
+    if (isset($cart->customer_email) && empty($cart->customer_email)) {
+      unset($cart->customer_email);
+    }
+
+    // Don't tell conductor our stored totals for no reason.
+    if (isset($cart->totals)) {
+      unset($cart->totals);
+    }
+
+    // Cart extensions must always be objects and not arrays.
+    if (isset($cart->carrier)) {
+      $cart->carrier = $this->normaliseExtension($cart->carrier);
+    }
+    // Remove shipping address if carrier not set.
+    else {
+      unset($cart->shipping);
+    }
+
+    // Cart constructor sets cart to any object passed in,
+    // circumventing ->setBilling() so trap any wayward extension[] here.
+    if (isset($cart->billing)) {
+      $cart->billing = $this->cleanCartAddress($cart->billing);
+    }
+
+    if (isset($cart->shipping)) {
+      $cart->shipping = $this->cleanCartAddress($cart->shipping);
+    }
+
+    // Never send response_message back.
+    if (isset($cart->response_message)) {
+      unset($cart->response_message);
+    }
+
+    // When we remove an item from cart, we have to reset the keys to have
+    // proper indexed array.
+    if (isset($cart->items)) {
+      $cart->items = array_values($cart->items);
+
+      foreach ($cart->items as &$item) {
+        $item['sku'] = (string) $item['sku'];
+      }
+    }
+
+    return $cart;
   }
 
 }

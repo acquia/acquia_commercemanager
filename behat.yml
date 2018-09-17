@@ -1,0 +1,31 @@
+default:
+  suites:
+    default:
+      contexts:
+        - FeatureContext:
+            parameters:
+              simpleurl: '/node/1'
+              simpletitle: 'Joust Duffle Bag'
+              simpleprice: '$34.00'
+              simpledoupbledprice: '$68.00'
+              simplediscountedprice: '$81.60'
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\DrushContext
+  extensions:
+    Behat\MinkExtension:
+      base_url: http://drupal
+      browser_name: chrome
+      javascript_session: default
+      sessions:
+        default:
+          selenium2:
+            wd_host: http://chrome:4444/wd/hub
+    Drupal\DrupalExtension:
+      blackbox: ~
+      api_driver: "drupal"
+      drupal:
+        drupal_root: '/var/www/html'
+      region_map:
+        content: "#content"

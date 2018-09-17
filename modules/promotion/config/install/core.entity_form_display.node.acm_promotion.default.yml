@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.acm_promotion.field_acm_promotion_label
     - field.field.node.acm_promotion.field_acm_promotion_rule_id
     - field.field.node.acm_promotion.field_acm_promotion_type
+    - field.field.node.acm_promotion.field_coupon_code
     - field.field.node.acm_promotion.field_skus
     - node.type.acm_promotion
   module:
@@ -118,6 +119,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_coupon_code:
+    weight: 121
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_skus:
     weight: 20
     settings:
@@ -125,12 +134,6 @@ content:
     third_party_settings: {  }
     type: sku_widget
     region: content
-  langcode:
-    type: language_select
-    weight: 1
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   path:
     type: path
     weight: 6
@@ -142,6 +145,13 @@ content:
     settings:
       display_label: true
     weight: 4
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
     region: content
     third_party_settings: {  }
   sticky:

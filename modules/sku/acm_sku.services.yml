@@ -45,7 +45,6 @@ services:
     class: Drupal\acm_sku\ProductManager
     arguments:
       - '@entity_type.manager'
-      - '@entity.query'
       - '@config.factory'
       - '@logger.factory'
       - '@acm_sku.category_repo'

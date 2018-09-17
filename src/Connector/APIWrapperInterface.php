@@ -224,6 +224,8 @@ interface APIWrapperInterface {
   /**
    * Requests a password reset.
    *
+   * Please note this is not a V2 endpoint.
+   *
    * @param string $email
    *   The email of the customer who wants to reset their password. An email
    *   will then be sent out from the ecommerce backend with a password reset
@@ -447,5 +449,27 @@ interface APIWrapperInterface {
    *   Failed request exception.
    */
   public function systemWatchdog();
+
+  /**
+   * Get number of items in site specific queue.
+   *
+   * @return int
+   *   Number of items in queue.
+   *
+   * @throws \Exception
+   *   Failed request exception.
+   */
+  public function getQueueStatus(): int;
+
+  /**
+   * Purge items in site specific queue.
+   *
+   * @return bool
+   *   Success of operation.
+   *
+   * @throws \Exception
+   *   Failed request exception.
+   */
+  public function purgeQueue(): bool;
 
 }

@@ -1,5 +1,3 @@
-uuid: e44837b2-b374-4e03-a8d5-a896ff57775b
-langcode: en
 status: true
 dependencies:
   config:
@@ -11,6 +9,7 @@ dependencies:
     - node
     - taxonomy
     - user
+    - views
 id: products
 label: Products
 module: views
