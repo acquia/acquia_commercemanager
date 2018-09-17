@@ -1,0 +1,13 @@
+{% for tile in items['tile']  %}
+    {{ tile }}
+{% endfor %}
+
+{% for line in items['line']  %}
+    {{ line }}
+{% endfor %}
+
+{% for group in items|without('tile', 'line')  %}
+    {% for item in group %}
+        {{ item }}
+    {% endfor %}
+{% endfor %}

@@ -112,5 +112,17 @@ services:
   repository.number_format:
     class: CommerceGuys\Intl\NumberFormat\NumberFormatRepository
 
+  plugin.manager.acm_dashboard_item:
+    class: Drupal\acm\CommerceDashboardItemManager
+    parent: default_plugin_manager
+
+  acm.verify_mapping:
+    class: Drupal\acm\VerifyMapping
+    arguments:
+      - '@logger.factory'
+      - '@acm.i18n_helper'
+      - '@config.factory'
+      - '@language_manager'
+
 parameters:
   acm.store.expire: 2000000

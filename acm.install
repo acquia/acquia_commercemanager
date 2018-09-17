@@ -82,3 +82,13 @@ function acm_update_8003() {
     $config->setData($data)->save(TRUE);
   }
 }
+
+/**
+ * Uninstall module acm_diagnostics.
+ */
+function acm_update_8004(){
+  $module_handler = \Drupal::moduleHandler();
+  if ($module_handler->moduleExists('acm_diagnostics')) {
+    \Drupal::service('module_installer')->uninstall(['acm_diagnostics']);
+  }
+}

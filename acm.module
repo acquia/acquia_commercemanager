@@ -197,3 +197,34 @@ function acm_is_code_api_down_code($code) {
 function acm_api_down_global_error_message() {
   return t('Sorry, something went wrong and we are unable to process your request right now. Please try again later.')->render();
 }
+
+/**
+ * Implements hook_theme().
+ */
+function acm_theme($existing, $type, $theme, $path) {
+  return [
+    'dashboard' => [
+      'variables' => [
+        'items' => [],
+      ],
+    ],
+    'dashboard_item' => [
+      'variables' => [
+        'title' => NULL,
+        'value' => NULL,
+      ],
+    ],
+    'dashboard_item__line' => [
+      'variables' => [
+        'title' => NULL,
+        'value' => NULL,
+      ],
+    ],
+    'dashboard_item__tile' => [
+      'variables' => [
+        'title' => NULL,
+        'value' => NULL,
+      ],
+    ],
+  ];
+}
