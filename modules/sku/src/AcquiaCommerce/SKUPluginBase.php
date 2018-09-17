@@ -7,6 +7,7 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\acm_sku\Entity\SKU;
 use Drupal\acm_sku\Entity\SKUTypeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -28,6 +29,13 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
   protected $configFactory;
 
   /**
+   * The current active database's master connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
    * Constructor.
    *
    * @param array $configuration
@@ -38,10 +46,13 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
    *   The plugin implementation definition.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The current active database's master connection.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, Connection $connection) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
+    $this->connection = $connection;
   }
 
   /**
@@ -52,7 +63,8 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('database')
     );
   }
 
@@ -187,7 +199,7 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
    * @throws \Exception
    */
   public function getParentSku(SKU $sku) {
-    $query = \Drupal::database()->select('acm_sku_field_data', 'acm_sku');
+    $query = $this->connection->select('acm_sku_field_data', 'acm_sku');
     $query->addField('acm_sku', 'sku');
     $query->join('acm_sku__field_configured_skus', 'child_sku', 'acm_sku.id = child_sku.entity_id');
     $query->condition('child_sku.field_configured_skus_value', $sku->getSku());
@@ -329,7 +341,7 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
           $stock = $sku->get('stock')->getString();
         }
         else {
-          $stock = \Drupal::database()->select('acm_sku_field_data', 'asfd')
+          $stock = $this->connection->select('acm_sku_field_data', 'asfd')
             ->fields('asfd', ['stock'])
             ->condition('asfd.sku', $sku_string)
             ->execute()
