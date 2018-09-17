@@ -37,7 +37,7 @@ class CommerceDashboardItem extends Plugin {
   /**
    * Group in which we want to display item.
    *
-   * Currently supported - tile, line
+   * Currently supported - tile, line.
    *
    * @var string
    */

@@ -12,7 +12,7 @@ interface CommerceDashboardItemInterface {
   /**
    * Returns the name of the requirement.
    *
-   * @return string|NULL
+   * @return string|null
    *   The name of the requirement.
    */
   public function title();

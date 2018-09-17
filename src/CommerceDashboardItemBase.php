@@ -46,6 +46,6 @@ abstract class CommerceDashboardItemBase extends PluginBase implements CommerceD
   /**
    * {@inheritdoc}
    */
-  public abstract function render();
+  abstract public function render();
 
 }

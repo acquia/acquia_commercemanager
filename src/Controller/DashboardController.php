@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class DashboardController extends ControllerBase {
 
   /**
-   * Dashboard Manager
+   * Dashboard Manager.
    *
    * @var \Drupal\acm\CommerceDashboardItemManager
    */
@@ -22,6 +22,7 @@ class DashboardController extends ControllerBase {
    * DashboardController constructor.
    *
    * @param \Drupal\acm\CommerceDashboardItemManager $dashboardManager
+   *   Dashboard manager.
    */
   public function __construct(CommerceDashboardItemManager $dashboardManager) {
     $this->dashboardManager = $dashboardManager;

@@ -79,7 +79,7 @@ class CommerceDashboardItemManager extends DefaultPluginManager {
    * @return int
    *   Returns -1 if A<B; 1 if A>B; 0 id A=B
    */
-  protected function sortPlugins($a, $b) {
+  protected function sortPlugins(array $a, array $b):int {
     if ($a['weight'] < $b['weight']) {
       return -1;
     }
