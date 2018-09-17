@@ -3,7 +3,7 @@
 namespace Drupal\acm_customer\Plugin\rest\resource;
 
 use Drupal\Core\Entity\EntityStorageException;
-use Drupal\rest\ResourceResponse;
+use Drupal\rest\ModifiedResourceResponse;
 use Drupal\rest\Plugin\ResourceBase;
 
 /**
@@ -32,7 +32,7 @@ class CustomerDeleteResource extends ResourceBase {
    * @param array $data
    *   Post data.
    *
-   * @return \Drupal\rest\ResourceResponse
+   * @return \Drupal\rest\ModifiedResourceResponse
    *   HTTP Response.
    */
   public function post(array $data = []) {
@@ -40,7 +40,7 @@ class CustomerDeleteResource extends ResourceBase {
     if (!$data['email']) {
       $this->logger->error('Invalid data to delete customer.');
       $response['success'] = (bool) (FALSE);
-      return (new ResourceResponse($response));
+      return (new ModifiedResourceResponse($response));
     }
 
     $email = $data['email'];
@@ -52,18 +52,18 @@ class CustomerDeleteResource extends ResourceBase {
         $user->delete();
         $this->logger->notice('Deleted user with uid %id and email %email.', ['%id' => $user->id(), '%email' => $email]);
         $response['success'] = (bool) (TRUE);
-        return (new ResourceResponse($response));
+        return (new ModifiedResourceResponse($response));
       }
       catch (EntityStorageException $e) {
         $this->logger->error($e->getMessage());
         $response['success'] = (bool) (FALSE);
-        return (new ResourceResponse($response));
+        return (new ModifiedResourceResponse($response));
       }
     }
     else {
       $this->logger->warning('User with email %email doesn\'t exist.', ['%email' => $email]);
       $response['success'] = (bool) (FALSE);
-      return (new ResourceResponse($response));
+      return (new ModifiedResourceResponse($response));
     }
   }
 
