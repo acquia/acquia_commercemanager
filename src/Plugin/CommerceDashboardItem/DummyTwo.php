@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @CommerceDashboardItem(
  *   id = "dummy_two",
- *   title = @Translation("Dummy Two"),
+ *   title = @Translation("Dummy Two - weight '-1'"),
  *   weight = -1,
  *   group = "line",
  * )

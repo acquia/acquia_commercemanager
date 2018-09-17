@@ -44,6 +44,7 @@ class DashboardController extends ControllerBase {
       '#theme' => 'dashboard',
       '#items' => $this->dashboardManager->getDashboardItems(),
     ];
+    $build['#attached']['library'][] = 'acm/dashboard';
 
     return $build;
   }
