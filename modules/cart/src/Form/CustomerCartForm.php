@@ -66,11 +66,17 @@ class CustomerCartForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // We always want this cache context.
+    $form['#cache']['contexts'][] = 'cookies:Drupal_visitor_acm_cart_id';
+
     $cart = $this->cartStorage->getCart(FALSE);
 
     if (empty($cart)) {
       return $form;
     }
+
+    // Add this cache tag if cart exists.
+    $form['#cache']['tags'][] = 'cart:' . $cart->id();
 
     $items = NULL;
 
