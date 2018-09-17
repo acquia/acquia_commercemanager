@@ -1,17 +1,17 @@
-<div class="dashboard-group dashboard-tile-group">
+<div class="dashboard-group dashboard-group--tile">
     {% for tile in items['tile'] %}
         {{ tile }}
     {% endfor %}
 </div>
 
-<div class="dashboard-group dashboard-line-group">
+<div class="dashboard-group dashboard-group--line">
     {% for line in items['line'] %}
         {{ line }}
     {% endfor %}
 </div>
 
 {% for key, group in items|without('tile', 'line') %}
-    <div class="dashboard-group dashboard-{{ key }}-group">
+    <div class="dashboard-group dashboard-group--{{ key }}">
     {% for item in group %}
         {{ item }}
     {% endfor %}
