@@ -78,7 +78,11 @@ class ProductManager implements ProductManagerInterface {
   private $deleted;
   private $created;
   private $updated;
-
+  private $failedSkus;
+  private $createdSkus;
+  private $ignoredSkus;
+  private $deletedSkus;
+  private $updatedSkus;
   private $debugDir;
 
   /**
@@ -296,6 +300,7 @@ class ProductManager implements ProductManagerInterface {
           '@store' => $product['store_id'],
           '@langcode' => $langcode,
         ]);
+        $this->ignoredSkus[] = $product['sku'] . '(Langcode is empty for store_id:' . $product['store_id'] . '.)';
         $this->ignored++;
         // Release the lock on this sku.
         $lock->release($lock_key);
@@ -323,7 +328,7 @@ class ProductManager implements ProductManagerInterface {
 
       if (!isset($product['type'])) {
         $message = "Product type must be defined. " . $product['sku'] . " was not synchronized.";
-        $this->logger->error($message);
+        $this->failedSkus[] = $product['sku'] . '(Missing Product Type)';
         $this->failed++;
         // Release the lock on this sku.
         $lock->release($lock_key);
@@ -339,7 +344,7 @@ class ProductManager implements ProductManagerInterface {
 
       if (!$has_bundle) {
         $message = "Product type " . $product['type'] . " is not supported yet. " . $product['sku'] . " was not synchronized.";
-        $this->logger->error($message);
+        $this->ignoredSkus[] = $product['sku'] . '(Product type not supported yet.' . $product['type'] . ')';
         $this->ignored++;
         // Release the lock on this sku.
         $lock->release($lock_key);
@@ -348,7 +353,7 @@ class ProductManager implements ProductManagerInterface {
       }
 
       if (!isset($product['sku']) || !strlen($product['sku'])) {
-        $this->logger->error('Invalid or empty product SKU.');
+        $this->ignoredSkus[] = $product['sku'] . '(Invalid or empty product SKU.)';
         $this->ignored++;
         // Release the lock on this sku.
         $lock->release($lock_key);
@@ -360,10 +365,11 @@ class ProductManager implements ProductManagerInterface {
       // @TODO(mirom): Call validation function by $product['type'].
       if ($product['type'] == 'configurable' && empty($product['extension']['configurable_product_options'])) {
         $productToString = print_r($product, TRUE);
-        $this->logger->error('Empty configurable options for SKU: @sku, Details: @deets', [
+        $this->debugLogger('Empty configurable options for SKU: @sku, Details: @deets', [
           '@sku' => $product['sku'],
           '@deets' => $productToString,
         ]);
+        $this->ignoredSkus[] = $product['sku'] . '(Empty configurable options for SKU.)';
         $this->ignored++;
         // Release the lock on this sku.
         $lock->release($lock_key);
@@ -376,7 +382,7 @@ class ProductManager implements ProductManagerInterface {
       $sku_ids = $query->execute();
 
       if (count($sku_ids) > 1) {
-        $this->logger->error('Duplicate product SKU @sku found.', ['@sku' => $product['sku']]);
+        $this->failedSkus[] = $product['sku'] . '(Duplicate product SKU found.)';
         $this->failed++;
         // Release the lock on this sku.
         $lock->release($lock_key);
@@ -398,6 +404,7 @@ class ProductManager implements ProductManagerInterface {
         $node = $plugin->getDisplayNode($sku, FALSE, TRUE);
         if (empty($node)) {
           $node = $this->createDisplayNode($product, $langcode);
+          $this->createdSkus[] = $product['sku'];
           $this->created++;
         }
         elseif ($node->hasTranslationChanges()) {
@@ -469,6 +476,27 @@ class ProductManager implements ProductManagerInterface {
       // Release the lock on this sku.
       $lock->release($lock_key);
       $lock_key = NULL;
+    }
+
+    // Log product import summary.
+    if (!empty($this->createdSkus)) {
+      $this->logger->info('SKU import, created: @created_skus', ['@created_skus' => implode(',', $this->createdSkus)]);
+    }
+
+    if (!empty($this->deletedSkus)) {
+      $this->logger->info('SKU import, deleted: @deleted_skus', ['@deleted_skus' => implode(',', $this->deletedSkus)]);
+    }
+
+    if (!empty($this->updatedSkus)) {
+      $this->logger->info('SKU import, updated: @updated_skus', ['@updated_skus' => implode(',', $this->updatedSkus)]);
+    }
+
+    if (!empty($this->failedSkus)) {
+      $this->logger->error('SKU import, failed: @failed_skus', ['@failed_skus' => implode(',', $this->failedSkus)]);
+    }
+
+    if (!empty($this->ignoredSkus)) {
+      $this->logger->error('SKU import, ignored: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignoredSkus)]);
     }
 
     return [
@@ -691,16 +719,18 @@ class ProductManager implements ProductManagerInterface {
 
         // Delete the SKU.
         $sku->delete();
+        $this->deletedSkus[] = $product['sku'];
         $this->deleted++;
         return NULL;
       }
 
       $this->logger->info('Updating product SKU @sku.', ['@sku' => $product['sku']]);
+      $this->updatedSkus[] = $product['sku'];
       $this->updated++;
     }
     else {
       if ($product['status'] != 1 && $this->configFactory->get('acm.connector')->get('delete_disabled_skus')) {
-        $this->logger->info('Not creating disabled SKU in system: @sku.', ['@sku' => $product['sku']]);
+        $this->ignoredSkus[] = $product['sku'] . '(Disabled SKU).';
         $this->ignored++;
         return NULL;
       }
@@ -711,8 +741,7 @@ class ProductManager implements ProductManagerInterface {
         'langcode' => $langcode,
       ]);
 
-      $this->logger->info('Creating product SKU @sku.', ['@sku' => $product['sku']]);
-
+      $this->createdSkus[] = $product['sku'];
       $this->created++;
     }
 

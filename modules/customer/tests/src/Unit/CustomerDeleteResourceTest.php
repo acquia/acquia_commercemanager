@@ -38,7 +38,7 @@ class CustomerDeleteResourceTest extends UnitTestCase {
   /**
    * A response object.
    *
-   * @var \Drupal\rest\ResourceResponse
+   * @var \Drupal\rest\ModifiedResourceResponse
    */
   protected $response;
 

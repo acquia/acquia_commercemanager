@@ -87,3 +87,8 @@ services:
       - '@entity_type.manager'
       - '@entity.definition_update_manager'
       - '@logger.channel.acm_sku'
+
+  acm_sku.product_info_helper:
+    class: Drupal\acm_sku\ProductInfoHelper
+    arguments:
+      - '@event_dispatcher'
