@@ -50,6 +50,7 @@ services:
       - '@acm_sku.category_repo'
       - '@acm_sku.product_options_manager'
       - '@acm.i18n_helper'
+      - '@module_handler'
 
   cache.stock:
       class: Drupal\Core\Cache\CacheBackendInterface
