@@ -679,9 +679,8 @@ class SKU extends ContentEntityBase implements SKUInterface {
     $args = ['@file' => $data['file'], '@sku_id' => $this->id()];
 
     // Download the file contents.
-    $client = \Drupal::httpClient();
     try {
-      $file_data = $client->get($data['file']);
+      $file_data = \Drupal::httpClient()->get($data['file'])->getBody();
     }
     catch (RequestException $e) {
       watchdog_exception('acq_commerce', $e);
