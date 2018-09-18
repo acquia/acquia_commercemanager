@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class ProductManager.
@@ -60,6 +61,13 @@ class ProductManager implements ProductManagerInterface {
   private $i18nHelper;
 
   /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private $moduleHandler;
+
+  /**
    * True if you want extra logging for debugging.
    *
    * @var bool
@@ -89,14 +97,17 @@ class ProductManager implements ProductManagerInterface {
    *   Product Options Manager service instance.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   Module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper, ModuleHandlerInterface $moduleHandler) {
     $this->entityManager = $entity_type_manager;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');
     $this->categoryRepo = $cat_repo;
     $this->productOptionsManager = $product_options_manager;
     $this->i18nHelper = $i18nHelper;
+    $this->moduleHandler = $moduleHandler;
     $this->debug = $this->configFactory->get('acm.connector')
       ->get('debug');
     $this->debugDir = $this->configFactory->get('acm.connector')
@@ -180,7 +191,7 @@ class ProductManager implements ProductManagerInterface {
     }
 
     // Invoke the alter hook to allow all modules to update the node.
-    \Drupal::moduleHandler()->alter('acm_sku_product_node', $node, $product);
+    $this->moduleHandler->alter('acm_sku_product_node', $node, $product);
 
     return $node;
   }
@@ -231,8 +242,7 @@ class ProductManager implements ProductManagerInterface {
     }
 
     // Invoke the alter hook to allow all modules to update the node.
-    \Drupal::moduleHandler()
-      ->alter('acm_sku_product_node_translation_update', $node, $product, $langcode);
+    $this->moduleHandler->alter('acm_sku_product_node_translation_update', $node, $product, $langcode);
   }
 
   /**
@@ -398,13 +408,12 @@ class ProductManager implements ProductManagerInterface {
         // addTranslation(), pathauto alias is not created for the translated
         // version.
         // @see https://www.drupal.org/project/pathauto/issues/2995829.
-        if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
+        if ($this->moduleHandler->moduleExists('pathauto')) {
           $node->path->pathauto = 1;
         }
 
         // Invoke the alter hook to allow all modules to update the node.
-        \Drupal::moduleHandler()
-          ->alter('acm_sku_product_node', $node, $product, $langcode);
+        $this->moduleHandler->alter('acm_sku_product_node', $node, $product, $langcode);
         $node->save();
       }
       else {
@@ -754,7 +763,7 @@ class ProductManager implements ProductManagerInterface {
     $plugin->processImport($sku, $product);
 
     // Invoke the alter hook to allow all modules to update the node.
-    \Drupal::moduleHandler()->alter('acm_sku_product_sku', $sku, $product);
+    $this->moduleHandler->alter('acm_sku_product_sku', $sku, $product);
 
     $sku->save();
 
