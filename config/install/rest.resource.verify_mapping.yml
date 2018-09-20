@@ -1,7 +1,7 @@
 status: true
 dependencies:
   module:
-    - acm_sku
+    - acm
     - serialization
     - user
     - simple_oauth
