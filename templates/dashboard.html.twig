@@ -4,11 +4,17 @@
     {% endfor %}
 </div>
 
+{% if items['line'] %}
 <div class="dashboard-group dashboard-group--line">
+    <table>
     {% for line in items['line'] %}
-        {{ line }}
+        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+            {{ line }}
+        </tr>
     {% endfor %}
+    </table>
 </div>
+{% endif %}
 
 {% for key, group in items|without('tile', 'line') %}
     <div class="dashboard-group dashboard-group--{{ key }}">

@@ -212,18 +212,21 @@ function acm_theme($existing, $type, $theme, $path) {
       'variables' => [
         'title' => NULL,
         'value' => NULL,
+        'attributes' => [],
       ],
     ],
     'dashboard_item__line' => [
       'variables' => [
         'title' => NULL,
         'value' => NULL,
+        'attributes' => [],
       ],
     ],
     'dashboard_item__tile' => [
       'variables' => [
         'title' => NULL,
         'value' => NULL,
+        'attributes' => [],
       ],
     ],
   ];

@@ -3,10 +3,12 @@
 namespace Drupal\acm\Plugin\CommerceDashboardItem;
 
 use Drupal\acm\CommerceDashboardItemBase;
+use Drupal\acm\Connector\APIWrapperInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ConnectorAccessiblityRequirement.
+ * Class QueueStatus.
  *
  * @CommerceDashboardItem(
  *   id = "queue_status",
@@ -18,13 +20,39 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class QueueStatus extends CommerceDashboardItemBase {
 
   /**
+   * Form builder.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * API Wrapper.
+   *
+   * @var \Drupal\acm\Connector\APIWrapperInterface
+   */
+  protected $api;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, APIWrapperInterface $api, FormBuilderInterface $form_builder) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->api = $api;
+    $this->formBuilder = $form_builder;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
-      $plugin_definition
+      $plugin_definition,
+      $container->get('acm.api'),
+      $container->get('form_builder')
     );
   }
 
@@ -32,14 +60,19 @@ class QueueStatus extends CommerceDashboardItemBase {
    * {@inheritdoc}
    */
   public function render() {
-    // @TODO: Inject via constructor.
-    // @TODO: Add button to clear queue.
-    $number = \Drupal::service('acm.api')->getQueueStatus();
+    $form = $this->formBuilder->getForm('\Drupal\acm\Form\PurgeQueueForm');
+    $number = $this->api->getQueueStatus();
     return [
       '#theme' => "dashboard_item__" . $this->pluginDefinition['group'],
       '#title' => $this->title(),
       '#value' => [
-        '#markup' => "<div class='heading-a'>" . $number . "</div><span>items</span>",
+        'text' => [
+          '#markup' => "<div class='heading-a'>" . $number . "</div><span>items</span>",
+        ],
+        'form' => $form,
+      ],
+      '#attributes' => [
+        'class' => ['text-align-center'],
       ],
     ];
   }
