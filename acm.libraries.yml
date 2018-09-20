@@ -9,3 +9,9 @@ global_styles:
   css:
     theme:
       css/acm.buttons.css: {}
+
+dashboard:
+  version: 1.x
+  css:
+    theme:
+      css/acm.dashboard.css: {}

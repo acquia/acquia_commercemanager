@@ -1,8 +1,8 @@
 acm.commerce:
   path: '/admin/commerce'
   defaults:
-    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
-    _title: 'Commerce'
+    _title: 'Acquia Commerce Manager Dashboard'
+    _controller: '\Drupal\acm\Controller\DashboardController::build'
   requirements:
     _permission: 'access commerce administration pages'
 
