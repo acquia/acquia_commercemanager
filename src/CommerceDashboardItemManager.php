@@ -33,7 +33,7 @@ class CommerceDashboardItemManager extends DefaultPluginManager {
       'Drupal\acm\Annotation\CommerceDashboardItem'
     );
 
-    $this->alterInfo('acm');
+    $this->alterInfo('acm_dashboard');
   }
 
   /**
