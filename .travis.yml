@@ -5,8 +5,8 @@ php:
   - 7.2
 
 env:
-  - DRUPAL=^8.5
-  - DRUPAL=^8.6
+  - DRUPAL=~8.5.0
+  - DRUPAL=~8.6.0
   - DRUPAL=8.5.x-dev
   - DRUPAL=8.6.x-dev
 
