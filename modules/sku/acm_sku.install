@@ -7,7 +7,6 @@
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\Core\Url;
 use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
@@ -61,35 +60,6 @@ function acm_sku_uninstall() {
     }
     $role->save();
   }
-}
-
-/**
- * Implements hook_requirements().
- */
-function acm_sku_requirements($phase) {
-  $requirements = [];
-
-  switch ($phase) {
-    case 'runtime':
-      $config = \Drupal::config('acm.connector');
-
-      if (!$config->get('product_node_type')) {
-        $config_url = Url::fromRoute('acm.configuration.connector')
-          ->toString();
-        $requirements['acm_sku'] = [
-          'title' => t('Acquia Commerce Connector'),
-          'severity' => REQUIREMENT_ERROR,
-          'value' => t('Not fully configured'),
-          'description' => t('The connector has not been configured to use a node type for products. <a href="@config-page">Set the product node type</a>.', [
-            '@config-page' => $config_url,
-          ]),
-        ];
-      }
-
-      break;
-  }
-
-  return $requirements;
 }
 
 /**

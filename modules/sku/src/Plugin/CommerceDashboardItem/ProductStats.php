@@ -5,6 +5,7 @@ namespace Drupal\acm_sku\Plugin\CommerceDashboardItem;
 use Drupal\acm\CommerceDashboardItemBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -62,10 +63,13 @@ class ProductStats extends CommerceDashboardItemBase {
     $productContentType = $this->configFactory->get('acm.connector')
       ->get('product_node_type');
     if (empty($productContentType)) {
+      $config_url = Url::fromRoute('acm.configuration.connector')->toString();
       return [
         '#theme' => "dashboard_item__" . $this->pluginDefinition['group'],
         '#title' => $this->title(),
-        '#value' => $this->t('Content type is not configured.'),
+        '#value' => $this->t('The connector has not been configured to use a node type for products. <a href="@config-page">Set the product node type</a>.', [
+          '@config-page' => $config_url,
+        ]),
       ];
     }
     $num_of_products = $this->entityQuery

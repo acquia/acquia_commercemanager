@@ -5,7 +5,6 @@
  * Contains install hooks for acm.
  */
 
-use Drupal\Core\Url;
 use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
@@ -21,30 +20,6 @@ function acm_install() {
   catch (\Exception $e) {
     \Drupal::logger('acm')->info('ACM role already exists');
   }
-}
-
-/**
- * Implements hook_requirements().
- */
-function acm_requirements($phase) {
-  $requirements = [];
-
-  if ($phase != 'runtime') {
-    return $requirements;
-  }
-
-  $link_generator = \Drupal::service('link_generator');
-  $internal_url = Url::fromRoute('acm.configuration.purge_queue');
-  $internal_link = $link_generator->generate('here', $internal_url);
-
-  $requirements[] = [
-    'title' => t('Acquia Commerce Manager: Queue status'),
-    'value' => t('@countItems items', ['@countItems' => \Drupal::service('acm.api')->getQueueStatus()]),
-    'description' => t("This number represents number of items in Commerce Connector Service Queue. It doesn't show number of items which are currently being processed. You can purge queue @here.",
-      ['@here' => $internal_link]),
-  ];
-
-  return $requirements;
 }
 
 /**
