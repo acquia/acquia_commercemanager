@@ -110,7 +110,7 @@ class EmptyCartForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => 'Empty',
-      '#op' => SELF::OP_EMPTY,
+      '#op' => self::OP_EMPTY,
     ];
 
     return $form;
