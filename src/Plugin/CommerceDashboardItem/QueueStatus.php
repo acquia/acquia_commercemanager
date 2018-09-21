@@ -6,6 +6,7 @@ use Drupal\acm\CommerceDashboardItemBase;
 use Drupal\acm\Connector\APIWrapperInterface;
 use Drupal\Core\Form\EnforcedResponseException;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,13 +41,21 @@ class QueueStatus extends CommerceDashboardItemBase {
   protected $api;
 
   /**
+   * Logger channel.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, APIWrapperInterface $api, FormBuilderInterface $form_builder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, APIWrapperInterface $api, FormBuilderInterface $form_builder, LoggerChannelFactory $loggerChannelFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->api = $api;
     $this->formBuilder = $form_builder;
+    $this->logger = $loggerChannelFactory->get('acm');
   }
 
   /**
@@ -58,7 +67,8 @@ class QueueStatus extends CommerceDashboardItemBase {
       $plugin_id,
       $plugin_definition,
       $container->get('acm.api'),
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('logger.factory')
     );
   }
 
@@ -74,7 +84,7 @@ class QueueStatus extends CommerceDashboardItemBase {
       $form = $this->formBuilder->getForm(self::FORM_ID);
     }
     catch (\Exception $e) {
-      \Drupal::logger('acm')->error($e->getCode() . ' ' . $e->getMessage());
+      $this->logger->error($e->getCode() . ' ' . $e->getMessage());
     }
     try {
       $number = $this->api->getQueueStatus();
