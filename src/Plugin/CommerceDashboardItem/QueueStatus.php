@@ -4,6 +4,7 @@ namespace Drupal\acm\Plugin\CommerceDashboardItem;
 
 use Drupal\acm\CommerceDashboardItemBase;
 use Drupal\acm\Connector\APIWrapperInterface;
+use Drupal\Core\Form\EnforcedResponseException;
 use Drupal\Core\Form\FormBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,6 +19,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class QueueStatus extends CommerceDashboardItemBase {
+
+  /**
+   * Purge form ID.
+   */
+  const FORM_ID = '\Drupal\acm\Form\PurgeQueueForm';
 
   /**
    * Form builder.
@@ -60,8 +66,17 @@ class QueueStatus extends CommerceDashboardItemBase {
    * {@inheritdoc}
    */
   public function render() {
+    $form = [];
     try {
-      $form = $this->formBuilder->getForm('\Drupal\acm\Form\PurgeQueueForm');
+      $form = $this->formBuilder->getForm(self::FORM_ID);
+    }
+    catch (EnforcedResponseException $e) {
+      $form = $this->formBuilder->getForm(self::FORM_ID);
+    }
+    catch (\Exception $e) {
+      \Drupal::logger('acm')->error($e->getCode() . ' ' . $e->getMessage());
+    }
+    try {
       $number = $this->api->getQueueStatus();
       return [
         '#theme' => "dashboard_item__" . $this->pluginDefinition['group'],
