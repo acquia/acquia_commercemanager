@@ -60,21 +60,32 @@ class QueueStatus extends CommerceDashboardItemBase {
    * {@inheritdoc}
    */
   public function render() {
-    $form = $this->formBuilder->getForm('\Drupal\acm\Form\PurgeQueueForm');
-    $number = $this->api->getQueueStatus();
-    return [
-      '#theme' => "dashboard_item__" . $this->pluginDefinition['group'],
-      '#title' => $this->title(),
-      '#value' => [
-        'text' => [
-          '#markup' => "<div class='heading-a'>" . $number . "</div><span>items</span>",
+    try {
+      $form = $this->formBuilder->getForm('\Drupal\acm\Form\PurgeQueueForm');
+      $number = $this->api->getQueueStatus();
+      return [
+        '#theme' => "dashboard_item__" . $this->pluginDefinition['group'],
+        '#title' => $this->title(),
+        '#value' => [
+          'text' => [
+            '#markup' => "<div class='heading-a'>" . $number . "</div><span>items</span>",
+          ],
+          'form' => $form,
         ],
-        'form' => $form,
-      ],
-      '#attributes' => [
-        'class' => ['text-align-center'],
-      ],
-    ];
+        '#attributes' => [
+          'class' => ['text-align-center'],
+        ],
+      ];
+    }
+    catch (\Exception $e) {
+      return [
+        '#theme' => "dashboard_item__" . $this->pluginDefinition['group'],
+        '#title' => $this->title(),
+        '#value' => [
+          '#markup' => $e->getMessage(),
+        ],
+      ];
+    }
   }
 
 }
