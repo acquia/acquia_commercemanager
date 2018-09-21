@@ -4,6 +4,7 @@ namespace Drupal\acm\Controller;
 
 use Drupal\acm\CommerceDashboardItemManager;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\system\SystemManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,13 +20,23 @@ class DashboardController extends ControllerBase {
   protected $dashboardManager;
 
   /**
+   * System Manager Service.
+   *
+   * @var \Drupal\system\SystemManager
+   */
+  protected $systemManager;
+
+  /**
    * DashboardController constructor.
    *
    * @param \Drupal\acm\CommerceDashboardItemManager $dashboardManager
    *   Dashboard manager.
+   * @param \Drupal\system\SystemManager $systemManager
+   *   System manager service.
    */
-  public function __construct(CommerceDashboardItemManager $dashboardManager) {
+  public function __construct(CommerceDashboardItemManager $dashboardManager, SystemManager $systemManager) {
     $this->dashboardManager = $dashboardManager;
+    $this->systemManager = $systemManager;
   }
 
   /**
@@ -33,7 +44,8 @@ class DashboardController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.acm_dashboard_item')
+      $container->get('plugin.manager.acm_dashboard_item'),
+      $container->get('system.manager')
     );
   }
 
@@ -44,6 +56,7 @@ class DashboardController extends ControllerBase {
     $build['content'] = [
       '#theme' => 'dashboard',
       '#items' => $this->dashboardManager->getDashboardItems(),
+      '#menu' => $this->systemManager->getBlockContents(),
     ];
     $build['#attached']['library'][] = 'acm/dashboard';
 

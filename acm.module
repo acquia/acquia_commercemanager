@@ -206,6 +206,7 @@ function acm_theme($existing, $type, $theme, $path) {
     'dashboard' => [
       'variables' => [
         'items' => [],
+        'menu' => [],
       ],
     ],
     'dashboard_item' => [
