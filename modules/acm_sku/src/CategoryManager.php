@@ -322,34 +322,25 @@ class CategoryManager implements CategoryManagerInterface {
         $this->logger->error('Multiple terms found for category id @cid', ['@cid' => $category['category_id']]);
       }
 
+      $existingTermData = [];
+
       // Always use the first term and continue.
       if (count($tids) > 0) {
-        $this->logger->info('Updating category term @name [@id]', [
-          '@name' => $category['name'],
-          '@id' => $category['category_id'],
-        ]);
-
         // Load and update the term entity.
         /** @var \Drupal\taxonomy\Entity\Term $term */
-        $term = $this->termStorage->load(array_shift($tids));
+        $term = $this->getTranslatedTerm(array_shift($tids));
 
-        if (!$term->hasTranslation($langcode)) {
-          $term = $term->addTranslation($langcode);
-
-          // We doing this because when the translation of node is created by
-          // addTranslation(), pathauto alias is not created for the translated
-          // version.
-          // @see https://www.drupal.org/project/pathauto/issues/2995829.
-          if ($this->modulehandler->moduleExists('pathauto')) {
-            $term->path->pathauto = 1;
-          }
-
-          $term->get('field_commerce_id')->setValue($category['category_id']);
-        }
-        else {
-          $term = $term->getTranslation($langcode);
+        // We doing this because when the translation of node is created by
+        // addTranslation(), pathauto alias is not created for the translated
+        // version.
+        // @see https://www.drupal.org/project/pathauto/issues/2995829.
+        if ($this->modulehandler->moduleExists('pathauto')) {
+          $term->path->pathauto = 1;
         }
 
+        $existingTermData = $term->toArray();
+
+        $term->get('field_commerce_id')->setValue($category['category_id']);
         $term->setName($category['name']);
         $term->parent = $parent_data;
         $term->weight->value = $position;
@@ -365,14 +356,8 @@ class CategoryManager implements CategoryManagerInterface {
         }
 
         $this->results['updated']++;
-
       }
       else {
-        // Create the term entity.
-        $this->logger->info('Creating category term @name [@id]',
-          ['@name' => $category['name'], '@id' => $category['category_id']]
-        );
-
         $term = $this->termStorage->create([
           'vid' => $this->vocabulary->id(),
           'name' => $category['name'],
@@ -401,6 +386,25 @@ class CategoryManager implements CategoryManagerInterface {
 
       try {
         $term->save();
+
+        // $existingTermData will have value when it is updating.
+        if ($existingTermData) {
+          $updatedTerm = $this->getTranslatedTerm($term->id());
+          $updatedTermData = $updatedTerm->toArray();
+
+          $this->logger->info('Updated category @magento_id for @langcode: @diff.', [
+            '@langcode' => $langcode,
+            '@magento_id' => $category['category_id'],
+            '@diff' => DiffArray::diffAssocRecursive($updatedTermData, $existingTermData),
+          ]);
+        }
+        else {
+          $this->logger->info('New category @magento_id for @langcode saved.', [
+            '@langcode' => $langcode,
+            '@magento_id' => $category['category_id'],
+          ]);
+        }
+
         // Release the lock.
         $lock->release($lock_key);
         $lock_key = NULL;
@@ -419,6 +423,30 @@ class CategoryManager implements CategoryManagerInterface {
       $childCats = (isset($category['children'])) ? $category['children'] : [];
       $this->syncCategory($childCats, $term, $storeId);
     }
+  }
+
+  /**
+   * Wrapper function to get translated term for tid.
+   *
+   * @param mixed $tid
+   *   Not sure about Drupal standards as of now, it can be int/string.
+   * @param string $langcode
+   *   Language code.
+   *
+   * @return \Drupal\taxonomy\TermInterface
+   *   Loaded, translated term.
+   */
+  private function getTranslatedTerm($tid, string $langcode): TermInterface {
+    $term = $this->termStorage->load($tid);
+
+    if (!$term->hasTranslation($langcode)) {
+      $term = $term->addTranslation($langcode);
+    }
+    else {
+      $term = $term->getTranslation($langcode);
+    }
+
+    return $term;
   }
 
 }

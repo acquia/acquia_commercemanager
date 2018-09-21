@@ -80,10 +80,7 @@ class ProductManager implements ProductManagerInterface {
   private $created;
   private $updated;
   private $failedSkus;
-  private $createdSkus;
   private $ignoredSkus;
-  private $deletedSkus;
-  private $updatedSkus;
   private $debugDir;
 
   /**
@@ -412,8 +409,6 @@ class ProductManager implements ProductManagerInterface {
           $node = $plugin->getDisplayNode($sku, FALSE, TRUE);
           if (empty($node)) {
             $node = $this->createDisplayNode($product, $langcode);
-            $this->createdSkus[] = $product['sku'];
-            $this->created++;
           }
           elseif ($node->hasTranslationChanges()) {
             $this->updateNodeTranslation($node, $product, $langcode);
@@ -516,18 +511,6 @@ class ProductManager implements ProductManagerInterface {
     }
 
     // Log product import summary.
-    if (!empty($this->createdSkus)) {
-      $this->logger->info('SKU import, created: @created_skus', ['@created_skus' => implode(',', $this->createdSkus)]);
-    }
-
-    if (!empty($this->deletedSkus)) {
-      $this->logger->info('SKU import, deleted: @deleted_skus', ['@deleted_skus' => implode(',', $this->deletedSkus)]);
-    }
-
-    if (!empty($this->updatedSkus)) {
-      $this->logger->info('SKU import, updated: @updated_skus', ['@updated_skus' => implode(',', $this->updatedSkus)]);
-    }
-
     if (!empty($this->failedSkus)) {
       $this->logger->error('SKU import, failed: @failed_skus', ['@failed_skus' => implode(',', $this->failedSkus)]);
     }
@@ -620,14 +603,20 @@ class ProductManager implements ProductManagerInterface {
       } while (!$lock_acquired);
 
       /** @var \Drupal\acm_sku\Entity\SKU $sku */
-      if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
-        $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
-
+      if ($sku = SKU::loadFromSku($stock['sku'], $langcode, FALSE)) {
         if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
           $stock['quantity'] = 0;
         }
 
         $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
+        $old = $sku->get('stock')->getString();
+
+        $args = [
+          '@sku' => $stock['sku'],
+          '@old' => $old,
+          '@new' => $quantity,
+          '@debug' => json_encode($stock),
+        ];
 
         if ($quantity != $sku->get('stock')->getString()) {
           $sku->get('stock')->setValue($quantity);
@@ -635,6 +624,11 @@ class ProductManager implements ProductManagerInterface {
 
           // Clear product and forms related to sku.
           Cache::invalidateTags(['acm_sku:' . $sku->id()]);
+
+          $this->logger->info('Updated stock for SKU @sku: old quantity @old / new quantity: @new. Debug info @debug.', $args);
+        }
+        else {
+          $this->logger->info('Ignored stock update for SKU @sku: old quantity @old / new quantity: @new. Debug info @debug.', $args);
         }
       }
 
@@ -739,6 +733,9 @@ class ProductManager implements ProductManagerInterface {
    */
   public function processSku(array $product, $langcode) {
     $em = $this->entityManager->getStorage('acm_sku');
+
+    $existingSkuData = [];
+
     if ($sku = SKU::loadFromSku($product['sku'], $langcode, FALSE, TRUE)) {
       if ($product['status'] != 1 && $this->configFactory->get('acm.connector')->get('delete_disabled_skus')) {
         $this->logger->info('Removing disabled SKU from system: @sku.', ['@sku' => $product['sku']]);
@@ -756,13 +753,17 @@ class ProductManager implements ProductManagerInterface {
 
         // Delete the SKU.
         $sku->delete();
-        $this->deletedSkus[] = $product['sku'];
+
+        $this->logger->info('Deleted SKU @sku for @langcode', [
+          '@sku' => $sku->getSku(),
+          '@langcode' => $langcode,
+        ]);
+
         $this->deleted++;
         return NULL;
       }
 
-      $this->logger->info('Updating product SKU @sku.', ['@sku' => $product['sku']]);
-      $this->updatedSkus[] = $product['sku'];
+      $existingSkuData = $sku->toArray();
       $this->updated++;
     }
     else {
@@ -778,7 +779,6 @@ class ProductManager implements ProductManagerInterface {
         'langcode' => $langcode,
       ]);
 
-      $this->createdSkus[] = $product['sku'];
       $this->created++;
     }
 
@@ -836,6 +836,25 @@ class ProductManager implements ProductManagerInterface {
     $this->moduleHandler->alter('acm_sku_product_sku', $sku, $product);
 
     $sku->save();
+
+    // $existingSkuData will have value when it is updating.
+    if ($existingSkuData) {
+      // Load SKU again to have exact same data structure.
+      $sku_entity = SKU::loadFromSku($product['sku'], $langcode, FALSE);
+      $updatedSkuData = $sku_entity->toArray();
+
+      $this->logger->info('Updated SKU @sku for @langcode: @diff', [
+        '@sku' => $sku->getSku(),
+        '@langcode' => $langcode,
+        '@diff' => json_encode(self::getArrayDiff($updatedSkuData, $existingSkuData)),
+      ]);
+    }
+    else {
+      $this->logger->info('New SKU @sku for @langcode', [
+        '@sku' => $sku->getSku(),
+        '@langcode' => $langcode,
+      ]);
+    }
 
     // Update product media to set proper position.
     $sku->media = $this->getProcessedMedia($product, $sku->media->value);
@@ -1061,6 +1080,24 @@ class ProductManager implements ProductManagerInterface {
     }
 
     return serialize($media);
+  }
+
+  /**
+   * Helper function to get recursive array diff.
+   *
+   * @param array $array1
+   *   Array one.
+   * @param array $array2
+   *   Array two.
+   *
+   * @return array
+   *   Array containing difference of two arrays, empty array if no diff.
+   */
+  public static function getArrayDiff($array1, $array2): array {
+    // Cleanup in both arrays first.
+    unset($array1['changed']);
+    unset($array2['changed']);
+    return DiffArray::diffAssocRecursive($array1, $array2);
   }
 
 }
