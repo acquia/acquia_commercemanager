@@ -1093,7 +1093,7 @@ class ProductManager implements ProductManagerInterface {
    * @return array
    *   Array containing difference of two arrays, empty array if no diff.
    */
-  public static function getArrayDiff($array1, $array2): array {
+  public static function getArrayDiff(array $array1, array $array2): array {
     // Cleanup in both arrays first.
     unset($array1['changed']);
     unset($array2['changed']);
