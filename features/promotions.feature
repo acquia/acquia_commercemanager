@@ -14,13 +14,13 @@ Feature: Test various scenarios for promotions
     And I fill in "acm-promotion-coupon" with "incorrect-coupon-code"
     And I press "Update"
     And I wait for the page to load
-    Then I should see "Form errors cannot be set after form validation has finished" in the "highlighted"
+    Then I should see "Coupon code is not valid" in the "highlighted"
     And I should see "Your cart has been updated." in the "highlighted"
 
     When I fill in "acm-promotion-coupon" with "demo"
     And I press "Update"
     And I wait for the page to load
-    Then I should see "Form errors cannot be set after form validation has finished" in the "highlighted"
+    Then I should see "Coupon code is not valid" in the "highlighted"
     And I should see "Your cart has been updated." in the "highlighted"
 
     When I fill in "edit-cart-24-mb01-quantity" with "3"
@@ -39,7 +39,7 @@ Feature: Test various scenarios for promotions
     When I fill in "edit-cart-24-mb01-quantity" with "2"
     And I press "Update"
     And I wait for the page to load
-    Then I should see "Form errors cannot be set after form validation has finished" in the "highlighted"
+    Then I should see "Coupon code is not valid" in the "highlighted"
     And I should see "Your cart has been updated." in the "highlighted"
     And I should see the price doubled for the product
 
