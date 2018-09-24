@@ -25,9 +25,15 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
 
   private $simple_title;
 
+  private $simple_price;
+
   private $simple_doubled_price;
 
+  private $simple_price_four;
+
   private $simple_discounted_price;
+
+  private $simple_discounted_price_four;
 
 
   /**
@@ -39,8 +45,11 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   public function __construct($parameters) {
     $this->simple_url = $parameters['simpleurl'];
     $this->simple_title = $parameters['simpletitle'];
+    $this->simple_price = $parameters['simpleprice'];
     $this->simple_doubled_price = $parameters['simpledoupbledprice'];
+    $this->simple_price_four = $parameters['simplepricefour'];
     $this->simple_discounted_price = $parameters['simplediscountedprice'];
+    $this->simple_discounted_price_four = $parameters['simplediscountedpricefour'];
   }
 
   /**
@@ -129,6 +138,32 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $expected_price = $page->find('css', '[data-drupal-selector="edit-totals-grand"] td:last-child')->getText();
     if ($expected_price != $this->simple_discounted_price) {
       throw new \Exception('Price did not get updated after adding the coupon');
+    }
+  }
+
+  /**
+   * @Given I should see the discounted price for four products
+   * @throws Exception
+   */
+  public function iShouldSeeTheDiscountedPriceForFourProducts()
+  {
+    $page = $this->getSession()->getPage();
+    $expected_price = $page->find('css', '[data-drupal-selector="edit-totals-grand"] td:last-child')->getText();
+    if ($expected_price != $this->simple_discounted_price_four) {
+      throw new \Exception('Discounted price is incorrect. Expected '.$expected_price.' to equal '.$this->simple_discounted_price_four);
+    }
+  }
+
+  /**
+   * @Given I should see the price for four products
+   * @throws Exception
+   */
+  public function iShouldSeeThePriceForFourProducts()
+  {
+    $page = $this->getSession()->getPage();
+    $expected_price = $page->find('css', '[data-drupal-selector="edit-totals-grand"] td:last-child')->getText();
+    if ($expected_price != $this->simple_price_four) {
+      throw new \Exception('Price is incorrect. Expected '.$expected_price.' to equal '.$this->simple_price_four);
     }
   }
 
