@@ -7,8 +7,10 @@ default:
               simpleurl: '/node/1'
               simpletitle: 'Joust Duffle Bag'
               simpleprice: '$34.00'
+              simplepricefour: '$136.00'
               simpledoupbledprice: '$68.00'
               simplediscountedprice: '$81.60'
+              simplediscountedpricefour: '$108.80'
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MessageContext
@@ -29,3 +31,4 @@ default:
         drupal_root: '/var/www/html'
       region_map:
         content: "#content"
+        highlighted: ".highlighted"
