@@ -160,8 +160,8 @@ class ProductManagerTest extends BrowserTestBase {
       ->synchronizeProducts($simpleProducts);
 
     $this->assertSame($result["success"], TRUE);
-    // 2 nodes and 2 skus created.
-    $this->assertSame($result["created"], 4);
+    // 2 skus created.
+    $this->assertSame($result["created"], 2);
 
     $nodes = $this->container->get('entity_type.manager')
       ->getStorage("node")
@@ -345,8 +345,8 @@ class ProductManagerTest extends BrowserTestBase {
     $result = $this->container->get('acm_sku.product_manager')
       ->synchronizeProducts($simpleProductsMoreData);
     $this->assertSame($result["success"], TRUE);
-    // 2 nodes and 2 skus created.
-    $this->assertSame($result["created"], 4);
+    // 2 skus created.
+    $this->assertSame($result["created"], 2);
 
     $nodes = $this->container->get('entity_type.manager')
       ->getStorage("node")
