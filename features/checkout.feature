@@ -69,7 +69,7 @@ Feature: Test Checkout feature
     And I select "MA" from "edit-billing-information-address-address-fields-region"
     And I fill in "edit-billing-information-address-address-fields-postcode" with "12345"
     When I press "Continue to shipping"
-    Then I should see "Please fill out this field" in the "body"
+    Then HTML5 form validation should fail on "edit-billing-information-address-address-fields-firstname"
 
     When I fill in "edit-billing-information-address-address-fields-firstname" with "Dries"
     And I press "Continue to shipping"
