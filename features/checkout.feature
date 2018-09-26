@@ -137,7 +137,7 @@ Feature: Test Checkout feature
 
     When I fill in "edit-billing-information-address-address-fields-postcode" with "54321"
     And I press "Continue to shipping"
-    Then I should see "12345" the old post code in the "edit-shipping-information-address-address-fields-postcode--*"
+    Then I should see "12345" the old post code in "edit-shipping-information-address-address-fields-postcode"
     # AND I expect my shipping-method choice to be remembered. Please make it so
     When I press "Estimate Shipping"
     And I wait for AJAX to finish
@@ -150,8 +150,29 @@ Feature: Test Checkout feature
     And I wait for AJAX to finish
     And I press "Continue to review"
     And I wait for the page to load
-    Then I should see "54321" in BILLING
-    And I should see "12345" in SHIPPING
+    Then I should see "54321" within "edit-review-billing-information"
+    And I should see "12345" within "edit-review-shipping-information"
+
+    When I press Edit inside billing
+    And I wait for the page to load
+    And I select "KG" from "edit-billing-information-address-address-fields-country-id"
+    And I press "Continue to shipping"
+    Then I should see "12345" the shipping address post code in "edit-shipping-information-address-address-fields-postcode"
+    And I should see "US" selected as the shipping address country in "edit-shipping-information-address-address-fields-country-id"
+    # AND I expect my shipping-method choice to be remembered. Please make it so
+    When I press "Estimate Shipping"
+    And I wait for AJAX to finish
+    And I select "Best Way — Table Rate (15)" from "shipping_methods_wrapper"
+    And I wait 1 seconds
+    And I press "Continue to payment"
+    And I wait for the page to load
+    # AND I expect my payment choice to be remembered. Please make it so
+    But I select the radio button "Cash on delivery"
+    And I wait for AJAX to finish
+    And I press "Continue to review"
+    And I wait for the page to load
+    Then I should see "United States" within "edit-review-billing-information"
+    And I should see "Kyrgyzstan" within  "edit-review-shipping-information"
 
     When I press "Pay and complete purchase"
     And I wait for the page to load
