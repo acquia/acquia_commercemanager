@@ -128,20 +128,6 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
-   * @Given HTML5 form validation should fail on :arg1
-   */
-  public function HTML5FormValidationShouldFail($arg1)
-  {
-    $page = $this->getSession()->getPage();
-    $formField = $page->find('css','#'.$arg1);
-    $validationMessage = $formField->getAttribute("validationMessage");
-    echo("VALIDATION MESSAGE IS: "$validationMessage);
-    if (strlen($validationMessage) < 1) {
-      throw new \Exception('HTML5 validation message missing');
-    }
-  }
-
-  /**
    * @Then /^I should see the price doubled for the product$/
    */
   public function iShouldSeeThePriceDoubledForTheProduct()

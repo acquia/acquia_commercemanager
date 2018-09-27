@@ -61,7 +61,7 @@ Feature: Test Checkout feature
   I should be able to change billing address after visting the shipping page and still be able to checkout using COD
     Given I enter a valid Email ID in field "edit-billing-information-address-email"
     And I select "Mr" from "edit-billing-information-address-address-fields-title"
-    #And I fill in "edit-billing-information-address-address-fields-firstname" with "Dries"
+    And I fill in "edit-billing-information-address-address-fields-firstname" with "Dries"
     And I fill in "edit-billing-information-address-address-fields-lastname" with "Buytart"
     And I fill in "edit-billing-information-address-address-fields-telephone" with "55004455"
     And I fill in "edit-billing-information-address-address-fields-street" with "State street 1"
@@ -69,10 +69,6 @@ Feature: Test Checkout feature
     And I select "MA" from "edit-billing-information-address-address-fields-region"
     And I fill in "edit-billing-information-address-address-fields-postcode" with "12345"
     When I press "Continue to shipping"
-    Then HTML5 form validation should fail on "edit-billing-information-address-address-fields-firstname"
-
-    When I fill in "edit-billing-information-address-address-fields-firstname" with "Dries"
-    And I press "Continue to shipping"
     And I wait for the page to load
     Then I should not see "There was an error retrieving your account. Please try again."
 
