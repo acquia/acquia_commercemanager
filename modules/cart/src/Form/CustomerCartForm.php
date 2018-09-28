@@ -37,20 +37,6 @@ class CustomerCartForm extends FormBase {
   protected $successMessage = NULL;
 
   /**
-   * The warning message to be displayed on coupon apply.
-   *
-   * @var string
-   */
-  protected $warningMessage = NULL;
-
-  /**
-   * The error message to be displayed on cart update.
-   *
-   * @var string
-   */
-  protected $errorMessage = NULL;
-
-  /**
    * Constructor.
    *
    * @param \Drupal\acm_cart\CartStorageInterface $cart_storage
@@ -225,7 +211,7 @@ class CustomerCartForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
 
     $cartFormItems = $form_state->getValue('cart');
 
@@ -267,16 +253,12 @@ class CustomerCartForm extends FormBase {
         // (Is it? What about the error state?)
         // If we have success message available.
         $msg = !empty($this->successMessage) ? $this->successMessage : $this->t('Your cart has been updated.');
-        drupal_set_message($msg);
-        // If we have warning message available.
-        if (!empty($this->warningMessage)) {
-          drupal_set_message($this->warningMessage, 'warning');
-        }
-        // If we have error message available.
-        if (!empty($this->errorMessage)) {
-          drupal_set_message($this->errorMessage, 'error');
-        }
+        $this->messenger()->addMessage($msg);
     }
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+
   }
 
   /**
@@ -293,34 +275,24 @@ class CustomerCartForm extends FormBase {
       // the response message string while key '1' contains the response
       // message context/type like success or coupon.
       if (!empty($response_message[1])) {
-        $translatedResponseMessage = t($response_message[0]);
         // If its success.
         if ($response_message[1] == 'success') {
-          $this->successMessage = $translatedResponseMessage;
+          $this->successMessage = $response_message[0];
         }
         elseif ($response_message[1] == 'error_coupon') {
           // Set the error and require rebuild.
-          // NO. Causes Drupal to throw exception:
-          // 'Form errors cannot be set after form validation has finished'.
-          //$form_state->setErrorByName('coupon', $response_message[0]);
-          //$form_state->setRebuild(TRUE);
-          $this->warningMessage = $translatedResponseMessage;
+          $form_state->setErrorByName('coupon', $response_message[0]);
+          $form_state->setRebuild(TRUE);
 
           // Remove the coupon and update the cart.
-          // NO. Always update to what ecommerce sent back.
-          // Do not revert to some state that does not represent the ecommerce's cart's state
-          // The Drupal cart was already updated above. Do nothing here.
-          //$this->cartStorage->setCoupon('');
-          //$this->updateCart($form_state);
-        }
-        else {
-          $this->errorMessage = $translatedResponseMessage;
+          $this->cartStorage->setCoupon('');
+          $this->updateCart($form_state);
         }
       }
     }
     catch (\Exception $e) {
       if (acm_is_exception_api_down_exception($e)) {
-        drupal_set_message($e->getMessage(), 'error');
+        $this->messenger()->addError($e->getMessage());
         $form_state->setErrorByName('custom', $e->getMessage());
         $form_state->setRebuild(TRUE);
       }
@@ -329,7 +301,7 @@ class CustomerCartForm extends FormBase {
       $dispatcher = \Drupal::service('event_dispatcher');
       $event = new UpdateCartErrorEvent($e);
       $dispatcher->dispatch(UpdateCartErrorEvent::SUBMIT, $event);
-      drupal_set_message($e->getMessage(), 'error');
+      $this->messenger()->addError($e->getMessage());
     }
   }
 
