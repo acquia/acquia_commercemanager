@@ -110,6 +110,16 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
+   * @Given /^I enter an invalid Email ID in field "([^"]*)"$/
+   */
+  public function iEnterAnInvalidEmailID($field)
+  {
+    $randomString = 'randemail' . rand(2, getrandmax());
+    $email_id = $randomString . '@gmailcom';
+    $this->getSession()->getPage()->fillField($field, $email_id);
+  }
+
+  /**
    * @Given /^I wait (\d+) seconds$/
    */
   public function iWaitSeconds($seconds)

@@ -104,7 +104,15 @@ class ProductManager implements ProductManagerInterface {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, CategoryRepositoryInterface $cat_repo, ProductOptionsManager $product_options_manager, I18nHelper $i18nHelper, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    ConfigFactoryInterface $config_factory,
+    LoggerChannelFactoryInterface $logger_factory,
+    CategoryRepositoryInterface $cat_repo,
+    ProductOptionsManager $product_options_manager,
+    I18nHelper $i18nHelper,
+    ModuleHandlerInterface $moduleHandler
+  ) {
     $this->entityManager = $entity_type_manager;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');

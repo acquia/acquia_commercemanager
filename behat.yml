@@ -31,4 +31,6 @@ default:
         drupal_root: '/var/www/html'
       region_map:
         content: "#content"
+        body: "body"
+        page: "#page"
         highlighted: ".highlighted"
