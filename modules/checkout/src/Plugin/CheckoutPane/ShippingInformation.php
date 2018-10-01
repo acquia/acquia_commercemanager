@@ -183,9 +183,36 @@ class ShippingInformation extends CheckoutPaneBase {
       $address_fields['address_fields']['dynamic_parts']['region']['#value'] = $possiblyMatchingRegion;
 
       $address_fields['address_fields']['dynamic_parts'] = array_replace_recursive($address_fields['address_fields']['dynamic_parts'], $dynamic_parts);
+      if (!empty($use_billing_address)) {
+        self::disableFields($address_fields['address_fields']);
+      }
     }
 
     return $form['shipping_information'];
+  }
+
+  /**
+   * Add attributes for disabled fields.
+   *
+   * @param array $fields
+   *   Associated array of fields.
+   */
+  public static function disableFields(array &$fields) {
+    $keys = array_keys($fields);
+    foreach ($keys as $key) {
+      // Filter out items like #type, not real fields.
+      if (strpos($key, '#') !== FALSE) {
+        continue;
+      }
+      if ($key === 'dynamic_parts') {
+        self::disableFields($fields[$key]);
+        continue;
+      }
+      $fields[$key]['#attributes'] = [
+        'disabled' => 'disabled',
+        'class' => ['disabled'],
+      ];
+    }
   }
 
   /**
@@ -251,9 +278,10 @@ class ShippingInformation extends CheckoutPaneBase {
         ->getShippingEstimates($cart->id(), $address, $customer_id);
     }
     catch (\Exception $error) {
-      \Drupal::logger('acm_checkout')->error(t('Unable to fetch shipping methods: @reason', [
-        '@reason' => $error->getMessage(),
-      ]));
+      \Drupal::logger('acm_checkout')
+        ->error(t('Unable to fetch shipping methods: @reason', [
+          '@reason' => $error->getMessage(),
+        ]));
     }
 
     if (empty($shipping_methods)) {
