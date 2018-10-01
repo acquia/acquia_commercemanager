@@ -211,7 +211,7 @@ class CustomerCartForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
 
     $cartFormItems = $form_state->getValue('cart');
 
@@ -253,8 +253,15 @@ class CustomerCartForm extends FormBase {
         // (Is it? What about the error state?)
         // If we have success message available.
         $msg = !empty($this->successMessage) ? $this->successMessage : $this->t('Your cart has been updated.');
-        drupal_set_message($msg);
+        $this->messenger()->addMessage($msg);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+
   }
 
   /**
@@ -288,7 +295,7 @@ class CustomerCartForm extends FormBase {
     }
     catch (\Exception $e) {
       if (acm_is_exception_api_down_exception($e)) {
-        drupal_set_message($e->getMessage(), 'error');
+        $this->messenger()->addError($e->getMessage());
         $form_state->setErrorByName('custom', $e->getMessage());
         $form_state->setRebuild(TRUE);
       }
@@ -297,7 +304,7 @@ class CustomerCartForm extends FormBase {
       $dispatcher = \Drupal::service('event_dispatcher');
       $event = new UpdateCartErrorEvent($e);
       $dispatcher->dispatch(UpdateCartErrorEvent::SUBMIT, $event);
-      drupal_set_message($e->getMessage(), 'error');
+      $this->messenger()->addError($e->getMessage());
     }
   }
 
