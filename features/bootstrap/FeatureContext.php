@@ -202,4 +202,58 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     }
   }
 
+  /**
+   * @Then the :arg1 field should have label :arg2
+   */
+  public function theFieldShouldHaveLabel($arg1, $arg2)
+  {
+    throw new PendingException();
+  }
+
+  /**
+   * Checks, that form field with specified id has specified value
+   * Example: Then the "username" ajax field should contain "bwayne"
+   * Example: And the "username" ajax field should contain "bwayne"
+   *
+   * @Then /^the "(?P<field>(?:[^"]|\\")*)" ajax field should contain "(?P<value>(?:[^"]|\\")*)"$/
+   */
+  public function assertAjaxFieldContains($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    if ($element->getValue() != $value) {
+      throw new \Exception("Values are not the same.");
+    }
+  }
+
+  /**
+   * Selects option in select field with specified id
+   * Example: When I select "Bats" from ajax field "user_fears"
+   * Example: And I select "Bats" from ajax field "user_fears"
+   *
+   * @When /^(?:|I )select "(?P<option>(?:[^"]|\\")*)" from ajax field "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function selectAjaxOption($field, $option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    $element->selectOption($option);
+  }
+
+  /**
+   * Fills in form field with specified id
+   * Example: When I fill in ajax field "username" with: "bwayne"
+   * Example: And I fill in ajax field "bwayne" for "username"
+   *
+   * @When /^(?:|I )fill in ajax field "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)"$/
+   * @When /^(?:|I )fill in ajax field "(?P<field>(?:[^"]|\\")*)" with:$/
+   * @When /^(?:|I )fill in ajax field "(?P<value>(?:[^"]|\\")*)" for "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function fillAjaxField($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    $element->setValue($value);
+  }
+
 }
