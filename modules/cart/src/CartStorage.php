@@ -13,8 +13,11 @@ use Drupal\acm_cart\Event\Events;
 use Drupal\acm\Connector\APIWrapperInterface;
 use Drupal\acm\SessionStoreInterface;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class CartStorage.
@@ -59,6 +62,20 @@ class CartStorage implements CartInterface, CartStorageInterface {
   protected $cart;
 
   /**
+   * Config.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $config;
+
+  /**
+   * Incoming request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\acm\SessionStoreInterface $storage
@@ -69,13 +86,23 @@ class CartStorage implements CartInterface, CartStorageInterface {
    *   The event dispatcher.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   LoggerFactory object.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory object.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   Request object.
    */
-  public function __construct(SessionStoreInterface $storage, APIWrapperInterface $api_wrapper, EventDispatcherInterface $event_dispatcher, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(SessionStoreInterface $storage,
+                              APIWrapperInterface $api_wrapper,
+                              EventDispatcherInterface $event_dispatcher,
+                              LoggerChannelFactoryInterface $logger_factory,
+                              ConfigFactoryInterface $config_factory,
+                              RequestStack $request_stack) {
     $this->storage = $storage;
     $this->apiWrapper = $api_wrapper;
     $this->eventDispatcher = $event_dispatcher;
     $this->logger = $logger_factory->get('acm_cart');
-
+    $this->config = $config_factory->get('acm.commerce_users');
+    $this->request = $request_stack->getCurrentRequest();
     // Load the intial cart.
     $cart = $this->storage->get(self::STORAGE_KEY);
     if (!empty($cart) && $cart instanceof CartInterface) {
@@ -91,7 +118,6 @@ class CartStorage implements CartInterface, CartStorageInterface {
    */
   public function getCartId($create_new = TRUE) {
     $cookies = $this->getCookies();
-    $cart_id = NULL;
 
     if (isset($cookies['Drupal_visitor_acm_cart_id'])) {
       return $cookies['Drupal_visitor_acm_cart_id'];
@@ -456,12 +482,11 @@ class CartStorage implements CartInterface, CartStorageInterface {
   /**
    * Gets the current user.
    *
-   * @return \Drupal\Core\Session\AccountProxy
+   * @return \Drupal\Core\Session\AccountProxyInterface
    *   The current user.
    */
   protected function getCurrentUser() {
-    $use_ecomm_sessions = \Drupal::config('acm.commerce_users')
-      ->get('use_ecomm_sessions');
+    $use_ecomm_sessions = $this->config->get('use_ecomm_sessions');
 
     if ($use_ecomm_sessions) {
       return \Drupal::service('acm.commerce_user_manager');
@@ -486,8 +511,7 @@ class CartStorage implements CartInterface, CartStorageInterface {
       return $customer_id;
     }
 
-    $use_ecomm_sessions = \Drupal::config('acm.commerce_users')
-      ->get('use_ecomm_sessions');
+    $use_ecomm_sessions = $this->config->get('use_ecomm_sessions');
 
     if ($use_ecomm_sessions) {
       $customer_id = $current_user->getAccount()->id();
@@ -506,8 +530,8 @@ class CartStorage implements CartInterface, CartStorageInterface {
    *   The cookies.
    */
   protected function getCookies() {
-    if (isset(\Drupal::request()->cookies)) {
-      return \Drupal::request()->cookies->all();
+    if (isset($this->request->cookies)) {
+      return $this->request->cookies->all();
     }
     return $_COOKIE;
   }
@@ -526,8 +550,8 @@ class CartStorage implements CartInterface, CartStorageInterface {
       return;
     }
 
-    if (isset(\Drupal::request()->cookies)) {
-      \Drupal::request()->cookies->set("Drupal_visitor_{$name}", $value);
+    if (isset($this->request->cookies)) {
+      $this->request->cookies->set("Drupal_visitor_{$name}", $value);
     }
 
     user_cookie_save([

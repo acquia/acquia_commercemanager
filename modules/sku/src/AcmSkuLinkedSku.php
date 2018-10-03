@@ -15,6 +15,26 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 class AcmSkuLinkedSku {
 
   /**
+   * For the all.
+   */
+  const LINKED_SKU_TYPE_ALL = 'all';
+
+  /**
+   * For the upsell.
+   */
+  const LINKED_SKU_TYPE_UPSELL = 'upsell';
+
+  /**
+   * For the cross_sell.
+   */
+  const LINKED_SKU_TYPE_CROSSSELL = 'crosssell';
+
+  /**
+   * For the related.
+   */
+  const LINKED_SKU_TYPE_RELATED = 'related';
+
+  /**
    * The connector api wrapper.
    *
    * @var \Drupal\acm\Connector\APIWrapper
@@ -82,7 +102,7 @@ class AcmSkuLinkedSku {
    * @return array
    *   All linked skus of given type.
    */
-  public function getLinkedskus(SKU $sku, $type = LINKED_SKU_TYPE_ALL) {
+  public function getLinkedskus(SKU $sku, $type = self::LINKED_SKU_TYPE_ALL) {
     // Cache key is like - 'acm_sku:linked_skus:123:LINKED_SKU_TYPE_ALL'.
     $cache_key = 'acm_sku:linked_skus:' . $sku->id() . ':' . $type;
     // Get cached data.
@@ -95,7 +115,7 @@ class AcmSkuLinkedSku {
     try {
       // Get linked skus and set the cache.
       $linked_skus = $this->apiWrapper->getLinkedskus($sku->getSku(), $type);
-      $data = $type != LINKED_SKU_TYPE_ALL ? $linked_skus[$type] : $linked_skus;
+      $data = $type != self::LINKED_SKU_TYPE_ALL ? $linked_skus[$type] : $linked_skus;
       // Set the cache.
       if ($cache_lifetime = $this->configFactory->get('acm_sku.settings')->get('linked_skus_cache_max_lifetime')) {
         $cache_lifetime += \Drupal::time()->getRequestTime();

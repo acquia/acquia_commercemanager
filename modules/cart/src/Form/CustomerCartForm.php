@@ -2,11 +2,13 @@
 
 namespace Drupal\acm_cart\Form;
 
+use Drupal\acm\I18nHelper;
 use Drupal\acm_cart\CartStorageInterface;
 use Drupal\acm\UpdateCartErrorEvent;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class CustomerCartForm.
@@ -30,6 +32,20 @@ class CustomerCartForm extends FormBase {
   protected $cartStorage;
 
   /**
+   * Internationalization helper object.
+   *
+   * @var \Drupal\acm\I18nHelper
+   */
+  protected $i18nHelper;
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * The success message to be displayed on coupon apply.
    *
    * @var string
@@ -41,9 +57,15 @@ class CustomerCartForm extends FormBase {
    *
    * @param \Drupal\acm_cart\CartStorageInterface $cart_storage
    *   The cart storage.
+   * @param \Drupal\acm\I18nHelper $i18n_helper
+   *   Internationalization helper object.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    */
-  public function __construct(CartStorageInterface $cart_storage) {
+  public function __construct(CartStorageInterface $cart_storage, I18nHelper $i18n_helper, EventDispatcherInterface $event_dispatcher) {
     $this->cartStorage = $cart_storage;
+    $this->i18nHelper = $i18n_helper;
+    $this->eventDispatcher = $event_dispatcher;
   }
 
   /**
@@ -51,7 +73,9 @@ class CustomerCartForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('acm_cart.cart_storage')
+      $container->get('acm_cart.cart_storage'),
+      $container->get('acm.i18n_helper'),
+      $container->get('event_dispatcher')
     );
   }
 
@@ -87,18 +111,18 @@ class CustomerCartForm extends FormBase {
     $form['cart'] = [
       '#type' => 'table',
       '#header' => [
-        t('Product'),
-        t('Quantity'),
-        t('Price'),
+        $this->t('Product'),
+        $this->t('Quantity'),
+        $this->t('Price'),
       ],
-      '#empty' => t('There are no products in your cart yet.'),
+      '#empty' => $this->t('There are no products in your cart yet.'),
     ];
 
     if (empty($items)) {
       return $form;
     }
 
-    foreach ($items as $index => $line_item) {
+    foreach ($items as $line_item) {
       // Ensure object notation.
       $line_item = (object) $line_item;
 
@@ -113,8 +137,7 @@ class CustomerCartForm extends FormBase {
 
       if (is_numeric($line_item->price)) {
         $form['cart'][$id]['price'] = [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($line_item->price),
+          '#markup' => $this->i18nHelper->formatPrice($line_item->price),
         ];
       }
       else {
@@ -131,53 +154,48 @@ class CustomerCartForm extends FormBase {
     $totals = $cart->totals();
 
     $form['totals']['sub'] = [
-      'label' => ['#plain_text' => t('Subtotal')],
+      'label' => ['#plain_text' => $this->t('Subtotal')],
       'value' => [
-        '#markup' => \Drupal::service('acm.i18n_helper')
-          ->formatPrice($totals['sub']),
+        '#markup' => $this->i18nHelper->formatPrice($totals['sub']),
       ],
     ];
 
     if ((float) $totals['tax'] > 0) {
       $form['totals']['tax'] = [
-        'label' => ['#plain_text' => t('Tax')],
+        'label' => ['#plain_text' => $this->t('Tax')],
         'value' => [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($totals['tax']),
+          '#markup' => $this->i18nHelper->formatPrice($totals['tax']),
         ],
       ];
     }
 
     if ((float) $totals['discount'] != 0) {
       $form['totals']['discount'] = [
-        'label' => ['#plain_text' => t('Discount')],
+        'label' => ['#plain_text' => $this->t('Discount')],
         'value' => [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($totals['discount']),
+          '#markup' => $this->i18nHelper->formatPrice($totals['discount']),
         ],
       ];
     }
 
     if ((float) $totals['shipping'] != 0) {
       $form['totals']['shipping'] = [
-        'label' => ['#plain_text' => t('Shipping')],
+        'label' => ['#plain_text' => $this->t('Shipping')],
         'value' => [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($totals['shipping']),
+          '#markup' => $this->i18nHelper->formatPrice($totals['shipping']),
         ],
       ];
     }
 
     $form['totals']['grand'] = [
-      'label' => ['#plain_text' => t('Grand total')],
+      'label' => ['#plain_text' => $this->t('Grand total')],
       'value' => [
-        '#markup' => \Drupal::service('acm.i18n_helper')
-          ->formatPrice($totals['grand']),
+        '#markup' => $this->i18nHelper->formatPrice($totals['grand']),
       ],
     ];
 
     $form['coupon'] = [
-      '#title' => t('Coupon code'),
+      '#title' => $this->t('Coupon code'),
       '#type' => 'textfield',
     ];
     $coupon = $cart->getCoupon();
@@ -189,19 +207,19 @@ class CustomerCartForm extends FormBase {
     $form['actions']['#type'] = 'actions';
     $form['actions']['update'] = [
       '#type' => 'submit',
-      '#value' => t('Update'),
+      '#value' => $this->t('Update'),
     ];
 
     if ($coupon) {
       $form['actions']['removeCoupon'] = [
         '#type' => 'submit',
-        '#value' => t('Remove coupon code'),
+        '#value' => $this->t('Remove coupon code'),
       ];
     }
 
     $form['actions']['checkout'] = [
       '#type' => 'submit',
-      '#value' => t('Checkout'),
+      '#value' => $this->t('Checkout'),
       '#button_type' => 'primary',
     ];
 
@@ -301,9 +319,7 @@ class CustomerCartForm extends FormBase {
       }
 
       // Dispatch event so action can be taken.
-      $dispatcher = \Drupal::service('event_dispatcher');
-      $event = new UpdateCartErrorEvent($e);
-      $dispatcher->dispatch(UpdateCartErrorEvent::SUBMIT, $event);
+      $this->eventDispatcher->dispatch(UpdateCartErrorEvent::SUBMIT, new UpdateCartErrorEvent($e));
       $this->messenger()->addError($e->getMessage());
     }
   }

@@ -4,6 +4,7 @@ namespace Drupal\acm\Connector;
 
 use Drupal\acm\APIHelper;
 use Drupal\acm\I18nHelper;
+use Drupal\acm_sku\AcmSkuLinkedSku;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
@@ -934,7 +935,7 @@ class APIWrapper implements APIWrapperInterface {
    *
    * @throws \Drupal\acm\Connector\RouteException
    */
-  public function getLinkedskus($sku, $type = LINKED_SKU_TYPE_ALL) {
+  public function getLinkedskus($sku, $type = AcmSkuLinkedSku::LINKED_SKU_TYPE_ALL) {
     $endpoint = $this->apiVersion . "/agent/product/$sku/related/$type";
 
     $doReq = function ($client, $opt) use ($endpoint) {

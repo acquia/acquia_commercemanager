@@ -12,26 +12,6 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Site\Settings;
 
 /**
- * For the all.
- */
-const LINKED_SKU_TYPE_ALL = 'all';
-
-/**
- * For the upsell.
- */
-const LINKED_SKU_TYPE_UPSELL = 'upsell';
-
-/**
- * For the cross_sell.
- */
-const LINKED_SKU_TYPE_CROSSSELL = 'crosssell';
-
-/**
- * For the related.
- */
-const LINKED_SKU_TYPE_RELATED = 'related';
-
-/**
  * Implements hook_page_attachments().
  */
 function acm_page_attachments(array &$attachments) {
