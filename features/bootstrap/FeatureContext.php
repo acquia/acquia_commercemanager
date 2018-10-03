@@ -203,11 +203,15 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
-   * @Then the :arg1 field should have label :arg2
+   * @Then /^the "(?P<field>(?:[^"]|\\")*)" field should have label "(?P<value>(?:[^"]|\\")*)"$/
    */
-  public function theFieldShouldHaveLabel($arg1, $arg2)
+  public function theFieldShouldHaveLabel($field, $value)
   {
-    throw new PendingException();
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[for^='" . $field . "']");
+    if ($element->getText() != $value) {
+      throw new \Exception("Label is different - " . $element->getText());
+    }
   }
 
   /**
@@ -254,6 +258,34 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     $page = $this->getSession()->getPage();
     $element = $page->find('css', "[id^='" . $field . "']");
     $element->setValue($value);
+  }
+
+  /**
+   * Checks checkbox with specified id|name|label|value
+   * Example: When I check "Pearl Necklace"
+   * Example: And I check "Pearl Necklace"
+   *
+   * @When /^(?:|I )check the ajax box "(?P<option>(?:[^"]|\\")*)"$/
+   */
+  public function checkAjaxCheckbox($option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $option . "']");
+    $element->check();
+  }
+
+  /**
+   * Unchecks checkbox with specified id|name|label|value
+   * Example: When I uncheck "Broadway Plays"
+   * Example: And I uncheck "Broadway Plays"
+   *
+   * @When /^(?:|I )uncheck the ajax box "(?P<option>(?:[^"]|\\")*)"$/
+   */
+  public function uncheckAjaxCheckbox($option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $option . "']");
+    $element->uncheck();
   }
 
 }
