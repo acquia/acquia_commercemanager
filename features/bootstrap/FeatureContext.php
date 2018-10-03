@@ -202,4 +202,90 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     }
   }
 
+  /**
+   * @Then /^the "(?P<field>(?:[^"]|\\")*)" field should have label "(?P<value>(?:[^"]|\\")*)"$/
+   */
+  public function theFieldShouldHaveLabel($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[for^='" . $field . "']");
+    if ($element->getText() != $value) {
+      throw new \Exception("Label is different - " . $element->getText());
+    }
+  }
+
+  /**
+   * Checks, that form field with specified id has specified value
+   * Example: Then the "username" ajax field should contain "bwayne"
+   * Example: And the "username" ajax field should contain "bwayne"
+   *
+   * @Then /^the "(?P<field>(?:[^"]|\\")*)" ajax field should contain "(?P<value>(?:[^"]|\\")*)"$/
+   */
+  public function assertAjaxFieldContains($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    if ($element->getValue() != $value) {
+      throw new \Exception("Values are not the same.");
+    }
+  }
+
+  /**
+   * Selects option in select field with specified id
+   * Example: When I select "Bats" from ajax field "user_fears"
+   * Example: And I select "Bats" from ajax field "user_fears"
+   *
+   * @When /^(?:|I )select "(?P<option>(?:[^"]|\\")*)" from ajax field "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function selectAjaxOption($field, $option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    $element->selectOption($option);
+  }
+
+  /**
+   * Fills in form field with specified id
+   * Example: When I fill in ajax field "username" with: "bwayne"
+   * Example: And I fill in ajax field "bwayne" for "username"
+   *
+   * @When /^(?:|I )fill in ajax field "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)"$/
+   * @When /^(?:|I )fill in ajax field "(?P<field>(?:[^"]|\\")*)" with:$/
+   * @When /^(?:|I )fill in ajax field "(?P<value>(?:[^"]|\\")*)" for "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function fillAjaxField($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    $element->setValue($value);
+  }
+
+  /**
+   * Checks checkbox with specified id|name|label|value
+   * Example: When I check "Pearl Necklace"
+   * Example: And I check "Pearl Necklace"
+   *
+   * @When /^(?:|I )check the ajax box "(?P<option>(?:[^"]|\\")*)"$/
+   */
+  public function checkAjaxCheckbox($option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $option . "']");
+    $element->check();
+  }
+
+  /**
+   * Unchecks checkbox with specified id|name|label|value
+   * Example: When I uncheck "Broadway Plays"
+   * Example: And I uncheck "Broadway Plays"
+   *
+   * @When /^(?:|I )uncheck the ajax box "(?P<option>(?:[^"]|\\")*)"$/
+   */
+  public function uncheckAjaxCheckbox($option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $option . "']");
+    $element->uncheck();
+  }
+
 }
