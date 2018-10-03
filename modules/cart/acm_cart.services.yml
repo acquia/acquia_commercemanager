@@ -10,7 +10,7 @@ services:
       - '@request_stack'
   acm_cart.mini_cart:
     class: Drupal\acm_cart\MiniCartManager
-    arguments: ['@acm_cart.cart_storage']
+    arguments: ['@acm_cart.cart_storage', '@acm.i18n_helper']
 
   acm_cart.access.cart:
     class: Drupal\acm_cart\Access\CartAccess

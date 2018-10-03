@@ -5,6 +5,8 @@ namespace Drupal\Tests\acm_cart\Unit;
 use Drupal\Tests\acm\Unit\Connector\MockAPIWrapper;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @coversDefaultClass \Drupal\acm_cart\CartStorage
@@ -64,6 +66,13 @@ class CartStorageTest extends UnitTestCase {
   protected $storageKey = 'acm_cart';
 
   /**
+   * The request stack mock.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -73,8 +82,19 @@ class CartStorageTest extends UnitTestCase {
     $this->logger = $this->getMock('Drupal\Core\Logger\LoggerChannelFactoryInterface');
     $this->eventDispatcher = new EventDispatcher();
     $this->apiWrapper = new MockAPIWrapper();
+    $this->requestStack = new RequestStack();
 
-    $this->cartStorage = new MockCartStorage($this->session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $config_factory = $this->getConfigFactoryStub([
+      'acm.commerce_users' => [
+        'use_ecomm_sessions' => TRUE,
+      ]
+    ]);
+
+    $request = new Request();
+    $this->requestStack
+      ->push($request);
+
+    $this->cartStorage = new MockCartStorage($this->session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $config_factory, $this->requestStack);
 
     $cart = (object) [
       'shippable' => TRUE,

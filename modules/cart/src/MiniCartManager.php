@@ -2,6 +2,8 @@
 
 namespace Drupal\acm_cart;
 
+use Drupal\acm\I18nHelper;
+
 /**
  * Class MiniCartManager.
  *
@@ -10,13 +12,30 @@ namespace Drupal\acm_cart;
 class MiniCartManager {
 
   /**
+   * Drupal\acm_cart\CartStorageInterface definition.
+   *
+   * @var \Drupal\acm_cart\CartStorageInterface
+   */
+  protected $cartStorage;
+
+  /**
+   * Internationalization helper object.
+   *
+   * @var \Drupal\acm\I18nHelper
+   */
+  protected $i18nHelper;
+
+  /**
    * MiniCartManager constructor.
    *
    * @param \Drupal\acm_cart\CartStorageInterface $cartStorage
    *   Cart storage service.
+   * @param \Drupal\acm\I18nHelper $i18n_helper
+   *   Internationalization helper object.
    */
-  public function __construct(CartStorageInterface $cartStorage) {
+  public function __construct(CartStorageInterface $cartStorage, I18nHelper $i18n_helper) {
     $this->cartStorage = $cartStorage;
+    $this->i18nHelper = $i18n_helper;
   }
 
   /**
@@ -47,7 +66,7 @@ class MiniCartManager {
       }
 
       $total = [
-        '#markup' => \Drupal::service('acm.i18n_helper')->formatPrice($grand_total),
+        '#markup' => $this->i18nHelper->formatPrice($grand_total),
       ];
 
       // Use the template to render the HTML.
