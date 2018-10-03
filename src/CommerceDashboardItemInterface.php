@@ -5,7 +5,7 @@ namespace Drupal\acm;
 /**
  * Provides an interface defining a ACM Commerce Requirement plugin.
  *
- * @package acm_diagnostic
+ * @package acm
  */
 interface CommerceDashboardItemInterface {
 
