@@ -11,6 +11,7 @@ services:
       - '@acm.api'
       - '@logger.factory'
       - '@acm.i18n_helper'
+      - '@module_handler'
 
   acm_sku.product_options_manager:
     class: Drupal\acm_sku\ProductOptionsManager
