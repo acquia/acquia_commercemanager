@@ -87,7 +87,7 @@ class CartStorageTest extends UnitTestCase {
     $config_factory = $this->getConfigFactoryStub([
       'acm.commerce_users' => [
         'use_ecomm_sessions' => TRUE,
-      ]
+      ],
     ]);
 
     $request = new Request();
