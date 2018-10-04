@@ -7,6 +7,7 @@ use Drupal\acm\I18nHelper;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\acm\Connector\ClientFactory;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Provides a service for category data to taxonomy synchronization.
@@ -65,6 +66,13 @@ class CategoryManager implements CategoryManagerInterface {
   private $logger;
 
   /**
+   * Module Handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private $modulehandler;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -77,16 +85,19 @@ class CategoryManager implements CategoryManagerInterface {
    *   LoggerFactory object.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   Module handler service.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ClientFactory $client_factory, APIWrapper $api_wrapper, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ClientFactory $client_factory, APIWrapper $api_wrapper, LoggerChannelFactory $logger_factory, I18nHelper $i18nHelper, ModuleHandlerInterface $moduleHandler) {
     $this->termStorage = $entity_type_manager->getStorage('taxonomy_term');
     $this->vocabStorage = $entity_type_manager->getStorage('taxonomy_vocabulary');
     $this->clientFactory = $client_factory;
     $this->apiWrapper = $api_wrapper;
     $this->logger = $logger_factory->get('acm_sku');
     $this->i18nHelper = $i18nHelper;
+    $this->modulehandler = $moduleHandler;
   }
 
   /**
@@ -361,6 +372,14 @@ class CategoryManager implements CategoryManagerInterface {
           'weight' => $position,
           'langcode' => $langcode,
         ]);
+
+        // We doing this because when the translation of node is created by
+        // addTranslation(), pathauto alias is not created for the translated
+        // version.
+        // @see https://www.drupal.org/project/pathauto/issues/2995829.
+        if ($this->modulehandler->moduleExists('pathauto')) {
+          $term->path->pathauto = 1;
+        }
 
         $this->results['created']++;
       }
