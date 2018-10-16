@@ -6,5 +6,5 @@ package: Commerce
 dependencies:
   - drupal:node
   - drupal:views
-  - acm:acm
-  - acm:acm_sku
+  - acquia_commercemanager:acm
+  - acquia_commercemanager:acm_sku

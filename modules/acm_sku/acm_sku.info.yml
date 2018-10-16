@@ -4,7 +4,7 @@ description: This module provides SKU functionality to the Acquia Commerce Conne
 core: 8.x
 package: Commerce
 dependencies:
-  - acm:acm
+  - acquia_commercemanager:acm
   - key_value_field:key_value_field
   - inline_entity_form:inline_entity_form
   - drupal:menu_ui
