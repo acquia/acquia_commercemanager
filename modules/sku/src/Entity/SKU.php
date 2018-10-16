@@ -128,8 +128,8 @@ class SKU extends ContentEntityBase implements SKUInterface {
     // Now discard all skus in other languages if there is more than one.
     if ($is_multilingual && count($skus) > 1) {
       // Get rid of undesired languages. Later the first sku is picked up.
-      foreach ($skus as $key => $sku) {
-        if ($sku->langcode->value != $langcode) {
+      foreach ($skus as $key => $skuEntity) {
+        if ($skuEntity->langcode->value != $langcode) {
           unset($skus[$key]);
         }
       }
