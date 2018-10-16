@@ -1,5 +1,5 @@
 {
-    "name": "acquia/commerce-manager",
+    "name": "drupal/acquia_commercemanager",
     "description": "This project provides the ability to use the Acquia Commerce Connector.",
     "type": "drupal-module",
     "license": "GPL-2.0+",
