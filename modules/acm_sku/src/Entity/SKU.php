@@ -125,11 +125,18 @@ class SKU extends ContentEntityBase implements SKUInterface {
       return NULL;
     }
 
+    $sku_entity = reset($skus);
+
+    // Sanity check.
+    if (!($sku_entity instanceof SKUInterface)) {
+      return NULL;
+    }
+
     // Now discard all skus in other languages if there is more than one.
     if ($is_multilingual && count($skus) > 1) {
       // Get rid of undesired languages. Later the first sku is picked up.
-      foreach ($skus as $key => $sku) {
-        if ($sku->langcode->value != $langcode) {
+      foreach ($skus as $key => $skuEntity) {
+        if ($skuEntity->language()->getId() != $langcode) {
           unset($skus[$key]);
         }
       }
@@ -138,15 +145,18 @@ class SKU extends ContentEntityBase implements SKUInterface {
     // Now test if there is still more than one sku found.
     // Noting for multiple entries, we just log the error
     // and continue with first sku.
-    if (!$is_multilingual && count($skus) > 1) {
+    if (count($skus) > 1) {
       \Drupal::logger('acm_sku')->error('Duplicate SKUs found while loading for @sku.', ['@sku' => $sku]);
     }
-
-    $sku_entity = array_shift($skus);
 
     if ($is_multilingual) {
       if ($sku_entity->hasTranslation($langcode)) {
         $sku_entity = $sku_entity->getTranslation($langcode);
+
+        // Set value in static variable.
+        // We set in static cache only for proper case, when returning different
+        // language or creating translation we can avoid static cache.
+        $skus_static_cache[$static_cache_sku_identifier] = $sku_entity;
       }
       elseif ($create_translation) {
         $sku_entity = $sku_entity->addTranslation($langcode, ['sku' => $sku]);
@@ -157,9 +167,10 @@ class SKU extends ContentEntityBase implements SKUInterface {
         \Drupal::logger('acq_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
       }
     }
-
-    // Set value in static variable.
-    $skus_static_cache[$static_cache_sku_identifier] = $sku_entity;
+    else {
+      // Set value in static variable directly if not a multi-lingual site.
+      $skus_static_cache[$static_cache_sku_identifier] = $sku_entity;
+    }
 
     return $sku_entity;
   }

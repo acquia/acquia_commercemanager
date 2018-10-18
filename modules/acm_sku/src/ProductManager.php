@@ -279,195 +279,216 @@ class ProductManager implements ProductManagerInterface {
 
     $this->debugLogger('Number of products: @count', ['@count' => count($products)]);
     foreach ($products as $product) {
+      try {
+        $lock_key = 'synchronizeProduct' . $product['sku'];
+        // Acquire lock to ensure parallel processes are executed one by one.
+        do {
+          $lock_acquired = $lock->acquire($lock_key);
+          // Sleep for half a second before trying again.
+          if (!$lock_acquired) {
+            usleep(500000);
+          }
+        } while (!$lock_acquired);
 
-      $lock_key = 'synchronizeProduct' . $product['sku'];
-      // Acquire lock to ensure parallel processes are executed one by one.
-      do {
-        $lock_acquired = $lock->acquire($lock_key);
-        // Sleep for half a second before trying again.
-        if (!$lock_acquired) {
-          usleep(500000);
+        // For v1 connector we are going to get store_id from each product,
+        // because we are not sending X-ACM-UUID header.
+        // Noting product sync hits the standard Magento API and
+        // so $product['store_id'] is not set on product sync.
+        // However, it is set on product async because
+        // that hits ACM Magento module.
+        if (empty($langcode)) {
+          $langcode = $this->i18nHelper->getLangcodeFromStoreId($product['store_id']);
         }
-      } while (!$lock_acquired);
 
-      // For v1 connector we are going to get store_id from each product,
-      // because we are not sending X-ACM-UUID header.
-      // Noting product sync hits the standard Magento API and
-      // so $product['store_id'] is not set on product sync.
-      // However, it is set on product async because
-      // that hits ACM Magento module.
-      if (empty($langcode)) {
-        $langcode = $this->i18nHelper->getLangcodeFromStoreId($product['store_id']);
-      }
+        // If langcode is still empty at this point, we probably don't support
+        // this store. This is because we are sending all data for all stores.
+        if (empty($langcode)) {
+          $this->debugLogger("Lang code is empty. Otherwise would have synchronize product SKU @sku for store_id @store in language @langcode", [
+            '@sku' => $product['sku'],
+            '@store' => $product['store_id'],
+            '@langcode' => $langcode,
+          ]);
+          $this->ignoredSkus[] = $product['sku'] . '(Langcode is empty for store_id:' . $product['store_id'] . '.)';
+          $this->ignored++;
+          // Release the lock on this sku.
+          $lock->release($lock_key);
+          $lock_key = NULL;
+          continue;
+        }
 
-      // If langcode is still empty at this point, we probably don't support
-      // this store. This is because we are sending all data for all stores.
-      if (empty($langcode)) {
-        $this->debugLogger("Lang code is empty. Otherwise would have synchronize product SKU @sku for store_id @store in language @langcode", [
+        $this->debugLogger("Synchronize product SKU @sku for store_id @store in language @langcode", [
           '@sku' => $product['sku'],
           '@store' => $product['store_id'],
           '@langcode' => $langcode,
         ]);
-        $this->ignoredSkus[] = $product['sku'] . '(Langcode is empty for store_id:' . $product['store_id'] . '.)';
-        $this->ignored++;
-        // Release the lock on this sku.
-        $lock->release($lock_key);
-        $lock_key = NULL;
-        continue;
-      }
+        $this->debugLogger('Product data: @data', ['@data' => print_r($product, TRUE)]);
+        $display = NULL;
 
-      $this->debugLogger("Synchronize product SKU @sku for store_id @store in language @langcode", [
-        '@sku' => $product['sku'],
-        '@store' => $product['store_id'],
-        '@langcode' => $langcode,
-      ]);
-      $this->debugLogger('Product data: @data', ['@data' => print_r($product, TRUE)]);
-      $display = NULL;
-
-      if ($this->debug && !empty($this->debugDir)) {
-        // Export product data into file.
-        if (!isset($fps) || !isset($fps[$langcode])) {
-          $filename = $this->debugDir . '/products_' . $langcode . '.data';
-          $fps[$langcode] = fopen($filename, 'a');
-        }
-        fwrite($fps[$langcode], var_export($product, 1));
-        fwrite($fps[$langcode], '\n');
-      }
-
-      if (!isset($product['type'])) {
-        $message = "Product type must be defined. " . $product['sku'] . " was not synchronized.";
-        $this->failedSkus[] = $product['sku'] . '(Missing Product Type)';
-        $this->failed++;
-        // Release the lock on this sku.
-        $lock->release($lock_key);
-        $lock_key = NULL;
-        continue;
-      }
-
-      $query = $this->entityManager->getStorage('acm_sku_type')->getQuery()
-        ->condition('id', $product['type'])
-        ->count();
-
-      $has_bundle = $query->execute();
-
-      if (!$has_bundle) {
-        $message = "Product type " . $product['type'] . " is not supported yet. " . $product['sku'] . " was not synchronized.";
-        $this->ignoredSkus[] = $product['sku'] . '(Product type not supported yet.' . $product['type'] . ')';
-        $this->ignored++;
-        // Release the lock on this sku.
-        $lock->release($lock_key);
-        $lock_key = NULL;
-        continue;
-      }
-
-      if (!isset($product['sku']) || !strlen($product['sku'])) {
-        $this->ignoredSkus[] = $product['sku'] . '(Invalid or empty product SKU.)';
-        $this->ignored++;
-        // Release the lock on this sku.
-        $lock->release($lock_key);
-        $lock_key = NULL;
-        continue;
-      }
-
-      // Don't import configurable SKU if it has no configurable options.
-      // @TODO(mirom): Call validation function by $product['type'].
-      if ($product['type'] == 'configurable' && empty($product['extension']['configurable_product_options'])) {
-        $productToString = print_r($product, TRUE);
-        $this->debugLogger('Empty configurable options for SKU: @sku, Details: @deets', [
-          '@sku' => $product['sku'],
-          '@deets' => $productToString,
-        ]);
-        $this->ignoredSkus[] = $product['sku'] . '(Empty configurable options for SKU.)';
-        $this->ignored++;
-        // Release the lock on this sku.
-        $lock->release($lock_key);
-        $lock_key = NULL;
-        continue;
-      }
-
-      $query = $this->entityManager->getStorage('acm_sku')->getQuery()
-        ->condition('sku', $product['sku']);
-      $sku_ids = $query->execute();
-
-      if (count($sku_ids) > 1) {
-        $this->failedSkus[] = $product['sku'] . '(Duplicate product SKU found.)';
-        $this->failed++;
-        // Release the lock on this sku.
-        $lock->release($lock_key);
-        $lock_key = NULL;
-        continue;
-      }
-
-      $sku = $this->processSku($product, $langcode);
-
-      if (is_null($sku)) {
-        continue;
-      }
-
-      /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
-      $plugin = $sku->getPluginInstance();
-      $plugin->processImport($sku, $product);
-
-      if ($product['status'] == 1 && $product['visibility'] == 1) {
-        $node = $plugin->getDisplayNode($sku, FALSE, TRUE);
-        if (empty($node)) {
-          $node = $this->createDisplayNode($product, $langcode);
-          $this->createdSkus[] = $product['sku'];
-          $this->created++;
-        }
-        elseif ($node->hasTranslationChanges()) {
-          $this->updateNodeTranslation($node, $product, $langcode);
+        if ($this->debug && !empty($this->debugDir)) {
+          // Export product data into file.
+          if (!isset($fps) || !isset($fps[$langcode])) {
+            $filename = $this->debugDir . '/products_' . $langcode . '.data';
+            $fps[$langcode] = fopen($filename, 'a');
+          }
+          fwrite($fps[$langcode], var_export($product, 1));
+          fwrite($fps[$langcode], '\n');
         }
 
-        // We doing this because when the translation of node is created by
-        // addTranslation(), pathauto alias is not created for the translated
-        // version.
-        // @see https://www.drupal.org/project/pathauto/issues/2995829.
-        if ($this->moduleHandler->moduleExists('pathauto')) {
-          $node->path->pathauto = 1;
+        if (!isset($product['type'])) {
+          $message = "Product type must be defined. " . $product['sku'] . " was not synchronized.";
+          $this->failedSkus[] = $product['sku'] . '(Missing Product Type)';
+          $this->failed++;
+          // Release the lock on this sku.
+          $lock->release($lock_key);
+          $lock_key = NULL;
+          continue;
         }
 
-        // Invoke the alter hook to allow all modules to update the node.
-        $this->moduleHandler->alter('acm_sku_product_node', $node, $product, $langcode);
-        $node->save();
-      }
-      else {
-        try {
-          // Un-publish if node available.
-          if ($node = $plugin->getDisplayNode($sku, FALSE, FALSE)) {
-            $node->setUnpublished();
-            $node->save();
+        $query = $this->entityManager->getStorage('acm_sku_type')->getQuery()
+          ->condition('id', $product['type'])
+          ->count();
+
+        $has_bundle = $query->execute();
+
+        if (!$has_bundle) {
+          $message = "Product type " . $product['type'] . " is not supported yet. " . $product['sku'] . " was not synchronized.";
+          $this->ignoredSkus[] = $product['sku'] . '(Product type not supported yet.' . $product['type'] . ')';
+          $this->ignored++;
+          // Release the lock on this sku.
+          $lock->release($lock_key);
+          $lock_key = NULL;
+          continue;
+        }
+
+        if (!isset($product['sku']) || !strlen($product['sku'])) {
+          $this->ignoredSkus[] = $product['sku'] . '(Invalid or empty product SKU.)';
+          $this->ignored++;
+          // Release the lock on this sku.
+          $lock->release($lock_key);
+          $lock_key = NULL;
+          continue;
+        }
+
+        // Don't import configurable SKU if it has no configurable options.
+        // @TODO(mirom): Call validation function by $product['type'].
+        if ($product['type'] == 'configurable' && empty($product['extension']['configurable_product_options'])) {
+          $productToString = print_r($product, TRUE);
+          $this->debugLogger('Empty configurable options for SKU: @sku, Details: @deets', [
+            '@sku' => $product['sku'],
+            '@deets' => $productToString,
+          ]);
+          $this->ignoredSkus[] = $product['sku'] . '(Empty configurable options for SKU.)';
+          $this->ignored++;
+          // Release the lock on this sku.
+          $lock->release($lock_key);
+          $lock_key = NULL;
+          continue;
+        }
+
+        $query = $this->entityManager->getStorage('acm_sku')->getQuery()
+          ->condition('sku', $product['sku']);
+        $sku_ids = $query->execute();
+
+        if (count($sku_ids) > 1) {
+          $this->failedSkus[] = $product['sku'] . '(Duplicate product SKU found.)';
+          $this->failed++;
+          // Release the lock on this sku.
+          $lock->release($lock_key);
+          $lock_key = NULL;
+          continue;
+        }
+
+        $sku = $this->processSku($product, $langcode);
+
+        if (is_null($sku)) {
+          continue;
+        }
+
+        /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
+        $plugin = $sku->getPluginInstance();
+        $plugin->processImport($sku, $product);
+
+        if ($product['status'] == 1 && $product['visibility'] == 1) {
+          $node = $plugin->getDisplayNode($sku, FALSE, TRUE);
+          if (empty($node)) {
+            $node = $this->createDisplayNode($product, $langcode);
+            $this->createdSkus[] = $product['sku'];
+            $this->created++;
+          }
+          elseif ($node->hasTranslationChanges()) {
+            $this->updateNodeTranslation($node, $product, $langcode);
+          }
+
+          // We doing this because when the translation of node is created by
+          // addTranslation(), pathauto alias is not created for the translated
+          // version.
+          // @see https://www.drupal.org/project/pathauto/issues/2995829.
+          if ($this->moduleHandler->moduleExists('pathauto')) {
+            $node->path->pathauto = 1;
+          }
+
+          // Invoke the alter hook to allow all modules to update the node.
+          $this->moduleHandler->alter('acm_sku_product_node', $node, $product, $langcode);
+          $node->save();
+        }
+        else {
+          try {
+            // Un-publish if node available.
+            if ($node = $plugin->getDisplayNode($sku, FALSE, FALSE)) {
+              $node->setUnpublished();
+              $node->save();
+            }
+          }
+          catch (\Exception $e) {
+            // Do nothing, we may not have the node available in system.
           }
         }
-        catch (\Exception $e) {
-          // Do nothing, we may not have the node available in system.
+
+        $plugin_manager = \Drupal::service('plugin.manager.sku');
+        $plugin_definition = $plugin_manager->pluginFromSKU($sku);
+        if (!empty($plugin_definition)) {
+          $plugin = $plugin_manager->createInstance($plugin_definition['id']);
+          $processedImport = $plugin->processImport($sku, $product);
+          if (!$processedImport) {
+            $this->debugLogger("@sku will be processed later", ['@sku' => $product['sku']]);
+            $processLaterList[] = [
+              'plugin' => $plugin,
+              'sku' => $sku,
+              'product' => $product,
+            ];
+          }
         }
       }
+      catch (\Exception $e) {
+        // We consider this as failure as it failed for an unknown reason.
+        // (not taken care of above).
+        $this->failedSkus[] = $product['sku'] . '(' . $e->getMessage() . ')';
+        $this->failed++;
+      }
+      catch (\Throwable $e) {
+        // We consider this as failure as it failed for an unknown reason.
+        // (not taken care of above).
+        $this->failedSkus[] = $product['sku'] . '(' . $e->getMessage() . ')';
+        $this->failed++;
+      }
+      finally {
+        // Release the lock if acquired.
+        if (!empty($lock_key) && !empty($lock_acquired)) {
+          $lock->release($lock_key);
 
-      $plugin_manager = \Drupal::service('plugin.manager.sku');
-      $plugin_definition = $plugin_manager->pluginFromSKU($sku);
-      if (!empty($plugin_definition)) {
-        $plugin = $plugin_manager->createInstance($plugin_definition['id']);
-        $processedImport = $plugin->processImport($sku, $product);
-        if (!$processedImport) {
-          $this->debugLogger("@sku will be processed later", ['@sku' => $product['sku']]);
-          $processLaterList[] = [
-            'plugin' => $plugin,
-            'sku' => $sku,
-            'product' => $product,
-          ];
+          // We will come here again for next loop item and we might face
+          // exception before we reach the code that sets $lock_key.
+          // To ensure we don't keep releasing the lock again and again
+          // we set it to NULL here.
+          $lock_key = NULL;
         }
       }
+    }
 
-      if (isset($fps)) {
-        foreach ($fps as $fp) {
-          fclose($fp);
-        }
+    if (isset($fps)) {
+      foreach ($fps as $fp) {
+        fclose($fp);
       }
-
-      // Release the lock on this sku.
-      $lock->release($lock_key);
-      $lock_key = NULL;
     }
 
     // @TODO(mirom): Review usage of processImport(), it's called 5 times here.

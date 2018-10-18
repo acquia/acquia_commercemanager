@@ -114,8 +114,28 @@ class ProductSyncResource extends ResourceBase {
 
     \Drupal::logger('acm_sku')->info("Updating products for acm_uuid " . $storeId . ".");
 
+    // To avoid even E_RECOVERABLE_ERROR, we set our custom error handler.
+    set_error_handler([$this, 'errorHandler']);
+
     $response = $this->productManager->synchronizeProducts($products, $storeId);
     return (new ModifiedResourceResponse($response));
+  }
+
+  /**
+   * Custom error handler that converts E_RECOVERABLE_ERROR into an exception.
+   *
+   * @param int $error_number
+   *   The error number.
+   * @param string $error_message
+   *   The error message.
+   *
+   * @throws \Exception
+   */
+  public function errorHandler(int $error_number, string $error_message) {
+    switch ($error_number) {
+      case E_RECOVERABLE_ERROR:
+        throw new Exception($error_message, $error_number);
+    }
   }
 
 }
