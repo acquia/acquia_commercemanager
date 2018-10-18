@@ -4,5 +4,5 @@ description: Provides configurable error messaging for API exceptions.
 core: 8.x
 package: Commerce
 dependencies:
-  - acm:acm
+  - acquia_commercemanager:acm
 configure: acm_exception.settings
