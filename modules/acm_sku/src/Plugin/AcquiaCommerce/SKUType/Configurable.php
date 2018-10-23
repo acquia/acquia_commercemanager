@@ -584,7 +584,7 @@ class Configurable extends SKUPluginBase {
         $attributes[$key] = $value;
       }
 
-      foreach ($tree['combinations']['by_sku'] as $sku => $sku_attributes) {
+      foreach ($tree['combinations']['by_sku'] ?? [] as $sku => $sku_attributes) {
         if (count(array_intersect_assoc($sku_attributes, $attributes)) === count($sku_attributes)) {
           return $tree['products'][$sku];
         }
