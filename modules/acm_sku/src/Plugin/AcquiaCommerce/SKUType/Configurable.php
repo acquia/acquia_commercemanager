@@ -375,7 +375,7 @@ class Configurable extends SKUPluginBase {
     }
     else {
       $message = t('The current selection does not appear to be valid.');
-      drupal_set_message($message);
+      \Drupal::messenger($message);
       // Dispatch event so action can be taken.
       $dispatcher = \Drupal::service('event_dispatcher');
       $exception = new \Exception($message);
