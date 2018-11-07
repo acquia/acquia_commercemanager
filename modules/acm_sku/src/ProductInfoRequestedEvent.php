@@ -88,6 +88,16 @@ class ProductInfoRequestedEvent extends Event {
   }
 
   /**
+   * Get context.
+   *
+   * @return string
+   *   Context.
+   */
+  public function getContext() {
+    return $this->context;
+  }
+
+  /**
    * Get current value - default or modified.
    *
    * @return mixed
