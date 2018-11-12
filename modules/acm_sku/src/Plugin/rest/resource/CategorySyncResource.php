@@ -130,7 +130,7 @@ class CategorySyncResource extends ResourceBase {
       $storeId
     );
 
-    $response['success'] = (bool) (($response['created'] > 0) || ($response['updated'] > 0));
+    $response['success'] = (bool) ((count($response['created']) > 0) || (count($response['updated']) > 0));
 
     return (new ModifiedResourceResponse($response));
   }

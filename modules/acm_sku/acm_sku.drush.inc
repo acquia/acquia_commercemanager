@@ -6,6 +6,7 @@
  */
 
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\taxonomy\TermInterface;
 
 const DELETE_BATCH_COUNT = 200;
 
@@ -211,7 +212,50 @@ function drush_acm_sku_sync_commerce_cats() {
 
   drush_print(dt('Synchronizing all commerce categories, please wait...'));
   $container = \Drupal::getContainer();
-  $container->get('acm_sku.category_manager')->synchronizeTree($category_vid);
+  $response = $container->get('acm_sku.category_manager')->synchronizeTree($category_vid);
+
+  // We trigger delete only if there is any term update/create.
+  // So if API does not return anything, we don't delete all the categories.
+  if (!empty($response['created']) || !empty($response['updated'])) {
+    $db = \Drupal::database();
+    // Get all category terms with commerce id.
+    $query = $db->select('taxonomy_term_field_data', 'ttd');
+    $query->fields('ttd', ['tid', 'name']);
+    $query->leftJoin('taxonomy_term__field_commerce_id', 'tcid', 'ttd.tid=tcid.entity_id');
+    $query->fields('tcid', ['field_commerce_id_value']);
+    $query->condition('ttd.vid', 'acq_product_category');
+    $result = $query->execute()->fetchAllAssoc('tid', \PDO::FETCH_ASSOC);
+
+    $affected_terms = array_unique(array_merge($response['created'], $response['updated']));
+    // Filter terms which are not in sync response.
+    $result = array_filter($result, function ($val) use ($affected_terms) {
+      return !in_array($val['field_commerce_id_value'], $affected_terms);
+    });
+
+    // If there are categories to delete.
+    if (!empty($result)) {
+      // Confirmation to delete old categories.
+      if (drush_confirm(dt('Are you sure you want to clean old categories @cat', [
+        '@cat' => json_encode(array_column($result, 'name')),
+      ]))) {
+
+        // Allow other modules to skipping the deleting of terms.
+        \Drupal::moduleHandler()->alter('acm_sku_sync_categories_delete', $result);
+
+        foreach ($result as $tid => $rs) {
+          $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
+          if ($term instanceof TermInterface) {
+            // Delete the term.
+            $term->delete();
+          }
+        }
+      }
+    }
+  }
+  else {
+    \Drupal::logger('acm_sku')->notice(dt('Not cleaning(deleting) old terms as there is no term update/create.'));
+  }
+
   drush_print(dt('Done.'));
 }
 

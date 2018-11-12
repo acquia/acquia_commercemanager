@@ -46,5 +46,16 @@ function hook_acm_sku_commerce_category_alter(TermInterface $term, array $catego
 }
 
 /**
+ * Alter old categories data that needs to be deleted after category sync.
+ *
+ * @param array $result
+ *   Array containing updated/created terms commerce id.
+ *
+ */
+function hook_acm_sku_sync_categories_delete_alter(array &$result) {
+
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
