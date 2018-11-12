@@ -50,7 +50,6 @@ function hook_acm_sku_commerce_category_alter(TermInterface $term, array $catego
  *
  * @param array $result
  *   Array containing updated/created terms commerce id.
- *
  */
 function hook_acm_sku_sync_categories_delete_alter(array &$result) {
 
