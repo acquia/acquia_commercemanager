@@ -2,6 +2,7 @@
 
 namespace Drupal\acm_sku;
 
+use Differ\ArrayDiff;
 use Drupal\acm\I18nHelper;
 use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -846,7 +847,7 @@ class ProductManager implements ProductManagerInterface {
       $this->logger->info('Updated SKU @sku for @langcode: @diff', [
         '@sku' => $sku->getSku(),
         '@langcode' => $langcode,
-        '@diff' => json_encode(self::getArrayDiff($updatedSkuData, $existingSkuData)),
+        '@diff' => self::getArrayDiff($updatedSkuData, $existingSkuData),
       ]);
     }
     else {
@@ -1090,14 +1091,12 @@ class ProductManager implements ProductManagerInterface {
    * @param array $array2
    *   Array two.
    *
-   * @return array
-   *   Array containing difference of two arrays, empty array if no diff.
+   * @return string
+   *   JSON encoded Array containing difference of two arrays.
    */
   public static function getArrayDiff(array $array1, array $array2): array {
-    // Cleanup in both arrays first.
-    unset($array1['changed']);
-    unset($array2['changed']);
-    return DiffArray::diffAssocRecursive($array1, $array2);
+    $differ = new ArrayDiff();
+    return json_encode($differ->diff($array1, $array2));
   }
 
 }

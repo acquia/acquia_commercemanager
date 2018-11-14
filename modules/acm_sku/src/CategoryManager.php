@@ -2,6 +2,7 @@
 
 namespace Drupal\acm_sku;
 
+use Differ\ArrayDiff;
 use Drupal\acm\Connector\APIWrapper;
 use Drupal\acm\I18nHelper;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -392,10 +393,13 @@ class CategoryManager implements CategoryManagerInterface {
           $updatedTerm = $this->getTranslatedTerm($term->id());
           $updatedTermData = $updatedTerm->toArray();
 
+          $differ = new ArrayDiff();
+          $diff = $differ->diff($existingTermData, $updatedTermData);
+
           $this->logger->info('Updated category @magento_id for @langcode: @diff.', [
             '@langcode' => $langcode,
             '@magento_id' => $category['category_id'],
-            '@diff' => DiffArray::diffAssocRecursive($updatedTermData, $existingTermData),
+            '@diff' => json_encode($diff),
           ]);
         }
         else {
