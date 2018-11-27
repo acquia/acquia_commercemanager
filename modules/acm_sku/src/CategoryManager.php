@@ -95,7 +95,7 @@ class CategoryManager implements CategoryManagerInterface {
    *   Instance of I18nHelper service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler service.
-   * @param \Drupal\Core\Database\Connection $conneciton
+   * @param \Drupal\Core\Database\Connection $connection
    *   Database connection.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
