@@ -433,8 +433,7 @@ class CategoryManager implements CategoryManagerInterface {
   }
 
   /**
-   * Identify the categories which are not in commerce backend anymore and must
-   * be deleted.
+   * Identify categories which are not in commerce backend and must be deleted.
    *
    * @param array $sync_categories
    *   Sync categories.

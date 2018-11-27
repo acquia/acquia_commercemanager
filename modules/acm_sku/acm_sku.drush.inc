@@ -217,23 +217,22 @@ function drush_acm_sku_sync_commerce_cats() {
   // We trigger delete only if there is any term update/create.
   // So if API does not return anything, we don't delete all the categories.
   if (!empty($response['created']) || !empty($response['updated'])) {
-    // Get all category terms with commerce id.
+    // Get orphan categories which only exist in drupal.
     $orphan_categories = \Drupal::service('acm_sku.category_manager')->getOrphanCategories($response);
 
-    // If there are categories to delete.
+    // If there are orphan categories to delete.
     if (!empty($orphan_categories)) {
-      // Confirmation to delete old categories.
-      if (drush_confirm(dt('Are you sure you want to clean old categories @cat', [
+      // Confirmation to delete orphan categories.
+      if (drush_confirm(dt('Are you sure you want to clean orphan categories @cat', [
         '@cat' => json_encode(array_column($orphan_categories, 'name')),
       ]))) {
 
-        // Allow other modules to skipping the deleting of terms.
+        // Allow other modules to skipping the deleting of orphan categories.
         \Drupal::moduleHandler()->alter('acm_sku_sync_categories_delete', $orphan_categories);
 
         foreach ($orphan_categories as $tid => $rs) {
           $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
           if ($term instanceof TermInterface) {
-            // Delete the term.
             $term->delete();
           }
         }
@@ -241,7 +240,7 @@ function drush_acm_sku_sync_commerce_cats() {
     }
   }
   else {
-    \Drupal::logger('acm_sku')->notice(dt('Not cleaning(deleting) old terms as there is no term update/create.'));
+    \Drupal::logger('acm_sku')->notice(dt('No orphan category to clean(delete).'));
   }
 
   drush_print(dt('Done.'));
