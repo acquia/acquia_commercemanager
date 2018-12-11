@@ -52,6 +52,7 @@ services:
       - '@acm_sku.product_options_manager'
       - '@acm.i18n_helper'
       - '@module_handler'
+      - '@event_dispatcher'
 
   cache.stock:
       class: Drupal\Core\Cache\CacheBackendInterface

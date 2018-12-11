@@ -10,6 +10,8 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\acq_sku\Event\AcqSkuValidateEvent;
 
 /**
  * Class ProductManager.
@@ -68,6 +70,13 @@ class ProductManager implements ProductManagerInterface {
   private $moduleHandler;
 
   /**
+   * Event Dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  private $eventDispatcher;
+
+  /**
    * True if you want extra logging for debugging.
    *
    * @var bool
@@ -103,6 +112,8 @@ class ProductManager implements ProductManagerInterface {
    *   Instance of I18nHelper service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher object.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
@@ -111,7 +122,8 @@ class ProductManager implements ProductManagerInterface {
     CategoryRepositoryInterface $cat_repo,
     ProductOptionsManager $product_options_manager,
     I18nHelper $i18nHelper,
-    ModuleHandlerInterface $moduleHandler
+    ModuleHandlerInterface $moduleHandler,
+    EventDispatcherInterface $event_dispatcher
   ) {
     $this->entityManager = $entity_type_manager;
     $this->configFactory = $config_factory;
@@ -124,6 +136,7 @@ class ProductManager implements ProductManagerInterface {
       ->get('debug');
     $this->debugDir = $this->configFactory->get('acm.connector')
       ->get('debug_dir');
+    $this->eventDispatcher = $event_dispatcher;
   }
 
   /**
@@ -280,6 +293,18 @@ class ProductManager implements ProductManagerInterface {
     $this->debugLogger('Number of products: @count', ['@count' => count($products)]);
     foreach ($products as $product) {
       try {
+        // Allow other modules to subscribe to pre-validation of the SKU being
+        // imported.
+        $event = new AcqSkuValidateEvent($product);
+        $this->eventDispatcher->dispatch(AcqSkuValidateEvent::ACQ_SKU_VALIDATE, $event);
+        // If skip attribute is set via any event subscriber, skip importing the
+        // product.
+        if ($product['skip']) {
+          $this->ignoredSkus[] = $product['sku'] . '(SKU doesn\'t meet the criteria for import set for this site.)';
+          $this->ignored++;
+          continue;
+        }
+
         $lock_key = 'synchronizeProduct' . $product['sku'];
         // Acquire lock to ensure parallel processes are executed one by one.
         do {
