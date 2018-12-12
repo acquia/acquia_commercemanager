@@ -239,6 +239,7 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
     $query = \Drupal::entityQuery('node')
       ->condition('type', $product_node_type)
       ->condition($sku_field_name, $sku->getSKU())
+      ->addTag('get_display_node_for_sku')
       ->range(0, 1);
 
     $result = $query->execute();
