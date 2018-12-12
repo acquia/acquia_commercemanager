@@ -266,3 +266,12 @@ function acm_sku_update_8106() {
   $field_yaml = Yaml::parse(file_get_contents($config_path . 'field.field.taxonomy_term.acm_product_category.field_commerce_status.yml'));
   FieldConfig::create($field_yaml)->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Make price, final_price and special_price non-translatable.
+ */
+function acm_sku_update_8107() {
+  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+}
