@@ -307,3 +307,22 @@ function acm_sku_update_8108() {
   $config->set('attribute_weights', ['default' => $config->get('attribute_weights')]);
   $config->save(TRUE);
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Make field_configured_skus non-translatable.
+ */
+function acm_sku_update_8109() {
+  $field_storage = FieldStorageConfig::loadByName('acm_sku', 'field_configured_skus');
+  $field_storage->setTranslatable(FALSE);
+  $field_storage->save();
+
+  $field = FieldConfig::loadByName('acm_sku', 'configurable', 'field_configured_skus');
+  $field->setTranslatable(FALSE);
+  $field->save();
+
+  $field = FieldConfig::loadByName('acm_sku', 'variant', 'field_configured_skus');
+  $field->setTranslatable(FALSE);
+  $field->save();
+}
