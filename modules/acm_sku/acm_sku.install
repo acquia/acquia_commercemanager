@@ -266,3 +266,22 @@ function acm_sku_update_8106() {
   $field_yaml = Yaml::parse(file_get_contents($config_path . 'field.field.taxonomy_term.acm_product_category.field_commerce_status.yml'));
   FieldConfig::create($field_yaml)->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Make field_configured_skus non-translatable.
+ */
+function acm_sku_update_8107() {
+  $field_storage = FieldStorageConfig::loadByName('acm_sku', 'field_configured_skus');
+  $field_storage->setTranslatable(FALSE);
+  $field_storage->save();
+
+  $field = FieldConfig::loadByName('acm_sku', 'configurable', 'field_configured_skus');
+  $field->setTranslatable(FALSE);
+  $field->save();
+
+  $field = FieldConfig::loadByName('acm_sku', 'variant', 'field_configured_skus');
+  $field->setTranslatable(FALSE);
+  $field->save();
+}
