@@ -281,8 +281,8 @@ class ProductManager implements ProductManagerInterface {
    * {@inheritdoc}
    */
   public function synchronizeProducts(array $products = [], $storeId = '') {
-
-    $lock = \Drupal::lock();
+    /** @var \Drupal\Core\Lock\PersistentDatabaseLockBackend $lock */
+    $lock = \Drupal::service('lock.persistent');
 
     $this->created = 0;
     $this->updated = 0;

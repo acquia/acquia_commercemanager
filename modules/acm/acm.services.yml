@@ -42,7 +42,7 @@ services:
 
   acm.database_session_store:
     class: Drupal\acm\DatabaseSessionStoreFactory
-    arguments: ['@keyvalue.expirable', '@lock', '@acm.commerce_user_manager', '@request_stack', '%acm.store.expire%']
+    arguments: ['@keyvalue.expirable', '@lock.persistent', '@acm.commerce_user_manager', '@request_stack', '%acm.store.expire%']
 
   acm.session_store_factory:
     class: Drupal\acm\SessionStoreFactory
