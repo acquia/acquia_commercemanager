@@ -261,8 +261,8 @@ class ProductManager implements ProductManagerInterface {
    * {@inheritdoc}
    */
   public function synchronizeProducts(array $products = [], $storeId = '') {
-
-    $lock = \Drupal::lock();
+    /** @var \Drupal\Core\Lock\PersistentDatabaseLockBackend $lock */
+    $lock = \Drupal::service('lock.persistent');
 
     $this->created = 0;
     $this->updated = 0;
@@ -560,7 +560,8 @@ class ProductManager implements ProductManagerInterface {
    *   Array of results.
    */
   public function synchronizeStockData(array $stock = [], $storeId = '') {
-    $lock = \Drupal::lock();
+    /** @var \Drupal\Core\Lock\PersistentDatabaseLockBackend $lock */
+    $lock = \Drupal::service('lock.persistent');
 
     $response = [
       'success' => FALSE,
