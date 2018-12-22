@@ -8,6 +8,7 @@
  * connector.
  */
 
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -113,6 +114,26 @@ function acm_promotion_node_view(array &$build, Node $node, EntityViewDisplayInt
     'callback' => $callback_url,
   ];
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function acm_promotion_node_delete(NodeInterface $node) {
+  if ($node->bundle() == 'acm_promotion') {
+    /* @var \Drupal\acm_promotion\AcmPromotionsManager $promotion_manager*/
+    $promotion_manager = \Drupal::service('acm_promotion.promotions_manager');
+    // Get SKUs attached to the promotion node.
+    $attached_promotion_skus = $promotion_manager->getSkusForPromotion($node);
+
+    if (!empty($attached_promotion_skus)) {
+      foreach ($attached_promotion_skus as $sku) {
+        if (($sku_entity = SKU::loadFromSku($sku)) &&
+          ($sku_entity instanceof SKU)) {
+          $promotion_manager->removeOrphanPromotionFromSku($sku_entity, $node->id());
+        }
+      }
+    }
+  }
 
 /**
  * Implements hook_form_alter().
