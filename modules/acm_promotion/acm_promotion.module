@@ -120,7 +120,7 @@ function acm_promotion_node_view(array &$build, Node $node, EntityViewDisplayInt
  */
 function acm_promotion_node_delete(NodeInterface $node) {
   if ($node->bundle() == 'acm_promotion') {
-    /* @var \Drupal\acm_promotion\AcmPromotionsManager $promotion_manager*/
+    /* @var \Drupal\acm_promotion\AcmPromotionsManager $promotion_manager */
     $promotion_manager = \Drupal::service('acm_promotion.promotions_manager');
     // Get SKUs attached to the promotion node.
     $attached_promotion_skus = $promotion_manager->getSkusForPromotion($node);
@@ -134,6 +134,7 @@ function acm_promotion_node_delete(NodeInterface $node) {
       }
     }
   }
+}
 
 /**
  * Implements hook_form_alter().
