@@ -4,6 +4,7 @@ namespace Drupal\acm_promotion\Plugin\QueueWorker;
 
 use Drupal\acm_promotion\AcmPromotionQueueBase;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Processes Skus to detach Promotions.
@@ -80,7 +81,7 @@ class AcmPromotionDetachQueue extends AcmPromotionQueueBase {
     $sku_texts = implode(',', $skus);
 
     // Invalidate cache tags for updated skus & promotions.
-    \Drupal::cache()->invalidateMultiple($invalidate_tags);
+    Cache::invalidateTags($invalidate_tags);
 
     $this->logger->info('Detached Promotion:@promo from SKUs: @skus',
       ['@promo' => $promotion_nid, '@skus' => $sku_texts]);

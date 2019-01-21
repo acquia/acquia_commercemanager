@@ -4,6 +4,7 @@ namespace Drupal\acm_promotion\Plugin\QueueWorker;
 
 use Drupal\acm_promotion\AcmPromotionQueueBase;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Processes Skus to attach Promotions.
@@ -113,7 +114,7 @@ class AcmPromotionAttachQueue extends AcmPromotionQueueBase {
     }
 
     // Invalidate sku cache tags & related promotion nid.
-    \Drupal::cache()->invalidateMultiple($invalidate_tags);
+    Cache::invalidateTags($invalidate_tags);
 
     if (!empty($skus_not_found)) {
       $this->logger->warning('Skus @skus not found in Drupal.',
