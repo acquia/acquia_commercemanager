@@ -114,7 +114,7 @@ class AcmPromotionAttachQueue extends AcmPromotionQueueBase {
     }
 
     // Invalidate sku cache tags & related promotion nid.
-    Cache::invalidateTags($invalidate_tags);
+    $this->tagInvalidate->invalidateTags($invalidate_tags);
 
     if (!empty($skus_not_found)) {
       $this->logger->warning('Skus @skus not found in Drupal.',

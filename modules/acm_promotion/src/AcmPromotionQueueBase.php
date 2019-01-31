@@ -7,6 +7,7 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 
 /**
  * Class AcmPromotionQueueBase.
@@ -30,6 +31,13 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
   protected $logger;
 
   /**
+   * The cache tags invalidator.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   */
+  protected $tagInvalidate;
+
+  /**
    * AcmPromotionAttachQueue constructor.
    *
    * @param array $configuration
@@ -42,15 +50,19 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
    *   IngestAPIWrapper Service object.
    * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   Logger service.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $tag_invalidate
+   *   The cache tags invalidator.
    */
   public function __construct(array $configuration,
                               $plugin_id,
                               $plugin_definition,
                               IngestAPIWrapper $ingestApiWrapper,
-                              LoggerChannelFactory $loggerFactory) {
+                              LoggerChannelFactory $loggerFactory,
+                              CacheTagsInvalidatorInterface $tag_invalidate) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->ingestApiWrapper = $ingestApiWrapper;
     $this->logger = $loggerFactory->get('acm_sku');
+    $this->tagInvalidate = $tag_invalidate;
   }
 
   /**
@@ -74,7 +86,8 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
       $plugin_id,
       $plugin_definition,
       $container->get('acm.ingest_api'),
-      $container->get('logger.factory')
+      $container->get('logger.factory'),
+      $container->get('cache_tags.invalidator')
     );
   }
 

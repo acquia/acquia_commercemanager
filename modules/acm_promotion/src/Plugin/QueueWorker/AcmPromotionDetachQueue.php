@@ -81,7 +81,7 @@ class AcmPromotionDetachQueue extends AcmPromotionQueueBase {
     $sku_texts = implode(',', $skus);
 
     // Invalidate cache tags for updated skus & promotions.
-    Cache::invalidateTags($invalidate_tags);
+    $this->tagInvalidate->invalidateTags($invalidate_tags);
 
     $this->logger->info('Detached Promotion:@promo from SKUs: @skus',
       ['@promo' => $promotion_nid, '@skus' => $sku_texts]);
