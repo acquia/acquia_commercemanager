@@ -199,18 +199,52 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
    * @throws \Exception
    */
   public function getParentSku(SKU $sku) {
+    $static = &drupal_static(__FUNCTION__, []);
+
+    $langcode = $sku->language()->getId();
+    $sku_string = $sku->getSku();
+
+    if (isset($static[$langcode], $static[$langcode][$sku_string])) {
+      return $static[$langcode][$sku_string];
+    }
+
+    // Initialise with empty value.
+    $static[$langcode][$sku_string] = NULL;
+
     $query = $this->connection->select('acm_sku_field_data', 'acm_sku');
     $query->addField('acm_sku', 'sku');
     $query->join('acm_sku__field_configured_skus', 'child_sku', 'acm_sku.id = child_sku.entity_id');
-    $query->condition('child_sku.field_configured_skus_value', $sku->getSku());
+    $query->condition('child_sku.field_configured_skus_value', $sku_string);
 
-    $parent_sku = $query->execute()->fetchField();
+    $parent_skus = array_keys($query->execute()->fetchAllAssoc('sku'));
 
-    if (empty($parent_sku)) {
+    if (empty($parent_skus)) {
       return NULL;
     }
 
-    return SKU::loadFromSku($parent_sku, $sku->language()->getId());
+    if (count($parent_skus) > 1) {
+      \Drupal::logger('acm_sku')->warning(
+        'Multiple parents found for SKU: @sku, parents: @parents',
+        [
+          '@parents' => implode(',', $parent_skus),
+          '@sku' => $sku_string,
+        ]
+      );
+    }
+
+    foreach ($parent_skus as $parent_sku) {
+      $parent = SKU::loadFromSku($parent_sku, $langcode);
+      if ($parent instanceof SKU) {
+        $node = $this->getDisplayNode($parent, FALSE, FALSE);
+
+        if ($node instanceof Node) {
+          $static[$langcode][$sku_string] = $parent;
+          break;
+        }
+      }
+    }
+
+    return $static[$langcode][$sku_string];
   }
 
   /**
