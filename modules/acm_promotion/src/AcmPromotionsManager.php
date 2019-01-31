@@ -153,19 +153,19 @@ class AcmPromotionsManager {
       $this->processPromotions($fetched_promotions);
     }
 
-    // Unpublish promotions, which are not part of API response.
+    // Delete promotions, which are not part of API response.
     if (!empty($ids)) {
       $this->unpublishPromotions($ids);
     }
   }
 
   /**
-   * Unpublish Promotion nodes, not part of API Response.
+   * Delete Promotion nodes, not part of API Response.
    *
    * @param array $validIDs
    *   Valid Rule ID's from API.
    */
-  protected function unpublishPromotions(array $validIDs = []) {
+  protected function deletePromotions(array $validIDs = []) {
     $query = $this->nodeStorage->getQuery();
     $query->condition('type', 'acm_promotion');
 
@@ -175,37 +175,15 @@ class AcmPromotionsManager {
 
     $nids = $query->execute();
 
-    $acm_promotion_attach_batch_size = $this->configFactory
-      ->get('acm_promotion.settings')
-      ->get('promotion_attach_batch_size');
-
     foreach ($nids as $nid) {
       /* @var $node \Drupal\node\NodeInterface */
       $node = $this->nodeStorage->load($nid);
-      $node->setPublished(NodeInterface::NOT_PUBLISHED);
-      $node->save();
-
-      // Unpublish all translations of the current node as well.
-      $translation_languages = $node->getTranslationLanguages();
-
-      foreach ($translation_languages as $langcode => $lang_obj) {
-        $node_translation = $node->getTranslation($langcode);
-        $node_translation->setPublished(Node::NOT_PUBLISHED);
-        $node_translation->save();
-      }
-
-      // Detach promotion from all skus.
-      $attached_promotion_skus = $this->getSkusForPromotion($node);
-
-      if (!empty($attached_promotion_skus)) {
-        $chunks = array_chunk($attached_promotion_skus, $acm_promotion_attach_batch_size);
-        foreach ($chunks as $chunk) {
-          $data['skus'] = $chunk;
-          $data['promotion'] = $nid;
-          $data['promotion_type'] = $node->get('field_acm_promotion_type')->getString();
-          $acm_promotion_detach_queue = $this->queue->get('acm_promotion_detach_queue');
-          $acm_promotion_detach_queue->createItem($data);
-        }
+      if ($node instanceof NodeInterface) {
+        $node->delete();
+        $this->logger->notice('Deleted orphan promotion node @promotion having rule_id:@rule_id.', [
+          '@promotion' => $node->label(),
+          '@rule_id' => $node->get('field_acm_promotion_rule_id')->first()->getString(),
+        ]);
       }
     }
   }
@@ -491,6 +469,33 @@ class AcmPromotionsManager {
     }
 
     return $output;
+  }
+
+  /**
+   * Removes the given promotion from SKU entity.
+   *
+   * @param \Drupal\acm_sku\Entity\SKU $sku
+   *   SKU Entity.
+   * @param int $nid
+   *   Promotion node id.
+   */
+  public function removeOrphanPromotionFromSku(SKU $sku, int $nid) {
+    $promotion_detach_item[] = ['target_id' => $nid];
+    $sku_promotions = $sku->get('field_acm_sku_promotions')->getValue();
+    $sku_promotions = array_udiff($sku_promotions, $promotion_detach_item, function ($array1, $array2) {
+      return $array1['target_id'] - $array2['target_id'];
+    });
+    $sku->get('field_acm_sku_promotions')->setValue($sku_promotions);
+    $sku->save();
+    // Update Sku Translations.
+    $translation_languages = $sku->getTranslationLanguages(TRUE);
+    if (!empty($translation_languages)) {
+      foreach ($translation_languages as $langcode => $language) {
+        $sku_entity_translation = $sku->getTranslation($langcode);
+        $sku_entity_translation->get('field_acm_sku_promotions')->setValue($sku_promotions);
+        $sku_entity_translation->save();
+      }
+    }
   }
 
 }
