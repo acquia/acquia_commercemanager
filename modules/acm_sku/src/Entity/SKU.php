@@ -323,7 +323,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
     $fields['price'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Display Price'))
       ->setDescription(t('Display Price of this SKU.'))
-      ->setTranslatable(TRUE)
+      ->setTranslatable(FALSE)
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'string',
@@ -339,14 +339,14 @@ class SKU extends ContentEntityBase implements SKUInterface {
     $fields['special_price'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Special Price'))
       ->setDescription(t('Special Price of this SKU.'))
-      ->setTranslatable(TRUE)
+      ->setTranslatable(FALSE)
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['final_price'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Final Price'))
       ->setDescription(t('Final Price of this SKU.'))
-      ->setTranslatable(TRUE)
+      ->setTranslatable(FALSE)
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
