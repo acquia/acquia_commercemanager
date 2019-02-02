@@ -357,8 +357,18 @@ class CategoryManager implements CategoryManagerInterface {
         // Break child relationships.
         $children = $this->termStorage->loadChildren($term->id(), $this->vocabulary->id());
         if (count($children)) {
-          $child_ids = array_map(function ($child) {
-            return ($child->id());
+          $child_ids = array_map(function ($child) use ($category) {
+            // If term having commerce id, means its sync from magento and
+            // thus we process. Term not having commerce id means its created
+            // only on Drupal and thus we skip processing.
+            if ($commerce_id = $child->get('field_commerce_id')->first()) {
+              // We check if the child exists in the response get from magento.
+              foreach ($category['children'] as $sync_cat_child) {
+                if ($commerce_id->getString() == $sync_cat_child['category_id']) {
+                  return $child->id();
+                }
+              }
+            }
           }, $children);
 
           $this->termStorage->deleteTermHierarchy($child_ids);
