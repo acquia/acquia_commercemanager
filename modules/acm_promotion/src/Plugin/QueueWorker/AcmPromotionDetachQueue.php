@@ -4,7 +4,6 @@ namespace Drupal\acm_promotion\Plugin\QueueWorker;
 
 use Drupal\acm_promotion\AcmPromotionQueueBase;
 use Drupal\acm_sku\Entity\SKU;
-use Drupal\Core\Cache\Cache;
 
 /**
  * Processes Skus to detach Promotions.
