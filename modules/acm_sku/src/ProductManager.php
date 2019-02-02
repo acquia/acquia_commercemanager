@@ -11,7 +11,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\acq_sku\Event\AcqSkuValidateEvent;
+use Drupal\acm_sku\Event\AcmSkuValidateEvent;
 
 /**
  * Class ProductManager.
@@ -295,8 +295,8 @@ class ProductManager implements ProductManagerInterface {
       try {
         // Allow other modules to subscribe to pre-validation of the SKU being
         // imported.
-        $event = new AcqSkuValidateEvent($product);
-        $this->eventDispatcher->dispatch(AcqSkuValidateEvent::ACQ_SKU_VALIDATE, $event);
+        $event = new AcmSkuValidateEvent($product);
+        $this->eventDispatcher->dispatch(AcmSkuValidateEvent::ACM_SKU_VALIDATE, $event);
         $product = $event->getProduct();
 
         // If skip attribute is set via any event subscriber, skip importing the

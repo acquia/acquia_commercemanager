@@ -44,7 +44,7 @@ class AcmSkuValidateEvent extends Event {
    * @param array $product
    *   Array of product attributes.
    */
-  public function setProduct($product) {
+  public function setProduct(array $product) {
     $this->product = $product;
   }
 
