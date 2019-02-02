@@ -96,33 +96,7 @@ class SKUFieldFormatter extends FormatterBase {
    *   The textual output generated.
    */
   protected function viewValue(FieldItemInterface $item) {
-    $sku = $item->value;
-
-    $query = \Drupal::entityQuery('acm_sku')
-      ->condition('sku', $sku);
-
-    $ids = $query->execute();
-
-    if (empty($ids)) {
-      \Drupal::logger('acm_sku')
-        ->notice(t('No SKU found for @sku.', ['@sku' => $sku]));
-      return '';
-    }
-    elseif (count($ids) > 1) {
-      \Drupal::logger('acm_sku')
-        ->notice(t('More than one SKU found for @sku. Using first.', ['@sku' => $sku]));
-    }
-
-    $sku_id = reset($ids);
-    $sku = SKU::load($sku_id);
-
-    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
-
-    if ($sku->hasTranslation($langcode)) {
-      $sku = $sku->getTranslation($langcode);
-    }
-
-    return $sku;
+    return SKU::loadFromSku($item->value);
   }
 
 }

@@ -775,10 +775,25 @@ class ProductManager implements ProductManagerInterface {
           if ($node = $plugin->getDisplayNode($sku, FALSE, FALSE)) {
             // Delete the node if it is linked to this SKU only.
             $node->delete();
+            $this->logger->info('Deleted node for SKU @sku for @langcode.', [
+              '@sku' => $sku->getSku(),
+              '@langcode' => $langcode,
+            ]);
+          }
+          else {
+            $this->logger->info('Node for SKU @sku for @langcode not found for deletion.', [
+              '@sku' => $sku->getSku(),
+              '@langcode' => $langcode,
+            ]);
           }
         }
         catch (\Exception $e) {
           // Not doing anything, we might not have node for the sku.
+          $this->logger->info('Error while deleting node for the SKU @sku for @langcode. Message:@message', [
+            '@sku' => $sku->getSku(),
+            '@langcode' => $langcode,
+            '@message' => $e->getMessage(),
+          ]);
         }
 
         // Delete the SKU.

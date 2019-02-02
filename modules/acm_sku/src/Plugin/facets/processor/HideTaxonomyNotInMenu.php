@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\acq_sku\Plugin\facets\processor;
+namespace Drupal\acm_sku\Plugin\facets\processor;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -117,6 +117,8 @@ class HideTaxonomyNotInMenu extends ProcessorPluginBase implements BuildProcesso
 
       // Process taxonomy terms & remove items not included in menu.
       if ($entity_type == 'taxonomy_term') {
+        $langcode = $this->languageManager->getCurrentLanguage()->getId();
+
         $ids = [];
 
         /** @var \Drupal\facets\Result\ResultInterface $result */
@@ -132,6 +134,10 @@ class HideTaxonomyNotInMenu extends ProcessorPluginBase implements BuildProcesso
         // Loop over all results.
         foreach ($results as $i => $result) {
           $term = isset($entities[$ids[$i]]) ? $entities[$ids[$i]] : NULL;
+
+          if (($term instanceof TermInterface) && $term->hasTranslation($langcode)) {
+            $term = $term->getTranslation($langcode);
+          }
 
           // Display the term if included in menu and status is enabled.
           if (($term instanceof TermInterface) &&

@@ -23,6 +23,13 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
   protected $ingestApiWrapper;
 
   /**
+   * Promotion manager.
+   *
+   * @var \Drupal\acm_promotion\AcqPromotionsManager
+   */
+  protected $promotionManager;
+
+  /**
    * LoggerChannelInterface object.
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
@@ -40,6 +47,8 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
    *   Plugin definition.
    * @param \Drupal\acm\Connector\IngestAPIWrapper $ingestApiWrapper
    *   IngestAPIWrapper Service object.
+   * @param \Drupal\acm_promotion\AcqPromotionsManager $promotionManager
+   *   Promotion manager.
    * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   Logger service.
    */
@@ -47,9 +56,11 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
                               $plugin_id,
                               $plugin_definition,
                               IngestAPIWrapper $ingestApiWrapper,
+                              AcqPromotionsManager $promotionManager,
                               LoggerChannelFactory $loggerFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->ingestApiWrapper = $ingestApiWrapper;
+    $this->promotionManager = $promotionManager;
     $this->logger = $loggerFactory->get('acm_sku');
   }
 
@@ -74,6 +85,7 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
       $plugin_id,
       $plugin_definition,
       $container->get('acm.ingest_api'),
+      $container->get('acm_promotion.promotions_manager'),
       $container->get('logger.factory')
     );
   }
