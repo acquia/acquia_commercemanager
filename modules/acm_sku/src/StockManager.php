@@ -13,6 +13,11 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Class StockManager.
+ *
+ * @package Drupal\acm_sku
+ */
 class StockManager {
 
   /**
@@ -79,7 +84,7 @@ class StockManager {
    *   Lock.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   Event Dispatcher.
-   * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   Logger.
    */
   public function __construct(Connection $connection,
@@ -142,6 +147,7 @@ class StockManager {
           }
         }
         break;
+
       case 'simple':
       default:
         $static[$sku_string] = (bool) $this->getStockQuantity($sku->getSku());
@@ -196,7 +202,7 @@ class StockManager {
     // Log if more than one found.
     if (count($result) > 1) {
       $this->logger->error('Duplicate entries found for stock of sku @sku.', [
-        '@sku' => $sku
+        '@sku' => $sku,
       ]);
     }
 
@@ -282,10 +288,12 @@ class StockManager {
    *
    * @param array $stock
    *   Stock data for particular SKU.
+   * @param int $store_id
+   *   Store ID.
    *
    * @throws \Exception
    */
-  public function processStockMessage(array $stock, $storeId) {
+  public function processStockMessage(array $stock, $store_id) {
     // Sanity check.
     if (!isset($stock['sku']) || !strlen($stock['sku'])) {
       $this->logger->error('Invalid or empty product SKU. Stock message: @message', [
@@ -297,14 +305,14 @@ class StockManager {
 
     $langcode = NULL;
 
-    if (empty($storeId) && isset($stock['store_id'])) {
-      $storeId = $stock['store_id'];
+    if (empty($store_id) && isset($stock['store_id'])) {
+      $store_id = $stock['store_id'];
     }
 
     // Check for stock is valid for current site.
     // If store id not available, we consider it as valid message.
-    if ($storeId) {
-      $langcode = $this->i18nHelper->getLangcodeFromStoreId($storeId);
+    if ($store_id) {
+      $langcode = $this->i18nHelper->getLangcodeFromStoreId($store_id);
 
       if (empty($langcode)) {
         // It could be for a different store/website, don't do anything.

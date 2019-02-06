@@ -81,6 +81,4 @@ class StockUpdatedEvent extends Event {
     return $this->lowQuantity;
   }
 
-
-
 }

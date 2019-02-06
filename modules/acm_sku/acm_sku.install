@@ -28,12 +28,9 @@ function acm_sku_update_8018() {
   // To start with we will let everything be handled by quantity only.
   foreach ($result as $row) {
     $db->merge('acm_sku_stock')
-        ->key(['sku' => $row->sku])
-        ->fields([
-          'quantity' => $row->stock,
-          'status' => 1,
-        ])
-        ->execute();
+      ->key(['sku' => $row->sku])
+      ->fields(['quantity' => $row->stock, 'status' => 1])
+      ->execute();
   }
 
   // Apply updates to remove stock field.

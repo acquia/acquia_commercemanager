@@ -3,7 +3,6 @@
 namespace Drupal\acm_sku\Entity;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
