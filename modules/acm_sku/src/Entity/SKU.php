@@ -164,7 +164,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
       // We will continue execution with available translation and just log
       // a message. During sync we say don't log messages.
       elseif ($log_not_found) {
-        \Drupal::logger('acq_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
+        \Drupal::logger('acm_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
       }
     }
     else {
@@ -305,17 +305,6 @@ class SKU extends ContentEntityBase implements SKUInterface {
       ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -11,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['stock'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Stock'))
-      ->setDescription(t('Stock quantity.'))
-      ->setTranslatable(FALSE)
-      ->setDisplayOptions('form', [
-        'type' => 'number',
-        'weight' => -10,
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
@@ -734,27 +723,12 @@ class SKU extends ContentEntityBase implements SKUInterface {
   }
 
   /**
-   * Helper function to clear stock cache for particular sku.
+   * {@inheritdoc}
    */
-  public function clearStockCache() {
-    $stock_mode = \Drupal::config('acm_sku.settings')->get('stock_mode');
-
-    // Clear product and forms related to sku.
-    Cache::invalidateTags(['acm_sku:' . $this->id()]);
-
-    if ($stock_mode == 'push') {
-      /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
-      $plugin = $this->getPluginInstance();
-
-      // Reset the stock value.
-      $plugin->getProcessedStock($this, TRUE);
-    }
-    else {
-      $stock_cid = 'stock:' . $this->getSku();
-
-      // Clear stock cache.
-      \Drupal::cache('stock')->invalidate($stock_cid);
-    }
+  public function refreshStock() {
+    /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
+    $plugin = $this->getPluginInstance();
+    $plugin->refreshStock($this);
   }
 
 }

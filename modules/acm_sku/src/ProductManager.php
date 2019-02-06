@@ -547,114 +547,6 @@ class ProductManager implements ProductManagerInterface {
   }
 
   /**
-   * SynchronizeStockData.
-   *
-   * Syncs an array of stock data.
-   *
-   * @param array $stock
-   *   Stock data for a product.
-   * @param string $storeId
-   *   Store ID from header.
-   *
-   * @return array
-   *   Array of results.
-   */
-  public function synchronizeStockData(array $stock = [], $storeId = '') {
-    $lock = \Drupal::lock();
-
-    $response = [
-      'success' => FALSE,
-    ];
-
-    $config = $this->configFactory->get('acm.connector');
-    $debug = $config->get('debug');
-    $debug_dir = $config->get('debug_dir');
-
-    if ($debug && !empty($debug_dir)) {
-      // Export product data into file.
-      if (!isset($fps)) {
-        $filename = $debug_dir . '/stock.data';
-        $fps = fopen($filename, 'a');
-      }
-      fwrite($fps, var_export($stock, 1));
-      fwrite($fps, '\n');
-    }
-
-    $langcode = NULL;
-
-    // For v1 connector we are going to get store_id from each stock,
-    // because we are not sending X-ACM-UUID header.
-    if (empty($storeId) && isset($stock['store_id'])) {
-      $storeId = $stock['store_id'];
-    }
-
-    if (!empty($storeId)) {
-      $langcode = $this->i18nHelper->getLangcodeFromStoreId($storeId);
-
-      if (empty($langcode)) {
-        // It could be for a different store/website, don't do anything.
-        return ($response);
-      }
-    }
-
-    // Work with single and array:
-    if (array_key_exists("sku", $stock)) {
-      $stockArray = [$stock];
-    }
-    else {
-      $stockArray = $stock;
-    }
-
-    foreach ($stockArray as $stock) {
-
-      if (!isset($stock['sku']) || !strlen($stock['sku'])) {
-        $this->logger->error('Invalid or empty product SKU.');
-        return ($response);
-      }
-
-      // Acquire lock to ensure parallel processes are executed one by one.
-      // TODO @Malachy: Should we change the key and move outside loop?
-      $lock_key = 'synchronizeProduct' . $stock['sku'];
-      do {
-        $lock_acquired = $lock->acquire($lock_key);
-      } while (!$lock_acquired);
-
-      /** @var \Drupal\acm_sku\Entity\SKU $sku */
-      if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
-        $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
-
-        if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
-          $stock['quantity'] = 0;
-        }
-
-        $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
-
-        if ($quantity != $sku->get('stock')->getString()) {
-          $sku->get('stock')->setValue($quantity);
-          $sku->save();
-
-          // Clear product and forms related to sku.
-          Cache::invalidateTags(['acm_sku:' . $sku->id()]);
-        }
-      }
-
-      // Release the lock.
-      $lock->release($lock_key);
-
-    }
-
-    if (isset($fps)) {
-      fclose($fps);
-    }
-
-    $response = [
-      'success' => TRUE,
-    ];
-
-    return ($response);
-  }
-
-  /**
    * FormatCategories.
    *
    * @return array
@@ -802,20 +694,6 @@ class ProductManager implements ProductManagerInterface {
     $sku->special_price->value = $product['special_price'];
     $sku->final_price->value = $product['final_price'];
     $sku->attributes = $this->formatProductAttributes($product['attributes']);
-
-    // Set default value of stock to 0.
-    $stock = 0;
-
-    if (isset($product['extension']['stock_item'],
-        $product['extension']['stock_item']['is_in_stock'],
-        $product['extension']['stock_item']['qty'])
-      && $product['extension']['stock_item']['is_in_stock']) {
-
-      // Store stock value in sku.
-      $stock = $product['extension']['stock_item']['qty'];
-    }
-
-    $sku->get('stock')->setValue($stock);
 
     $hasSerializableMedia = (
       array_key_exists('extension', $product) &&

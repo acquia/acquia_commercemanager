@@ -5,11 +5,11 @@ core: 8.x
 package: Commerce
 dependencies:
   - acquia_commercemanager:acm
+  - acquia_commercemanager:acm_sku_stock
   - key_value_field:key_value_field
   - inline_entity_form:inline_entity_form
   - drupal:menu_ui
   - drupal:node
   - drupal:path
-  - pcb:pcb
   - drupal:rest
   - drupal:taxonomy

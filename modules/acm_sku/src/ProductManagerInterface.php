@@ -24,19 +24,4 @@ interface ProductManagerInterface {
    */
   public function synchronizeProducts(array $products = [], $storeId = '');
 
-  /**
-   * SynchronizeStockData.
-   *
-   * Syncs an array of stock data.
-   *
-   * @param array $stock
-   *   Stock data for a product.
-   * @param string $storeId
-   *   Store ID from header.
-   *
-   * @return array
-   *   Array of results.
-   */
-  public function synchronizeStockData(array $stock = [], $storeId = '');
-
 }

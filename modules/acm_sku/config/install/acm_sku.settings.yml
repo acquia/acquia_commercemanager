@@ -1,4 +1,1 @@
-stock_mode: 'pull'
-stock_cache_multiplier: 600
-stock_cache_max_lifetime: 7200
 linked_skus_cache_max_lifetime: 3600
