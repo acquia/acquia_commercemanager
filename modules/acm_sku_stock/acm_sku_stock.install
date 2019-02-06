@@ -14,7 +14,7 @@ function acm_sku_stock_schema() {
     'fields' => [
       'sku' => [
         'type' => 'varchar',
-        'length' => 50,
+        'length' => 255,
         'not null' => TRUE,
         'description' => 'Product SKU.',
       ],

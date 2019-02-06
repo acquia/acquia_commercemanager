@@ -4,4 +4,4 @@ description: This module adds stock management functionality to the Acquia Comme
 core: 8.x
 package: Commerce
 dependencies:
-  - acm_commerce:acm_sku
+  - acquia_commercemanager:acm
