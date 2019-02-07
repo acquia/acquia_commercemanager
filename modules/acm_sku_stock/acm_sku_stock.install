@@ -13,7 +13,7 @@ function acm_sku_stock_schema() {
     'description' => 'Stores sku stock info.',
     'fields' => [
       'sku' => [
-        'type' => 'varchar',
+        'type' => 'varchar_ascii',
         'length' => 255,
         'not null' => TRUE,
         'description' => 'Product SKU.',
