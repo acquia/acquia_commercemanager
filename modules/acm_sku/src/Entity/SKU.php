@@ -757,4 +757,22 @@ class SKU extends ContentEntityBase implements SKUInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $cache_tags = parent::getCacheTags();
+    /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
+    $plugin = $this->getPluginInstance();
+    // Get parent skus(if any) for the sku.
+    $parent_skus = array_values($plugin->getAllParentSkus($this->getSku()));
+    // Prepare cache tags of parent sku.
+    $parent_skus = array_map(function ($parent_sku) {
+      return 'acm_sku:' . $parent_sku;
+    }, $parent_skus);
+
+    // @Todo: Add the tags of the display node as well.
+    return Cache::mergeTags($cache_tags, $parent_skus);
+  }
+
 }
