@@ -59,9 +59,9 @@ class StockManagerTest extends BrowserTestBase {
   }
 
   /**
-   * Test category sync.
+   * Test processStockMessage.
    */
-  public function testSyncCategory() {
+  public function testProcessStockMessage() {
     // Sync products first.
     global $_acm_commerce_simple_products;
     $this->container->get('acm_sku.product_manager')->synchronizeProducts($_acm_commerce_simple_products);
