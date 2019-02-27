@@ -293,7 +293,7 @@ class StockManager {
    *
    * @throws \Exception
    */
-  public function processStockMessage(array $stock, $store_id) {
+  public function processStockMessage(array $stock, $store_id = 0) {
     // Sanity check.
     if (!isset($stock['sku']) || !strlen($stock['sku'])) {
       $this->logger->error('Invalid or empty product SKU. Stock message: @message', [
