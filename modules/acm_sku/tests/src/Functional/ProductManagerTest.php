@@ -70,10 +70,10 @@ class ProductManagerTest extends BrowserTestBase {
    * @covers ::synchronizeProducts
    */
   public function testSynchronizeSimpleProducts() {
-    global $simpleProducts;
+    global $_acm_commerce_simple_products;
 
     $result = $this->container->get('acm_sku.product_manager')
-      ->synchronizeProducts($simpleProducts);
+      ->synchronizeProducts($_acm_commerce_simple_products);
 
     $this->assertSame($result["success"], TRUE);
     // 2 nodes and 2 skus created.
@@ -128,10 +128,10 @@ class ProductManagerTest extends BrowserTestBase {
    * @covers ::synchronizeProducts
    */
   public function testSynchronizeSimpleProductsWithMoreData() {
-    global $simpleProductsMoreData;
+    global $_acm_commerce_simple_products_more_data;
 
     $result = $this->container->get('acm_sku.product_manager')
-      ->synchronizeProducts($simpleProductsMoreData);
+      ->synchronizeProducts($_acm_commerce_simple_products_more_data);
     $this->assertSame($result["success"], TRUE);
     // 2 nodes and 2 skus created.
     $this->assertSame($result["created"], 4);

@@ -51,8 +51,8 @@ class StockManagerTest extends BrowserTestBase {
   public function setUp() {
     parent::setup();
 
-    // Load categories data.
-
+    // Load products and stock data.
+    module_load_include('data', 'acm_sku', 'tests/data/products');
     module_load_include('data', 'acm_sku', 'tests/data/stock');
 
     $this->stockManager = $this->container->get('acm_sku.stock_manager');
@@ -63,8 +63,8 @@ class StockManagerTest extends BrowserTestBase {
    */
   public function testSyncCategory() {
     // Sync products first.
-    global $simpleProducts;
-    $this->container->get('acm_sku.product_manager')->synchronizeProducts($simpleProducts);
+    global $_acm_commerce_simple_products;
+    $this->container->get('acm_sku.product_manager')->synchronizeProducts($_acm_commerce_simple_products);
 
     global $_acm_commerce_stock_create;
     $this->stockManager->processStockMessage($_acm_commerce_stock_create);

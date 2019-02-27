@@ -1,8 +1,8 @@
 <?php
 
-global $simpleProducts;
+global $_acm_commerce_simple_products;
 
-$simpleProducts = [
+$_acm_commerce_simple_products = [
       [
         "product_id" => 1,
         "store_id" => 1,
@@ -92,9 +92,9 @@ $simpleProducts = [
       ],
     ];
 
-global $simpleProductsMoreData;
+global $_acm_commerce_simple_products_more_data;
 
-$simpleProductsMoreData = [
+$_acm_commerce_simple_products_more_data = [
       [
         "product_id" => 1,
         "store_id" => 0,
