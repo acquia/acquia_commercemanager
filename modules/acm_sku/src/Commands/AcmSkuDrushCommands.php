@@ -219,8 +219,6 @@ class AcmSkuDrushCommands extends DrushCommands {
   /**
    * Run a full synchronization of all commerce product records.
    *
-   * @throws \Drush\Exceptions\UserAbortException
-   *
    * @param string $langcode
    *   Sync products available in this langcode.
    * @param string $page_size
@@ -246,6 +244,8 @@ class AcmSkuDrushCommands extends DrushCommands {
    * @usage drush acsp en 50 --category_id=1234
    *   Synchronize sku data for the skus in category with id 1234 only in store
    *   linked to en and page size 50.
+   *
+   * @throws \Drush\Exceptions\UserAbortException
    */
   public function syncProducts($langcode, $page_size, array $options = ['skus' => NULL, 'category_id' => NULL]) {
     $langcode = strtolower($langcode);
@@ -319,7 +319,7 @@ class AcmSkuDrushCommands extends DrushCommands {
         $this->io()->table([
           dt('Category Id'),
           dt('Category Name'),
-          dt('Category Commerce Id')
+          dt('Category Commerce Id'),
         ], $orphan_categories);
 
         // Confirmation to delete old categories.
@@ -600,9 +600,10 @@ class AcmSkuDrushCommands extends DrushCommands {
   }
 
   /**
-   * Flush all commerce data from the site (Products, SKUs, Product Categories and Product Options).
+   * Flush all commerce data from the site.
    *
-   * @throws \Drush\Exceptions\UserAbortException
+   * Handles Products, SKUs, Product Categories and Product Options and allows
+   * more data to be added for cleanup via alter hook.
    *
    * @command acm_sku:flush-synced-data
    *
@@ -611,7 +612,10 @@ class AcmSkuDrushCommands extends DrushCommands {
    * @aliases accd,clean-synced-data
    *
    * @usage drush accd
-   *   Flush all commerce data from the site (Products, SKUs, Product Categories and Product Options).
+   *   Flush all commerce data from the site (Products, SKUs, Product Categories
+   *   and Product Options).
+   *
+   * @throws \Drush\Exceptions\UserAbortException
    */
   public function flushSyncedData() {
     if (!$this->io()->confirm(dt("Are you sure you want to clean commerce data?"))) {

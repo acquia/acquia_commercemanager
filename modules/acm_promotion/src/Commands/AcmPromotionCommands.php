@@ -38,7 +38,7 @@ class AcmPromotionCommands extends DrushCommands {
    * Run a full synchronization of all commerce promotion records.
    *
    * @param array $options
-   *   Command Options
+   *   Command Options.
    *
    * @command acm_promotion:sync-promotions
    *
