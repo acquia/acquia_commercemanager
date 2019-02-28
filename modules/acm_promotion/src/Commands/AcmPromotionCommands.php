@@ -1,10 +1,16 @@
 <?php
+
 namespace Drupal\acm_promotion\Commands;
 
 use Drupal\acm_promotion\AcmPromotionsManager;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drush\Commands\DrushCommands;
 
+/**
+ * Class AcmPromotionCommands.
+ *
+ * @package Drupal\acm_promotion\Commands
+ */
 class AcmPromotionCommands extends DrushCommands {
 
   /**
@@ -31,6 +37,9 @@ class AcmPromotionCommands extends DrushCommands {
   /**
    * Run a full synchronization of all commerce promotion records.
    *
+   * @param array $options
+   *   Command Options
+   *
    * @command acm_promotion:sync-promotions
    *
    * @option types Type of promotions that need to be synced.
@@ -43,9 +52,8 @@ class AcmPromotionCommands extends DrushCommands {
    *   Run a full synchronization of all available promotions.
    * @usage drush acspm --types=cart
    *   Run a full synchronization of all available cart promotions.
-   * @param array $options
    */
-  public function synPromotions($options = ['types' => NULL]) {
+  public function synPromotions(array $options = ['types' => NULL]) {
     if ($types = $options['types']) {
       $this->logger->notice(dt('Synchronizing all @types commerce promotions, this usually takes some time...', ['@types' => $types]));
       $types = explode(',', $types);

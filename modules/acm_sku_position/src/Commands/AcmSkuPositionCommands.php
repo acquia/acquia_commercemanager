@@ -80,10 +80,10 @@ class AcmSkuPositionCommands extends DrushCommands {
   /**
    * Drush command to sync sku product position based on category.
    *
-   * @command acm_sku_position:position-sync
-   *
    * @param string $position_type
    *   Name of the position type.
+   *
+   * @command acm_sku_position:position-sync
    *
    * @aliases aapps,position-sync,sync-positions
    *
@@ -138,7 +138,7 @@ class AcmSkuPositionCommands extends DrushCommands {
           continue;
         }
 
-        // Skip sync if error is found in the response for a particular category.
+        // Skip sync if error is found in response for a particular category.
         if (is_array($response) && isset($response['message'])) {
           $this->logger->error(dt('Error in position sync for @name (tid: @tid). Response: @message', [
             '@name' => $term->name,

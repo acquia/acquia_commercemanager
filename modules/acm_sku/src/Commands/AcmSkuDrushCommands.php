@@ -42,7 +42,7 @@ class AcmSkuDrushCommands extends DrushCommands {
   /**
    * I18n Helper.
    *
-   * @var \ Drupal\acm\I18nHelper
+   * @var \Drupal\acm\I18nHelper
    */
   private $i18nhelper;
 
@@ -170,7 +170,7 @@ class AcmSkuDrushCommands extends DrushCommands {
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   Language Manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   Module Handler
+   *   Module Handler.
    * @param \Drupal\Core\Cache\CacheBackendInterface $linked_sku_cache
    *   Linked SKU cache service.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
@@ -221,14 +221,14 @@ class AcmSkuDrushCommands extends DrushCommands {
    *
    * @throws \Drush\Exceptions\UserAbortException
    *
-   * @command acm_sku:sync-products
-   *
    * @param string $langcode
    *   Sync products available in this langcode.
    * @param string $page_size
    *   Number of items to be synced in one batch.
-   *
    * @param array $options
+   *   Command options.
+   *
+   * @command acm_sku:sync-products
    *
    * @option skus SKUs to import (like query).
    * @option category_id Magento category id to sync the products for.
@@ -238,13 +238,16 @@ class AcmSkuDrushCommands extends DrushCommands {
    * @aliases acsp,sync-commerce-products
    *
    * @usage drush acsp en 50
-   *   Run a full product synchronization of all available products in store linked to en and page size 50.
+   *   Run a full product synchronization of all available products in store
+   *   linked to en and page size 50.
    * @usage drush acsp en 50 --skus=\'M-H3495 130 2  FW\',\'M-H3496 130 004FW\',\'M-H3496 130 005FW\''
-   *   Synchronize sku data for the skus M-H3495 130 2  FW, M-H3496 130 004FW & M-H3496 130 005FW only in store linked to en and page size 50.
+   *   Synchronize sku data for the skus M-H3495 130 2  FW, M-H3496 130 004FW
+   *   & M-H3496 130 005FW only in store linked to en and page size 50.
    * @usage drush acsp en 50 --category_id=1234
-   *   Synchronize sku data for the skus in category with id 1234 only in store linked to en and page size 50.
+   *   Synchronize sku data for the skus in category with id 1234 only in store
+   *   linked to en and page size 50.
    */
-  public function syncProducts($langcode, $page_size, $options = ['skus' => NULL, 'category_id' => NULL]) {
+  public function syncProducts($langcode, $page_size, array $options = ['skus' => NULL, 'category_id' => NULL]) {
     $langcode = strtolower($langcode);
 
     $store_id = $this->i18nhelper->getStoreIdFromLangcode($langcode);
@@ -313,7 +316,12 @@ class AcmSkuDrushCommands extends DrushCommands {
       // If there are categories to delete.
       if (!empty($orphan_categories)) {
         // Show `tid + cat name + commerce id` for review.
-        $this->io()->table([dt('Category Id'), dt('Category Name'), dt('Category Commerce Id')], $orphan_categories);
+        $this->io()->table([
+          dt('Category Id'),
+          dt('Category Name'),
+          dt('Category Commerce Id')
+        ], $orphan_categories);
+
         // Confirmation to delete old categories.
         if ($this->io()->confirm(dt('Are you sure you want to clean these old categories'), FALSE)) {
 
@@ -353,19 +361,22 @@ class AcmSkuDrushCommands extends DrushCommands {
   }
 
   /**
-   * Run a partial synchronization of commerce product records synchronously for testing / dev.
+   * Run a partial synchronization of commerce product records synchronously.
    *
-   * @command acm_sku:sync-products-test
+   * This is used for testing / dev environments.
    *
    * @param int $count
    *   Number of product records to sync.
+   *
+   * @command acm_sku:sync-products-test
    *
    * @validate-module-enabled acm_sku
    *
    * @aliases acdsp,sync-commerce-products-test
    *
    * @usage drush acdsp
-   *   Run a partial synchronization of commerce product records synchronously for testing / dev.
+   *   Run a partial synchronization of commerce product records synchronously
+   *   for testing / dev.
    */
   public function syncProductsTest($count) {
     $this->output->writeln(dt('Synchronizing @count commerce products for testing / dev...', ['@count' => $count]));
@@ -722,13 +733,10 @@ class AcmSkuDrushCommands extends DrushCommands {
   /**
    * Clear linked SKUs cache.
    *
-   * @return void
-   *
-   * @throws \Drush\Exceptions\UserAbortException
+   * @param array $options
+   *   Command Options.
    *
    * @command acm_sku:clear-linked-skus-cache
-   *
-   * @param array $options
    *
    * @option sku SKU to clean linked skus cache of.
    *
@@ -740,8 +748,10 @@ class AcmSkuDrushCommands extends DrushCommands {
    *   Clear linked SKUs cache for all SKUs.
    * @usage drush acclsc --skus=SKU
    *   Clear linked SKUs cache for particular SKU.
+   *
+   * @throws \Drush\Exceptions\UserAbortException
    */
-  public function flushLinkedSkuCache($options = ['sku' => NULL]) {
+  public function flushLinkedSkuCache(array $options = ['sku' => NULL]) {
     // Check if we are asked to clear cache of specific SKU.
     if (!empty($options['sku'])) {
       if ($sku_entity = SKU::loadFromSku($options['sku'])) {
