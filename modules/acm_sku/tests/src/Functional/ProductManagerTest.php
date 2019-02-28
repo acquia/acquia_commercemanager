@@ -56,9 +56,9 @@ class ProductManagerTest extends BrowserTestBase {
    * @covers ::synchronizeProducts
    */
   public function testSynchronizeNoProducts() {
-    $result = $this->container->get('acm_sku.product_manager')
-      ->synchronizeProducts();
-    $this->assertSame($result['success'], FALSE);
+    $result = $this->container->get('acm_sku.product_manager')->synchronizeProducts();
+    $processed = $result['created'] + $result['updated'] + $result['failed'] + $result['ignored'] + $result['deleted'];
+    $this->assertSame($processed, 0);
   }
 
   /**
