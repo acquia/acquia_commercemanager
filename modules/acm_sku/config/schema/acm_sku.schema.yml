@@ -1,0 +1,81 @@
+acm_sku.type.*:
+  type: config_entity
+  label: 'SKU type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+
+acm_sku.settings:
+  type: config_object
+  label: 'SKU settings'
+  mapping:
+    stock_mode:
+      type: string
+      label: 'stock_mode'
+    stock_cache_multiplier:
+      type: integer
+      label: 'stock_cache_multiplier'
+    stock_cache_max_lifetime:
+      type: integer
+      label: 'stock_cache_max_lifetime'
+    linked_skus_cache_max_lifetime:
+      type: integer
+      label: 'linked_skus_cache_max_lifetime'
+
+acm_sku.configurable_form_settings:
+  type: config_object
+  label: 'configurable_form_settings'
+  mapping:
+    attribute_weights:
+      type: config_object
+      label: 'attribute_weights'
+      mapping:
+        size:
+          label: 'Size'
+          type: integer
+    show_quantity:
+      type: boolean
+      label: 'show_quantity'
+
+field.storage_settings.sku:
+  type: mapping
+  label: 'SKU field settings'
+  mapping:
+    max_length:
+      label: 'max_length'
+      type: integer
+    is_ascii:
+      label: 'is_ascii'
+      type: boolean
+    case_sensitive:
+      label: 'case_sensitive'
+      type: boolean
+
+field.formatter.settings.product_link:
+  type: mapping
+  label: 'Image link ff settings'
+  mapping:
+    image_style:
+      type: string
+    image_link:
+      type: string
+
+field.formatter.settings.sku_formatter:
+  type: mapping
+  label: 'sku_formatter ff settings'
+  mapping:
+    view_mode:
+      type: string
+
+field.widget.settings.sku_widget:
+  type: mapping
+  label: 'Comment display format settings'
+  mapping:
+    size:
+      type: integer

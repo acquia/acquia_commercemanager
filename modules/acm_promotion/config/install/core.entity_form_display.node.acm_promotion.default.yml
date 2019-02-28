@@ -1,0 +1,186 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.acm_promotion.field_acm_promotion_action
+    - field.field.node.acm_promotion.field_acm_promotion_always_on
+    - field.field.node.acm_promotion.field_acm_promotion_data
+    - field.field.node.acm_promotion.field_acm_promotion_description
+    - field.field.node.acm_promotion.field_acm_promotion_disc_type
+    - field.field.node.acm_promotion.field_acm_promotion_discount
+    - field.field.node.acm_promotion.field_acm_promotion_label
+    - field.field.node.acm_promotion.field_acm_promotion_rule_id
+    - field.field.node.acm_promotion.field_acm_promotion_type
+    - field.field.node.acm_promotion.field_coupon_code
+    - field.field.node.acm_promotion.field_skus
+    - node.type.acm_promotion
+  module:
+    - acm_sku
+    - field_group
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_acquia_commerce:
+      children:
+        - field_acm_promotion_rule_id
+        - translation
+        - field_acm_promotion_label
+        - field_acm_promotion_disc_type
+        - field_acm_promotion_discount
+        - field_acm_promotion_action
+        - field_acm_promotion_data
+        - field_acm_promotion_type
+        - field_skus
+      parent_name: ''
+      weight: 14
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Acquia Commerce'
+id: node.acm_promotion.default
+targetEntityType: node
+bundle: acm_promotion
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_acm_promotion_action:
+    weight: 17
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_acm_promotion_always_on:
+    weight: 11
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_acm_promotion_data:
+    weight: 18
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_acm_promotion_description:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_acm_promotion_disc_type:
+    weight: 15
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_acm_promotion_discount:
+    weight: 16
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_acm_promotion_label:
+    weight: 14
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_acm_promotion_rule_id:
+    weight: 12
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_acm_promotion_type:
+    type: options_select
+    weight: 19
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_coupon_code:
+    weight: 121
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_skus:
+    weight: 20
+    settings:
+      size: 60
+    third_party_settings: {  }
+    type: sku_widget
+    region: content
+  path:
+    type: path
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 4
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 5
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 13
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+hidden: {  }

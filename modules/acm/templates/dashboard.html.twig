@@ -1,0 +1,30 @@
+<div class="dashboard-menu layout-column layout-column--quarter">
+    {{ menu }}
+</div>
+<div class="dashboard layout-column layout-column--three-quarter">
+    <div class="dashboard-group dashboard-group--tile">
+        {% for tile in items['tile'] %}
+            {{ tile }}
+        {% endfor %}
+    </div>
+
+    {% if items['line'] %}
+        <div class="dashboard-group dashboard-group--line">
+            <table>
+                {% for line in items['line'] %}
+                    <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+                        {{ line }}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+
+    {% for key, group in items|without('tile', 'line') %}
+        <div class="dashboard-group dashboard-group--{{ key }}">
+            {% for item in group %}
+                {{ item }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>

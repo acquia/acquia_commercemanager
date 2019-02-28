@@ -1,0 +1,163 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for acm_promotion.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function acm_promotion_install() {
+  // Add permissions into ACM role.
+  $role = Role::load('acm');
+  if (!is_null($role)) {
+    $permissions = [
+      'create acm_promotion content',
+      'delete acm_promotion revisions',
+      'delete any acm_promotion content',
+      'delete own acm_promotion content',
+      'edit any acm_promotion content',
+      'edit own acm_promotion content',
+      'restful post acm_promotionsync',
+      'revert acm_promotion revisions',
+      'view acm_promotion revisions',
+    ];
+
+    foreach ($permissions as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function acm_promotion_uninstall() {
+  // Remove permissions from ACM role.
+  $role = Role::load('acm');
+  if (!is_null($role)) {
+    $permissions = [
+      'create acm_promotion content',
+      'delete acm_promotion revisions',
+      'delete any acm_promotion content',
+      'delete own acm_promotion content',
+      'edit any acm_promotion content',
+      'edit own acm_promotion content',
+      'restful post acm_promotionsync',
+      'revert acm_promotion revisions',
+      'view acm_promotion revisions',
+    ];
+
+    foreach ($permissions as $permission) {
+      if ($role->hasPermission($permission)) {
+        $role->revokePermission($permission);
+      }
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Create 'Always On?' field.
+ */
+function acm_promotion_update_8001() {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  $storages = $entityTypeManager->getStorage('field_storage_config')
+    ->loadByProperties(['id' => 'node.field_acm_promotion_always_on']);
+  if (empty($storages)) {
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_acm_promotion_always_on',
+      'entity_type' => 'node',
+      'type' => 'boolean',
+      'cardinality' => '1',
+      'translatable' => TRUE,
+    ]);
+    $storage->save();
+  }
+  else {
+    $storage = reset($storages);
+  }
+
+  $fields = $entityTypeManager->getStorage('field_config')
+    ->loadByProperties(['id' => 'node.acm_promotion.field_acm_promotion_always_on']);
+  if (empty($fields)) {
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'acm_promotion',
+      'label' => 'Always On?',
+      'description' => 'Check this field if this promotion should always apply to users (ie a sale or a promotion without a marketing link).',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'settings' => [
+        'on_label' => 'On',
+        'off_label' => 'Off',
+      ],
+    ])->save();
+  }
+}
+
+/**
+ * Add taxonomy-related and product REST-related permissions to ACM role.
+ */
+function acm_promotion_update_8002() {
+  // Add permissions into ACM role.
+  $role = Role::load('acm');
+  if (!is_null($role)) {
+    $permissions = [
+      'create acm_promotion content',
+      'delete acm_promotion revisions',
+      'delete any acm_promotion content',
+      'delete own acm_promotion content',
+      'edit any acm_promotion content',
+      'edit own acm_promotion content',
+      'restful post acm_promotionsync',
+      'revert acm_promotion revisions',
+      'view acm_promotion revisions',
+    ];
+
+    foreach ($permissions as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Create 'Coupon code' field.
+ */
+function acm_promotion_update_8003() {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  $storages = $entityTypeManager->getStorage('field_storage_config')
+    ->loadByProperties(['id' => 'node.field_coupon_code']);
+  if (empty($storages)) {
+    $storage = FieldStorageConfig::create([
+      'field_name' => 'field_coupon_code',
+      'entity_type' => 'node',
+      'type' => 'string',
+      'cardinality' => '-1',
+      'translatable' => TRUE,
+    ]);
+    $storage->save();
+  }
+  else {
+    $storage = reset($storages);
+  }
+
+  $fields = $entityTypeManager->getStorage('field_config')
+    ->loadByProperties(['id' => 'node.acm_promotion.field_coupon_code']);
+  if (empty($fields)) {
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'bundle' => 'acm_promotion',
+      'label' => 'Coupon code',
+      'required' => FALSE,
+      'translatable' => FALSE,
+    ])->save();
+  }
+}

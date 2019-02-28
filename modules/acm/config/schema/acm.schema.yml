@@ -1,0 +1,109 @@
+# Schema for the configuration files of the Acquia Commerce module.
+acm.currency:
+  type: config_object
+  label: 'Currency Settings'
+  mapping:
+    currency_code:
+      type: label
+      label: 'Currency Code'
+    price_range_format_string:
+      type: label
+      label: "The format string to use for generating price ranges displayed on the admin pages. For example 'From %min to %mix'. Use %min and %max just like that as placeholders for the actual prices. For price-range display on the front pages use the theme template files in the acm_sku module eg /modules/acm_sku/templates/acm-sku-price--configurable.html.twig "
+    langcode:
+      type: string
+      label: 'Language code'
+
+acm.store:
+  type: config_object
+  label: 'Store Settings'
+  mapping:
+    store_id:
+      type: label
+      label: 'Store id'
+    langcode:
+      type: string
+      label: 'Language code'
+
+acm.commerce_users:
+  type: config_object
+  label: 'Commerce Users'
+  mapping:
+    storage_type:
+      type: string
+      label: 'Storage type'
+    use_ecomm_sessions:
+      type: boolean
+      label: 'Use ecomm sessions'
+    use_ecomm_pass_reset:
+      type: boolean
+      label: 'Use ecomm sessions'
+    ecomm_forgot_password_path:
+      type: string
+      label: 'ecomm_forgot_password_path'
+    external_registration_path:
+      type: string
+      label: 'external_registration_path'
+    external_login_path:
+      type: string
+      label: 'external_login_path'
+    external_logout_path:
+      type: string
+      label: 'external_logout_path'
+    customer_pages_plugin:
+      type: string
+      label: 'customer_pages_plugin'
+
+acm.connector:
+  type: config_object
+  label: 'Connector'
+  mapping:
+    url:
+      type: string
+      label: 'url'
+    hmac_id:
+      type: string
+      label: 'HMAC ID'
+    hmac_secret:
+      type: string
+      label: 'HMAC Secret'
+    timeout:
+      type: integer
+      label: 'Timeout'
+    verify_ssl:
+      type: boolean
+      label: 'verify_ssl'
+    product_page_size:
+      type: integer
+      label: 'product_page_size'
+    product_publish:
+      type: boolean
+      label: 'product_publish'
+    api_version:
+      type: string
+      label: 'api_version'
+    filter_root_category:
+      type: boolean
+      label: 'filter_root_category'
+    text_format:
+      type: string
+      label: 'text_format'
+    product_node_type:
+      type: string
+      label: 'product_node_type'
+    sku_field_name:
+      type: string
+      label: 'sku_field_name'
+    category_vid:
+      type: string
+      label: 'category_vid'
+    category_field_name:
+      type: string
+      label: 'category_field_name'
+
+acm.session:
+  type: config_object
+  label: 'Session'
+  mapping:
+    storage_type:
+      type: string
+      label: 'storage_type'

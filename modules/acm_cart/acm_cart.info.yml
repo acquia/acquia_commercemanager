@@ -1,0 +1,12 @@
+name: Acquia Commerce Manager Cart
+type: module
+description: This module provides cart functionality to the Acquia Commerce Connector Service.
+core: 8.x
+package: Commerce
+dependencies:
+  - acquia_commercemanager:acm
+  - acquia_commercemanager:acm_checkout
+  - acquia_commercemanager:acm_sku
+  - address:address
+  - key_value_field:key_value_field
+  - drupal:block

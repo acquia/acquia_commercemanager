@@ -1,0 +1,8 @@
+name: Acquia Commerce Manager Payment
+type: module
+description: This module provides payment functionality to the Acquia Commerce Connector Service.
+core: 8.x
+package: Commerce
+dependencies:
+  - acquia_commercemanager:acm
+  - acquia_commercemanager:acm_checkout

@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for acm.
+ */
+
+use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Implements hook_install().
+ */
+function acm_install() {
+  // Create empty ACM role.
+  try {
+    $role = Role::create(['id' => 'acm', 'label' => 'ACM']);
+    $role->save();
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('acm')->info('ACM role already exists');
+  }
+}
+
+/**
+ * Delete ACM ID global config.
+ */
+function acm_update_8001() {
+  \Drupal::configFactory()
+    ->getEditable('acm_commerce.connector')->clear('acm_id')->delete();
+}
+
+/**
+ * Create empty ACM role.
+ */
+function acm_update_8002() {
+  try {
+    $role = Role::create(['id' => 'acm', 'label' => 'ACM']);
+    $role->save();
+  }
+  catch (\Exception $e) {
+    \Drupal::logger('acm')->info('ACM role already exists');
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Create new configuration - acm.commerce_users.
+ */
+function acm_update_8003() {
+  $config = \Drupal::configFactory()->getEditable('acm.commerce_users');
+
+  if (empty($config->getRawData())) {
+    $config_path = drupal_get_path('module', 'acm') . '/config/install/acm.commerce_users.yml';
+    $data = Yaml::parse((file_get_contents($config_path)));
+    $config->setData($data)->save(TRUE);
+  }
+}
+
+/**
+ * Uninstall module acm_diagnostics.
+ */
+function acm_update_8004() {
+  $module_handler = \Drupal::moduleHandler();
+  if ($module_handler->moduleExists('acm_diagnostics')) {
+    \Drupal::service('module_installer')->uninstall(['acm_diagnostics']);
+  }
+}
