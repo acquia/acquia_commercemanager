@@ -44,4 +44,16 @@ interface CategoryManagerInterface {
    */
   public function synchronizeCategory($vocabulary, array $categories, $storeId = '');
 
+  /**
+   * Identify the categories which are not in commerce backend anymore and must
+   * be deleted.
+   *
+   * @param array $sync_categories
+   *   Sync categories.
+   *
+   * @return array
+   *   Orphan categories.
+   */
+  public function getOrphanCategories(array $sync_categories);
+
 }
