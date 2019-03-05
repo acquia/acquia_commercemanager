@@ -11,57 +11,6 @@
 use Drupal\Core\Render\Element;
 
 /**
- * Function to allow custom modules to add base fields for acm_sku entity type.
- *
- * @param array $fields
- *   An associative array containing field_machine_name as key and following
- *   data in value:
- *   - parent: (Required) Parent key in the array where to look for data.
- *   - label: (Required) Label to be used for admin forms and display.
- *   - description: Description of the field to be used in admin forms.
- *   - cardinality: Number of values allowed to be stored.
- *   - type: Type of the field.
- *   - weight: Default weight of the field in form and display.
- *   - configurable: Whether the field is part of configurable options.
- *   - visible_view: Whether the field should be visible while viewing content.
- *   - visible_form: Whether the field should be visible in form.
- *   - serialize: (Optional) Should the data be stored as serialized.
- *
- * @throws \Exception
- */
-function acm_sku_add_base_fields(array $fields) {
-  // Get the fields from config.
-  $configFactory = \Drupal::configFactory()->getEditable('acm_sku.base_field_additions');
-  $additionalFields = $configFactory->getRawData();
-
-  // Initialise with array if required.
-  $additionalFields = empty($additionalFields) || !is_array($additionalFields) ? [] : $additionalFields;
-
-  foreach ($fields as $machine_name => $field) {
-    // Confirm we have minimum required data available to create the fields.
-    if (empty($field['label'])) {
-      \Drupal::logger('acm_sku')->error('Unable to create field @machine_name because field label is empty.', ['@machine_name' => $machine_name]);
-      continue;
-    }
-
-    // Check if the field is already available in config.
-    if (isset($additionalFields[$machine_name])) {
-      \Drupal::logger('acm_sku')->error('Field @machine_name already exists.', ['@machine_name' => $machine_name]);
-      continue;
-    }
-
-    // Add the field to storedFields so we store them to config.
-    $additionalFields[$machine_name] = $field;
-  }
-
-  // Store the fields in config.
-  $configFactory->setData($additionalFields)->save();
-
-  // Apply entity updates.
-  \Drupal::service("entity.definition_update_manager")->applyUpdates();
-}
-
-/**
  * Implements hook_theme().
  */
 function acm_sku_theme($existing, $type, $theme, $path) {

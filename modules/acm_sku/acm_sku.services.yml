@@ -52,6 +52,7 @@ services:
       - '@acm_sku.category_repo'
       - '@acm_sku.product_options_manager'
       - '@acm.i18n_helper'
+      - '@acm_sku.fields_manager'
       - '@module_handler'
 
   cache.stock:
@@ -76,6 +77,19 @@ services:
       - { name: cache.bin }
     factory: cache_factory:get
     arguments: [linked_skus]
+
+  logger.channel.acm_sku:
+    parent: logger.channel_base
+    arguments: ['acm_sku']
+
+  acm_sku.fields_manager:
+    class: Drupal\acm_sku\SKUFieldsManager
+    arguments:
+      - '@config.factory'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@entity.definition_update_manager'
+      - '@logger.channel.acm_sku'
 
   acm_sku.product_info_helper:
     class: Drupal\acm_sku\ProductInfoHelper

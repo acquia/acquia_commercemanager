@@ -14,6 +14,30 @@ use Drupal\taxonomy\TermInterface;
  */
 
 /**
+ * Alter (add/update/delete) fields to be added to SKU entity.
+ *
+ * @param array $fields
+ *   Fields array.
+ */
+function hook_acm_sku_base_field_additions_alter(array &$fields = []) {
+
+}
+
+/**
+ * Allow modules to do something after base fields are updated.
+ *
+ * For instance, create facets, create facet blocks,
+ *
+ * @param array $fields
+ *   Fields array.
+ * @param string $op
+ *   Operation performed on fields.
+ */
+function hook_acm_sku_base_fields_updated(array $fields, $op = 'add') {
+
+}
+
+/**
  * Alter product node before it is saved during insert or update.
  *
  * Product data from API is passed here to allow other modules to read from
