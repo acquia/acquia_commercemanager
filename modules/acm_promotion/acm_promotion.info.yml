@@ -1,0 +1,8 @@
+name: Acquia Commerce Manager Promotion
+type: module
+description: This module provides Promotions functionality to the Acquia Commerce Connector Service.
+core: 8.x
+package: Commerce
+dependencies:
+  - acquia_commercemanager:acm_sku
+  - field_group:field_group

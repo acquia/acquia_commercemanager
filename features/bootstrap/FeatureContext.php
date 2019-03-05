@@ -25,9 +25,15 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
 
   private $simple_title;
 
+  private $simple_price;
+
   private $simple_doubled_price;
 
+  private $simple_price_four;
+
   private $simple_discounted_price;
+
+  private $simple_discounted_price_four;
 
 
   /**
@@ -39,8 +45,11 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   public function __construct($parameters) {
     $this->simple_url = $parameters['simpleurl'];
     $this->simple_title = $parameters['simpletitle'];
+    $this->simple_price = $parameters['simpleprice'];
     $this->simple_doubled_price = $parameters['simpledoupbledprice'];
+    $this->simple_price_four = $parameters['simplepricefour'];
     $this->simple_discounted_price = $parameters['simplediscountedprice'];
+    $this->simple_discounted_price_four = $parameters['simplediscountedpricefour'];
   }
 
   /**
@@ -101,6 +110,16 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
+   * @Given /^I enter an invalid Email ID in field "([^"]*)"$/
+   */
+  public function iEnterAnInvalidEmailID($field)
+  {
+    $randomString = 'randemail' . rand(2, getrandmax());
+    $email_id = $randomString . '@gmailcom';
+    $this->getSession()->getPage()->fillField($field, $email_id);
+  }
+
+  /**
    * @Given /^I wait (\d+) seconds$/
    */
   public function iWaitSeconds($seconds)
@@ -133,6 +152,32 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
   }
 
   /**
+   * @Given I should see the discounted price for four products
+   * @throws Exception
+   */
+  public function iShouldSeeTheDiscountedPriceForFourProducts()
+  {
+    $page = $this->getSession()->getPage();
+    $expected_price = $page->find('css', '[data-drupal-selector="edit-totals-grand"] td:last-child')->getText();
+    if ($expected_price != $this->simple_discounted_price_four) {
+      throw new \Exception('Discounted price is incorrect. Expected '.$expected_price.' to equal '.$this->simple_discounted_price_four);
+    }
+  }
+
+  /**
+   * @Given I should see the price for four products
+   * @throws Exception
+   */
+  public function iShouldSeeThePriceForFourProducts()
+  {
+    $page = $this->getSession()->getPage();
+    $expected_price = $page->find('css', '[data-drupal-selector="edit-totals-grand"] td:last-child')->getText();
+    if ($expected_price != $this->simple_price_four) {
+      throw new \Exception('Price is incorrect. Expected '.$expected_price.' to equal '.$this->simple_price_four);
+    }
+  }
+
+  /**
    * @Then /^I should see the link for "([^"]*)"$/
    */
   public function iShouldSeeTheLinkFor($arg1)
@@ -155,6 +200,92 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     } else {
       echo 'Element not found';
     }
+  }
+
+  /**
+   * @Then /^the "(?P<field>(?:[^"]|\\")*)" field should have label "(?P<value>(?:[^"]|\\")*)"$/
+   */
+  public function theFieldShouldHaveLabel($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[for^='" . $field . "']");
+    if ($element->getText() != $value) {
+      throw new \Exception("Label is different - " . $element->getText());
+    }
+  }
+
+  /**
+   * Checks, that form field with specified id has specified value
+   * Example: Then the "username" ajax field should contain "bwayne"
+   * Example: And the "username" ajax field should contain "bwayne"
+   *
+   * @Then /^the "(?P<field>(?:[^"]|\\")*)" ajax field should contain "(?P<value>(?:[^"]|\\")*)"$/
+   */
+  public function assertAjaxFieldContains($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    if ($element->getValue() != $value) {
+      throw new \Exception("Values are not the same.");
+    }
+  }
+
+  /**
+   * Selects option in select field with specified id
+   * Example: When I select "Bats" from ajax field "user_fears"
+   * Example: And I select "Bats" from ajax field "user_fears"
+   *
+   * @When /^(?:|I )select "(?P<option>(?:[^"]|\\")*)" from ajax field "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function selectAjaxOption($field, $option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    $element->selectOption($option);
+  }
+
+  /**
+   * Fills in form field with specified id
+   * Example: When I fill in ajax field "username" with: "bwayne"
+   * Example: And I fill in ajax field "bwayne" for "username"
+   *
+   * @When /^(?:|I )fill in ajax field "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)"$/
+   * @When /^(?:|I )fill in ajax field "(?P<field>(?:[^"]|\\")*)" with:$/
+   * @When /^(?:|I )fill in ajax field "(?P<value>(?:[^"]|\\")*)" for "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function fillAjaxField($field, $value)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $field . "']");
+    $element->setValue($value);
+  }
+
+  /**
+   * Checks checkbox with specified id|name|label|value
+   * Example: When I check "Pearl Necklace"
+   * Example: And I check "Pearl Necklace"
+   *
+   * @When /^(?:|I )check the ajax box "(?P<option>(?:[^"]|\\")*)"$/
+   */
+  public function checkAjaxCheckbox($option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $option . "']");
+    $element->check();
+  }
+
+  /**
+   * Unchecks checkbox with specified id|name|label|value
+   * Example: When I uncheck "Broadway Plays"
+   * Example: And I uncheck "Broadway Plays"
+   *
+   * @When /^(?:|I )uncheck the ajax box "(?P<option>(?:[^"]|\\")*)"$/
+   */
+  public function uncheckAjaxCheckbox($option)
+  {
+    $page = $this->getSession()->getPage();
+    $element = $page->find('css', "[id^='" . $option . "']");
+    $element->uncheck();
   }
 
 }

@@ -1,5 +1,5 @@
 {
-    "name": "acquia/commerce-manager",
+    "name": "drupal/acquia_commercemanager",
     "description": "This project provides the ability to use the Acquia Commerce Connector.",
     "type": "drupal-module",
     "license": "GPL-2.0+",
@@ -25,7 +25,8 @@
         "drupal/key_value_field": "~1.0",
         "acquia/http-hmac-php": "~3.2",
         "drupal/pcb": "~1.0",
-        "drupal/simple_oauth": "^3"
+        "drupal/simple_oauth": "^3",
+        "drupal/consumers": "1.4"
     },
     "require-dev": {
         "behat/behat": "3.5.*",

@@ -1,0 +1,16 @@
+status: true
+dependencies:
+  module:
+    - acm
+    - serialization
+    - user
+    - simple_oauth
+id: verify_mapping
+plugin_id: verify_mapping
+granularity: method
+configuration:
+  GET:
+    supported_formats:
+      - json
+    supported_auth:
+      - oauth2

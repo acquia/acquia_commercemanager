@@ -1,0 +1,187 @@
+<?php
+global $_acm_commerce_categories_create;
+
+$_acm_commerce_categories_create = [
+  0 =>
+    [
+      'category_id' => 2,
+      'parent_id'   => 1,
+      'store_id'    => 1,
+      'name'        => 'Default Category',
+      'description' => '',
+      'position'    => 1,
+      'level'       => 1,
+      'product_ids' => [],
+      'children'    =>
+        [
+          0 =>
+            [
+              'category_id' => 5,
+              'parent_id'   => 2,
+              'store_id'    => 1,
+              'name'        => 'Baby Clothing',
+              'description' => '<p>Lorem Ipsum</p>',
+              'position'    => 1,
+              'level'       => 2,
+              'product_ids' => [],
+              'children'    =>
+                [
+                  0 =>
+                    [
+                      'category_id' => 6,
+                      'parent_id'   => 5,
+                      'store_id'    => 1,
+                      'name'        => 'Baby (Newborn - 18 months)',
+                      'description' => '<p>Mothercare have a wide range of baby girls clothes that can take your baby girl from 1 year all the way to being a young girl at 10 years old.</p>',
+                      'position'    => 1,
+                      'level'       => 3,
+                      'product_ids' => [],
+                      'children'    =>
+                        [
+                          0 =>
+                            [
+                              'category_id' => 7,
+                              'parent_id'   => 6,
+                              'store_id'    => 1,
+                              'name'        => 'New in: Baby Clothing',
+                              'description' => '',
+                              'position'    => 1,
+                              'level'       => 4,
+                              'product_ids' => [],
+                              'children'    => [],
+                              'extension'   => [],
+                              'in_menu'     => TRUE,
+                              'is_active'   => TRUE,
+                            ],
+                          1 =>
+                            [
+                              'category_id' => 8,
+                              'parent_id'   => 6,
+                              'store_id'    => 1,
+                              'name'        => 'Baby Girls',
+                              'description' => '',
+                              'position'    => 2,
+                              'level'       => 4,
+                              'product_ids' => [],
+                              'children'    => [],
+                              'extension'   => [],
+                              'in_menu'     => FALSE,
+                              'is_active'   => TRUE,
+                            ],
+                          2 =>
+                            [
+                              'category_id' => 9,
+                              'parent_id'   => 6,
+                              'store_id'    => 1,
+                              'name'        => 'Baby Boys',
+                              'description' => '',
+                              'position'    => 3,
+                              'level'       => 4,
+                              'product_ids' => [],
+                              'children'    => [],
+                              'extension'   => [],
+                              'in_menu'     => TRUE,
+                              'is_active'   => TRUE,
+                            ],
+                        ],
+                      'extension'   =>
+                        [],
+                      'in_menu'     => TRUE,
+                      'is_active'   => TRUE,
+                    ],
+                  1 =>
+                    [
+                      'category_id' => 284,
+                      'parent_id'   => 5,
+                      'store_id'    => 1,
+                      'name'        => 'Collections',
+                      'description' => '',
+                      'position'    => 2,
+                      'level'       => 3,
+                      'product_ids' => [],
+                      'children'    => [],
+                      'extension'   => [],
+                      'in_menu'     => TRUE,
+                      'is_active'   => TRUE,
+                    ],
+                ],
+              'extension'   => [],
+              'in_menu'     => TRUE,
+              'is_active'   => TRUE,
+            ],
+          1 =>
+            [
+              'category_id' => 214,
+              'parent_id'   => 2,
+              'store_id'    => 1,
+              'name'        => 'Toddler Clothing',
+              'description' => '<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>',
+              'position'    => 2,
+              'level'       => 2,
+              'product_ids' => [],
+              'children'    =>
+                [
+                  0 =>
+                    [
+                      'category_id' => 231,
+                      'parent_id'   => 214,
+                      'store_id'    => 1,
+                      'name'        => 'Our Recommendations',
+                      'description' => '',
+                      'position'    => 1,
+                      'level'       => 3,
+                      'product_ids' =>
+                        [],
+                      'children'    =>
+                        [
+                          0 =>
+                            [
+                              'category_id' => 282,
+                              'parent_id'   => 231,
+                              'store_id'    => 1,
+                              'name'        => 'Test Category ',
+                              'description' => '',
+                              'position'    => 1,
+                              'level'       => 4,
+                              'product_ids' => [],
+                              'children'    => [],
+                              'extension'   => [],
+                              'in_menu'     => TRUE,
+                              'is_active'   => FALSE,
+                            ],
+                        ],
+                      'extension'   => [],
+                      'in_menu'     => TRUE,
+                      'is_active'   => TRUE,
+                    ],
+                ],
+              'extension'   => [],
+              'in_menu'     => FALSE,
+              'is_active'   => TRUE,
+            ],
+        ],
+      'extension'   => [],
+      'in_menu'     => TRUE,
+      'is_active'   => TRUE,
+    ],
+];
+
+global $_acm_commerce_categories_update;
+
+$_acm_commerce_categories_update = [
+  0 =>
+    [
+      'category_id' => 8,
+      'parent_id'   => 6,
+      'store_id'    => 1,
+      'name'        => 'Baby Girls',
+      'description' => '',
+      'position'    => 2,
+      'level'       => 4,
+      'product_ids' => [],
+      'children'    => [],
+      'extension'   => [],
+      'in_menu'     => FALSE,
+      'is_active'   => TRUE,
+    ],
+];

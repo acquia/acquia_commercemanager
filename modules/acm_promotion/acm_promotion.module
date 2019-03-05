@@ -1,0 +1,194 @@
+<?php
+
+/**
+ * @file
+ * Acquia Commerce promotions module file.
+ *
+ * Provides base hooks to the promotions functionality of Acquia Commerce
+ * connector.
+ */
+
+use Drupal\acm_sku\Entity\SKU;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_page_attachments().
+ */
+function acm_promotion_page_attachments(array &$page) {
+  $nids = \Drupal::entityQuery('node')
+    ->condition('type', 'acm_promotion')
+    ->condition('status', NodeInterface::PUBLISHED)
+    ->execute();
+
+  $promo_nodes = Node::loadMultiple($nids);
+
+  $always_on_promos = [];
+  $promo_display_map = [];
+  $sku_to_promo_map = [];
+
+  // Provide an alter hook so other modules can change the display mode(s).
+  $display_modes = acm_promotion_get_display_modes();
+
+  foreach ($promo_nodes as $node) {
+    $promo_code = $node->getTitle();
+
+    // Populate the always on promotions to be added to localSession.
+    if ($node->hasField('field_acm_promotion_always_on')) {
+      $always_on_field = $node->get('field_acm_promotion_always_on')->getValue();
+      $always_on = reset($always_on_field);
+
+      if ($always_on['value'] === '1') {
+        $always_on_promos[] = $promo_code;
+      }
+    }
+
+    // Create a map of promo displays to fill in containers once the page loads.
+    foreach (array_keys($display_modes) as $display_mode) {
+      $render_array = node_view($node, $display_mode);
+      $promo_display_map[$promo_code][$display_mode] = \Drupal::service('renderer')->renderRoot($render_array);
+    }
+
+    if ($node->hasField('field_skus')) {
+      $skus = $node->get('field_skus')->getValue();
+      foreach ($skus as $skuValue) {
+        if (empty($skuValue)) {
+          continue;
+        }
+        $sku = $skuValue['value'];
+        $sku_to_promo_map[$sku][] = $promo_code;
+      }
+    }
+  }
+
+  // Add JS that will look for always_on promos.
+  $page['#attached']['library'][] = 'acm_promotion/acm_promotion';
+
+  // Attach all necessary data that the promotion will need.
+  $page['#attached']['drupalSettings']['acm_promotion']['always_on'] = $always_on_promos;
+  $page['#attached']['drupalSettings']['acm_promotion']['promo_display_map'] = $promo_display_map;
+  $page['#attached']['drupalSettings']['acm_promotion']['sku_to_promo_map'] = $sku_to_promo_map;
+
+  // Load marketing link JS on all pages.
+  $page['#attached']['library'][] = 'acm_promotion/acm_promotion_marketing_link';
+
+  // Add JS that will handle promotion display loading.
+  $page['#attached']['library'][] = 'acm_promotion/acm_promotion_content';
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function acm_promotion_node_view(array &$build, Node $node, EntityViewDisplayInterface $display, $view_mode) {
+
+  if ($node->getType() !== 'acm_promotion') {
+    return;
+  }
+
+  // Users with the proper permissions can view the nodes.
+  $user = \Drupal::currentUser();
+  if ($user->hasPermission('edit own acm_promotion content')
+    || $user->hasPermission('edit any acm_promotion content')
+  ) {
+    return;
+  }
+
+  // We are assuming that this will only happen for the full display mode. End
+  // users will not need access to the full display mode.
+  if ($view_mode !== 'full') {
+    return;
+  }
+
+  $promo_code = $node->getTitle();
+
+  $callback_url = \Drupal::request()->query->get('callback');
+  if (empty($callback_url)) {
+    $callback_url = Url::fromRoute('<front>')->setAbsolute()->toString();
+  }
+
+  $build['#attached']['drupalSettings']['acm_promotion']['marketing_link'] = [
+    'promo' => $promo_code,
+    'callback' => $callback_url,
+  ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function acm_promotion_node_delete(NodeInterface $node) {
+  if ($node->bundle() == 'acm_promotion') {
+    /* @var \Drupal\acm_promotion\AcmPromotionsManager $promotion_manager */
+    $promotion_manager = \Drupal::service('acm_promotion.promotions_manager');
+    // Get SKUs attached to the promotion node.
+    $attached_promotion_skus = $promotion_manager->getSkusForPromotion($node);
+
+    if (!empty($attached_promotion_skus)) {
+      foreach ($attached_promotion_skus as $sku) {
+        if (($sku_entity = SKU::loadFromSku($sku)) &&
+          ($sku_entity instanceof SKU)) {
+          $promotion_manager->removeOrphanPromotionFromSku($sku_entity, $node->id());
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function acm_promotion_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id !== 'customer_cart_form') {
+    return;
+  }
+
+  $form['coupon']['#attributes'] = [
+    'id' => ['acm-promotion-coupon'],
+  ];
+
+  // Check the cart for coupons and cart rules and attach them so they can be
+  // added to the session in JavaScript.
+  $add_promos = [];
+  $cart_storage = \Drupal::service('acm_cart.cart_storage');
+  $cart = $cart_storage->getCartContents();
+
+  if (!empty($cart->cart_rules)) {
+    $add_promos = array_merge($add_promos, $cart->cart_rules);
+  }
+
+  $form['#attached']['library'][] = 'acm_promotion/acm_promotion_form';
+  $form['#attached']['library'][] = 'acm_promotion/acm_promotion_add_promotions';
+  $form['#attached']['drupalSettings']['acm_promotion']['add_promos'] = $add_promos;
+}
+
+/**
+ * Gets the configured display modes for promotions.
+ */
+function acm_promotion_get_display_modes() {
+  $display_modes = [
+    'teaser' => t('Teaser'),
+  ];
+
+  // Provide an alter hook so other modules can change the display mode(s).
+  \Drupal::moduleHandler()->alter('acm_promotion_display_modes', $display_modes);
+
+  return $display_modes;
+}
+
+/**
+ * Gets the configured container modes for promotions.
+ */
+function acm_promotion_get_container_modes() {
+  $container_modes = [
+    'always_on' => t('Always On'),
+    'sku' => t('Sku'),
+    'promotion' => t('Promotion'),
+  ];
+
+  // Provide an alter hook so other modules can change the container modes.
+  \Drupal::moduleHandler()->alter('acm_promotion_container_modes', $container_modes);
+
+  return $container_modes;
+}

@@ -1,0 +1,52 @@
+acm.commerce:
+  path: '/admin/commerce'
+  defaults:
+    _title: 'Acquia Commerce Manager Dashboard'
+    _controller: '\Drupal\acm\Controller\DashboardController::build'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm.configuration:
+  path: '/admin/commerce/config'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Configuration'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm.configuration.connector:
+  path: '/admin/commerce/config/connector'
+  defaults:
+    _form: '\Drupal\acm\Form\ConnectorSettingsForm'
+    _title: 'Connector Settings'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm.configuration.store:
+  path: '/admin/commerce/config/store-settings'
+  defaults:
+    _form: '\Drupal\acm\Form\StoreSettingsForm'
+    _title: 'Store and Currency Settings'
+    _description: 'Store and currency settings.'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm.configuration.commerce_users:
+  path: '/admin/commerce/config/commerce-users'
+  defaults:
+    _form: '\Drupal\acm\Form\CommerceUserSettingsForm'
+    _title: 'Commerce User Settings'
+  requirements:
+    _permission: 'access commerce administration pages'
+
+acm.configuration.purge_queue:
+  path: '/admin/commerce/config/purge-queue'
+  defaults:
+    _form: '\Drupal\acm\Form\PurgeQueueForm'
+    _title: 'Purge Queue'
+    _description: 'Perform purging of site queue.'
+  requirements:
+    _version_access_check: 'TRUE'
+
+route_callbacks:
+  - 'acm.route_subscriber:routes'

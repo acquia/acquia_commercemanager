@@ -1,0 +1,9 @@
+.dashboard-group {
+  clear: both;
+}
+
+.panel .tile--title {
+  border-bottom: 1px solid #bfbfbf;
+  margin-bottom: 9px;
+  padding-bottom: 4px;
+}
