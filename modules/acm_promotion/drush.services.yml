@@ -1,0 +1,6 @@
+services:
+  acm_promotion.commands:
+    class: \Drupal\acm_promotion\Commands\AcmPromotionCommands
+    arguments: [ '@acm_promotion.promotions_manager', '@logger.factory' ]
+    tags:
+      - { name: drush.command }
