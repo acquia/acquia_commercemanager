@@ -164,7 +164,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
       // We will continue execution with available translation and just log
       // a message. During sync we say don't log messages.
       elseif ($log_not_found) {
-        \Drupal::logger('acq_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
+        \Drupal::logger('acm_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
       }
     }
     else {
@@ -444,8 +444,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
       ->setDisplayConfigurable('view', TRUE);
 
     // Get all the fields added by other modules and add them as base fields.
-    $additionalFields = \Drupal::config('acm_sku.base_field_additions')
-      ->getRawData();
+    $additionalFields = \Drupal::service('acm_sku.fields_manager')->getFieldAdditions();
 
     // Get the default weight increment value from variables.
     $defaultWeightIncrement = \Drupal::state()

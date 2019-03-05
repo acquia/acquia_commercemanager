@@ -61,6 +61,13 @@ class ProductManager implements ProductManagerInterface {
   private $i18nHelper;
 
   /**
+   * SKU Fields Manager.
+   *
+   * @var \Drupal\acm_sku\SKUFieldsManager
+   */
+  private $skuFieldsManager;
+
+  /**
    * Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -101,18 +108,19 @@ class ProductManager implements ProductManagerInterface {
    *   Product Options Manager service instance.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
+   * @param \Drupal\acm_sku\SKUFieldsManager $sku_fields_manager
+   *   SKU Fields Manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler.
    */
-  public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $config_factory,
-    LoggerChannelFactoryInterface $logger_factory,
-    CategoryRepositoryInterface $cat_repo,
-    ProductOptionsManager $product_options_manager,
-    I18nHelper $i18nHelper,
-    ModuleHandlerInterface $moduleHandler
-  ) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager,
+                              ConfigFactoryInterface $config_factory,
+                              LoggerChannelFactoryInterface $logger_factory,
+                              CategoryRepositoryInterface $cat_repo,
+                              ProductOptionsManager $product_options_manager,
+                              I18nHelper $i18nHelper,
+                              SKUFieldsManager $sku_fields_manager,
+                              ModuleHandlerInterface $moduleHandler) {
     $this->entityManager = $entity_type_manager;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');
@@ -124,6 +132,7 @@ class ProductManager implements ProductManagerInterface {
       ->get('debug');
     $this->debugDir = $this->configFactory->get('acm.connector')
       ->get('debug_dir');
+    $this->skuFieldsManager = $sku_fields_manager;
   }
 
   /**
@@ -925,8 +934,7 @@ class ProductManager implements ProductManagerInterface {
    *   If the complex data structure is unset and no item can be set.
    */
   private function updateFields($parent, SKU $sku, array $values) {
-    $additionalFields = \Drupal::config('acm_sku.base_field_additions')
-      ->getRawData();
+    $additionalFields = $this->skuFieldsManager->getFieldAdditions();
 
     // Filter fields for the parent requested.
     $additionalFields = array_filter($additionalFields, function ($field) use ($parent) {
