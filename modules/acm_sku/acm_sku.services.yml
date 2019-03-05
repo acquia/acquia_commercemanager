@@ -55,13 +55,6 @@ services:
       - '@acm_sku.fields_manager'
       - '@module_handler'
 
-  cache.stock:
-      class: Drupal\Core\Cache\CacheBackendInterface
-      tags:
-        - { name: cache.bin, default_backend: cache.backend.permanent_database }
-      factory: cache_factory:get
-      arguments: [stock]
-
   acm_sku.linked_sku:
     class: Drupal\acm_sku\AcmSkuLinkedSku
     arguments:
@@ -95,3 +88,14 @@ services:
     class: Drupal\acm_sku\ProductInfoHelper
     arguments:
       - '@event_dispatcher'
+
+  acm_sku.stock_manager:
+    class: Drupal\acm_sku\StockManager
+    arguments:
+      - '@database'
+      - '@acm.api'
+      - '@acm.i18n_helper'
+      - '@config.factory'
+      - '@lock.persistent'
+      - '@event_dispatcher'
+      - '@logger.factory'

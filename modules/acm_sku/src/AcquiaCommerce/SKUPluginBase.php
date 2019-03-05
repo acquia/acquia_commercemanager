@@ -335,120 +335,59 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
   /**
    * {@inheritdoc}
    */
-  public function getProcessedStock(SKU $sku, $reset = FALSE) {
-    $stock = &drupal_static('stock_static_cache', []);
+  public function isProductInStock(SKU $sku) {
+    $static = &drupal_static(self::class . '_' . __FUNCTION__, []);
 
-    if (!$reset && isset($stock[$sku->getSku()])) {
-      return $stock[$sku->getSku()];
+    $sku_string = $sku->getSku();
+
+    if (isset($static[$sku_string])) {
+      return $static[$sku_string];
     }
 
-    $stock[$sku->getSku()] = (int) $this->getStock($sku, $reset);
+    $static[$sku_string] = $this->getStockManager()->isProductInStock($sku);
 
-    return $stock[$sku->getSku()];
+    return $static[$sku_string];
   }
 
   /**
-   * Returns the stock for the given sku.
-   *
-   * @param string $sku
-   *   SKU code of the product.
-   * @param bool $reset
-   *   Flag to mention if we should always try to get fresh value.
-   *
-   * @return array|mixed
-   *   Available stock quantity.
-   *
-   * @throws \Exception
+   * {@inheritdoc}
    */
-  protected function getStock($sku, $reset = FALSE) {
-    $stock_mode = \Drupal::config('acm_sku.settings')->get('stock_mode');
+  public function getStock($sku) {
+    $static = &drupal_static(self::class . '_' . __FUNCTION__, []);
+
     $sku_string = ($sku instanceof SKU) ? $sku->getSku() : $sku;
 
-    if (!$reset) {
-      // Return from Entity field in push mode.
-      if ($stock_mode == 'push') {
-        if ($sku instanceof SKU) {
-          $stock = $sku->get('stock')->getString();
-        }
-        else {
-          $stock = $this->connection->select('acm_sku_field_data', 'asfd')
-            ->fields('asfd', ['stock'])
-            ->condition('asfd.sku', $sku_string)
-            ->execute()
-            ->fetchField();
-        }
-
-        // Fallback to pull mode if no value available for the SKU.
-        if (!($stock === '' || $stock === NULL)) {
-          return (int) $stock;
-        }
-      }
-      // Return from Cache in Pull mode.
-      else {
-        // Cache id.
-        $cid = 'stock:' . $sku_string;
-
-        $cache = \Drupal::cache('stock')->get($cid);
-
-        if (!empty($cache)) {
-          return (int) $cache->data;
-        }
-      }
+    if (isset($static[$sku_string])) {
+      return $static[$sku_string];
     }
 
-    // Either reset is requested or we dont have value in attribute or we dont
-    // have value in cache, we will use the API to get fresh value now.
-    $stock = NULL;
+    $static[$sku_string] = $this->getStockManager()->getStockQuantity($sku_string);
 
-    /** @var \Drupal\acm\Connector\APIWrapper $api_wrapper */
-    $api_wrapper = \Drupal::service('acm.api');
+    return $static[$sku_string];
+  }
 
-    try {
-      // Get the stock.
-      $stock_info = $api_wrapper->skuStockCheck($sku_string);
-    }
-    catch (\Exception $e) {
-      // Log the stock error, do not throw error if stock info is missing.
-      \Drupal::logger('acm_sku')->warning('Unable to get the stock for @sku : @message', [
-        '@sku' => $sku_string,
-        '@message' => $e->getMessage(),
-      ]);
+  /**
+   * {@inheritdoc}
+   */
+  public function refreshStock(SKU $sku) {
+    $this->getStockManager()->refreshStock($sku->getSku());
+  }
 
-      // We will cache this also for sometime to reduce load.
-      $stock_info['is_in_stock'] = FALSE;
-    }
+  /**
+   * Get stock manager service instance.
+   *
+   * @return \Drupal\acm_sku\StockManager
+   *   Stock Manager service.
+   */
+  protected function getStockManager() {
+    static $manager;
 
-    // Magento uses additional flag as well for out of stock.
-    if (isset($stock_info['is_in_stock']) && empty($stock_info['is_in_stock'])) {
-      $stock_info['quantity'] = 0;
-    }
-
-    $stock = (int) $stock_info['quantity'];
-
-    // Save the value in SKU if we came here as fallback of push mode.
-    if ($stock_mode == 'push') {
-      if (!$sku instanceof SKU) {
-        $sku = SKU::loadFromSku($sku_string);
-      }
-
-      $sku->get('stock')->setValue($stock);
-      $sku->save();
-    }
-    // Save the value in cache if we are in pull mode.
-    // If cache multiplier is zero we don't cache the stock.
-    elseif ($cache_multiplier = \Drupal::config('acm_sku.settings')->get('stock_cache_multiplier')) {
-      $default_cache_lifetime = $stock ? $stock * $cache_multiplier : $cache_multiplier;
-      $max_cache_lifetime = \Drupal::config('acm_sku.settings')->get('stock_cache_max_lifetime');
-
-      // Calculate the timestamp when we want the cache to expire.
-      $stock_cache_lifetime = min($default_cache_lifetime, $max_cache_lifetime);
-      $expire = $stock_cache_lifetime + \Drupal::time()->getRequestTime();
-
-      // Set the stock in cache.
-      \Drupal::cache('stock')->set($cid, $stock, $expire);
+    if (!isset($manager)) {
+      /** @var \Drupal\acm_sku\StockManager $manager */
+      $manager = \Drupal::service('acm_sku.stock_manager');
     }
 
-    return $stock;
+    return $manager;
   }
 
   /**

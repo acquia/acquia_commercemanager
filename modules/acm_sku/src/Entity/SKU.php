@@ -3,7 +3,6 @@
 namespace Drupal\acm_sku\Entity;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -305,17 +304,6 @@ class SKU extends ContentEntityBase implements SKUInterface {
       ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -11,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    $fields['stock'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Stock'))
-      ->setDescription(t('Stock quantity.'))
-      ->setTranslatable(FALSE)
-      ->setDisplayOptions('form', [
-        'type' => 'number',
-        'weight' => -10,
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
@@ -733,27 +721,12 @@ class SKU extends ContentEntityBase implements SKUInterface {
   }
 
   /**
-   * Helper function to clear stock cache for particular sku.
+   * {@inheritdoc}
    */
-  public function clearStockCache() {
-    $stock_mode = \Drupal::config('acm_sku.settings')->get('stock_mode');
-
-    // Clear product and forms related to sku.
-    Cache::invalidateTags(['acm_sku:' . $this->id()]);
-
-    if ($stock_mode == 'push') {
-      /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
-      $plugin = $this->getPluginInstance();
-
-      // Reset the stock value.
-      $plugin->getProcessedStock($this, TRUE);
-    }
-    else {
-      $stock_cid = 'stock:' . $this->getSku();
-
-      // Clear stock cache.
-      \Drupal::cache('stock')->invalidate($stock_cid);
-    }
+  public function refreshStock() {
+    /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
+    $plugin = $this->getPluginInstance();
+    $plugin->refreshStock($this);
   }
 
   /**

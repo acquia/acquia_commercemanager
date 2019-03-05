@@ -1,0 +1,24 @@
+<?php
+global $_acm_commerce_stock_create;
+
+$_acm_commerce_stock_create = [
+  "quantity" => 3999,
+  "is_in_stock" => TRUE,
+  "sku" => "24-MB01",
+];
+
+global $_acm_commerce_stock_is_in_stock_false;
+
+$_acm_commerce_stock_is_in_stock_false = [
+  "quantity" => 3999,
+  "is_in_stock" => FALSE,
+  "sku" => "24-MB01",
+];
+
+global $_acm_commerce_stock_quantity_zero;
+
+$_acm_commerce_stock_quantity_zero = [
+  "quantity" => 0,
+  "is_in_stock" => TRUE,
+  "sku" => "24-MB01",
+];

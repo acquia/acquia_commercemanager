@@ -15,15 +15,6 @@ acm_sku.settings:
   type: config_object
   label: 'SKU settings'
   mapping:
-    stock_mode:
-      type: string
-      label: 'stock_mode'
-    stock_cache_multiplier:
-      type: integer
-      label: 'stock_cache_multiplier'
-    stock_cache_max_lifetime:
-      type: integer
-      label: 'stock_cache_max_lifetime'
     linked_skus_cache_max_lifetime:
       type: integer
       label: 'linked_skus_cache_max_lifetime'

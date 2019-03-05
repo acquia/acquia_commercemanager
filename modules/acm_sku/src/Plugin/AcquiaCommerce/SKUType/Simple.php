@@ -122,7 +122,7 @@ class Simple extends SKUPluginBase {
         $cartStorage->removeItemFromCart($sku);
       }
       // Clear stock cache.
-      $sku_entity->clearStockCache();
+      $this->refreshStock($sku_entity);
 
       // Dispatch event so action can be taken.
       $dispatcher = \Drupal::service('event_dispatcher');
