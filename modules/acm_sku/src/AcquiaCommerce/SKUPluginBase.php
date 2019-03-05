@@ -211,12 +211,7 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
     // Initialise with empty value.
     $static[$langcode][$sku_string] = NULL;
 
-    $query = $this->connection->select('acm_sku_field_data', 'acm_sku');
-    $query->addField('acm_sku', 'sku');
-    $query->join('acm_sku__field_configured_skus', 'child_sku', 'acm_sku.id = child_sku.entity_id');
-    $query->condition('child_sku.field_configured_skus_value', $sku_string);
-
-    $parent_skus = array_keys($query->execute()->fetchAllAssoc('sku'));
+    $parent_skus = array_keys($this->getAllParentSkus($sku_string));
 
     if (empty($parent_skus)) {
       return NULL;
@@ -454,6 +449,24 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
     }
 
     return $stock;
+  }
+
+  /**
+   * Get all parent skus of a given sku.
+   *
+   * @param string $sku
+   *   Sku string.
+   *
+   * @return mixed
+   *   All parent skus.
+   */
+  public function getAllParentSkus(string $sku) {
+    $query = $this->connection->select('acm_sku_field_data', 'acm_sku');
+    $query->addField('acm_sku', 'sku');
+    $query->addField('acm_sku', 'id');
+    $query->join('acm_sku__field_configured_skus', 'child_sku', 'acm_sku.id = child_sku.entity_id');
+    $query->condition('child_sku.field_configured_skus_value', $sku);
+    return $query->execute()->fetchAllKeyed('sku');
   }
 
 }
