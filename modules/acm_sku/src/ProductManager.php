@@ -545,8 +545,10 @@ class ProductManager implements ProductManagerInterface {
       $this->logger->error('SKU import, ignored: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignoredSkus)]);
     }
 
+    // Return success true always, we reached here which means we successfully
+    // processed the sync request.
     return [
-      'success' => !$this->failed && ($this->created || $this->updated || $this->ignored || $this->deleted),
+      'success' => TRUE,
       'created' => $this->created,
       'updated' => $this->updated,
       'failed' => $this->failed,
