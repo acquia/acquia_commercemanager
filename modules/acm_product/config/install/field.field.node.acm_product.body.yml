@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.acm_product
+  module:
+    - text
+    - node
+id: node.acm_product.body
+field_name: body
+entity_type: node
+bundle: acm_product
+label: 'Marketing Text'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

@@ -1,0 +1,11 @@
+services:
+  acm_sku_position.commands:
+    class: Drupal\acm_sku_position\Commands\AcmSkuPositionCommands
+    arguments:
+      - '@config.factory'
+      - '@logger.factory'
+      - '@acm.api'
+      - '@database'
+      - '@module_handler'
+    tags:
+      - { name: drush.command }

@@ -1,7 +1,0 @@
-name: Acquia Commerce Manager Diagnostic Tool
-description: Runs diagnostic checks on the Drupal site environment to ensure connectivity between the Acquia Commerce Connector Service.
-package: Commerce
-type: module
-core: 8.x
-dependencies:
-  - acm:acm

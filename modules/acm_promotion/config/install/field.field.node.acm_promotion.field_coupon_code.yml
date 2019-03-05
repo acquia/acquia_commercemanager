@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_coupon_code
+    - node.type.acm_promotion
+id: node.acm_promotion.field_coupon_code
+field_name: field_coupon_code
+entity_type: node
+bundle: acm_promotion
+label: 'Coupon code'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

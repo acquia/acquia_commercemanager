@@ -1,0 +1,19 @@
+status: true
+dependencies:
+  module:
+    - acm_sku
+id: acm_sku.field_configured_skus
+field_name: field_configured_skus
+entity_type: acm_sku
+type: sku
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: acm_sku
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

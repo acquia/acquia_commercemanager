@@ -1,0 +1,59 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.acm_promotion.field_acm_promotion_action
+    - field.field.node.acm_promotion.field_acm_promotion_always_on
+    - field.field.node.acm_promotion.field_acm_promotion_data
+    - field.field.node.acm_promotion.field_acm_promotion_description
+    - field.field.node.acm_promotion.field_acm_promotion_disc_type
+    - field.field.node.acm_promotion.field_acm_promotion_discount
+    - field.field.node.acm_promotion.field_acm_promotion_label
+    - field.field.node.acm_promotion.field_acm_promotion_rule_id
+    - field.field.node.acm_promotion.field_acm_promotion_type
+    - field.field.node.acm_promotion.field_coupon_code
+    - field.field.node.acm_promotion.field_skus
+    - node.type.acm_promotion
+  module:
+    - text
+    - user
+id: node.acm_promotion.default
+targetEntityType: node
+bundle: acm_promotion
+mode: default
+content:
+  field_acm_promotion_description:
+    type: text_default
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_acm_promotion_label:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_coupon_code:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  field_acm_promotion_action: true
+  field_acm_promotion_always_on: true
+  field_acm_promotion_data: true
+  field_acm_promotion_description: true
+  field_acm_promotion_disc_type: true
+  field_acm_promotion_discount: true
+  field_acm_promotion_rule_id: true
+  field_acm_promotion_type: true
+  field_skus: true
+  links: true
+  sharethis: true
