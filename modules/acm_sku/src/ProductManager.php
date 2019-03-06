@@ -309,9 +309,12 @@ class ProductManager implements ProductManagerInterface {
         // If skip attribute is set via any event subscriber, skip importing the
         // product.
         if ($product['skip']) {
-          $this->ignoredSkus[] = $product['sku'] . '(SKU doesn\'t meet the criteria for import set for this site.)';
-          $this->ignored++;
-          continue;
+          // We mark the status to disabled so product is deleted if available.
+          $product['status'] = 0;
+
+          $this->logger->warning('Updated status of sku @sku to 0 as it is marked as skipped.', [
+            '@sku' => $product['sku'],
+          ]);
         }
 
         $lock_key = 'synchronizeProduct' . $product['sku'];
