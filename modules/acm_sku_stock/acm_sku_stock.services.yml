@@ -1,0 +1,5 @@
+services:
+  acm_sku_stock.stock_updated_event_subscriber:
+    class: Drupal\acm_sku_stock\EventSubscriber\StockUpdatedEventSubscriber
+    tags:
+      - { name: 'event_subscriber' }

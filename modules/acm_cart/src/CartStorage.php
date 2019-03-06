@@ -439,7 +439,7 @@ class CartStorage implements CartInterface, CartStorageInterface {
 
     foreach ($items as $item) {
       $sku_entity = SKU::loadFromSku($item['sku']);
-      $sku_entity->clearStockCache();
+      $sku_entity->refreshStock();
     }
   }
 

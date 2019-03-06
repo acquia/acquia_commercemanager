@@ -1,0 +1,7 @@
+acm_sku_stock.settings:
+  type: 'config_entity'
+  label: 'SKU Stock Settings'
+  mapping:
+    low_stock:
+      type: 'integer'
+      label: 'Low Stock'

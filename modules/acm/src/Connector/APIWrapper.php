@@ -124,7 +124,12 @@ class APIWrapper implements APIWrapperInterface {
     };
 
     try {
-      return $this->tryAgentRequest($doReq, 'skuStockCheck', 'stock');
+      $message = $this->tryAgentRequest($doReq, 'skuStockCheck', 'stock');
+
+      // Add sku to message to allow processing it the same way as stock push.
+      $message['sku'] = $sku;
+
+      return $message;
     }
     catch (ConnectorException $e) {
       throw new RouteException(__FUNCTION__, $e->getMessage(), $e->getCode(), $this->getRouteEvents());

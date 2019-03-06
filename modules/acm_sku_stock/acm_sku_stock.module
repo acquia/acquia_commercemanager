@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Module file.
+ */
+
+use Drupal\acm_sku\Entity\SKU;
+
+/**
+ * Implements hook_acm_sku_product_sku_alter().
+ */
+function acm_sku_stock_acm_sku_product_sku_alter(SKU $sku, $product) {
+  // Update stock info from product.
+  if (isset($product['extension']['stock_item'])) {
+
+    /** @var \Drupal\acm_sku\StockManager $manager */
+    $manager = \Drupal::service('acm_sku.stock_manager');
+
+    $stock = $product['extension']['stock_item'];
+    $quantity = array_key_exists('qty', $stock) ? $stock['qty'] : $stock['quantity'];
+    $stock_status = isset($stock['is_in_stock']) ? (int) $stock['is_in_stock'] : 1;
+
+    $changed = $manager->updateStock($product['sku'], $quantity, $stock_status);
+
+    \Drupal::logger('acm_sku_stock')->info('@operation stock for sku @sku. Message: @message', [
+      '@operation' => $changed ? 'Updated' : 'Processed',
+      '@sku' => $product['sku'],
+      '@message' => json_encode($stock),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function acm_sku_stock_acm_sku_delete(SKU $entity) {
+  /** @var \Drupal\acm_sku\StockManager $manager */
+  $manager = \Drupal::service('acm_sku.stock_manager');
+  $manager->removeStockEntry($entity->getSku());
+}

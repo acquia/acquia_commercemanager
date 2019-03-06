@@ -3,7 +3,6 @@
 namespace Drupal\acm_sku\Entity;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -164,7 +163,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
       // We will continue execution with available translation and just log
       // a message. During sync we say don't log messages.
       elseif ($log_not_found) {
-        \Drupal::logger('acq_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
+        \Drupal::logger('acm_sku')->error('SKU translation not found of @sku for @langcode', ['@sku' => $sku, '@langcode' => $langcode]);
       }
     }
     else {
@@ -309,17 +308,6 @@ class SKU extends ContentEntityBase implements SKUInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['stock'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Stock'))
-      ->setDescription(t('Stock quantity.'))
-      ->setTranslatable(FALSE)
-      ->setDisplayOptions('form', [
-        'type' => 'number',
-        'weight' => -10,
-      ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
     $fields['price'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Display Price'))
       ->setDescription(t('Display Price of this SKU.'))
@@ -444,8 +432,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
       ->setDisplayConfigurable('view', TRUE);
 
     // Get all the fields added by other modules and add them as base fields.
-    $additionalFields = \Drupal::config('acm_sku.base_field_additions')
-      ->getRawData();
+    $additionalFields = \Drupal::service('acm_sku.fields_manager')->getFieldAdditions();
 
     // Get the default weight increment value from variables.
     $defaultWeightIncrement = \Drupal::state()
@@ -734,27 +721,30 @@ class SKU extends ContentEntityBase implements SKUInterface {
   }
 
   /**
-   * Helper function to clear stock cache for particular sku.
+   * {@inheritdoc}
    */
-  public function clearStockCache() {
-    $stock_mode = \Drupal::config('acm_sku.settings')->get('stock_mode');
+  public function refreshStock() {
+    /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
+    $plugin = $this->getPluginInstance();
+    $plugin->refreshStock($this);
+  }
 
-    // Clear product and forms related to sku.
-    Cache::invalidateTags(['acm_sku:' . $this->id()]);
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $cache_tags = parent::getCacheTags();
+    /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
+    $plugin = $this->getPluginInstance();
+    // Get parent skus(if any) for the sku.
+    $parent_skus = array_values($plugin->getAllParentSkus($this->getSku()));
+    // Prepare cache tags of parent sku.
+    $parent_skus = array_map(function ($parent_sku) {
+      return 'acm_sku:' . $parent_sku;
+    }, $parent_skus);
 
-    if ($stock_mode == 'push') {
-      /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
-      $plugin = $this->getPluginInstance();
-
-      // Reset the stock value.
-      $plugin->getProcessedStock($this, TRUE);
-    }
-    else {
-      $stock_cid = 'stock:' . $this->getSku();
-
-      // Clear stock cache.
-      \Drupal::cache('stock')->invalidate($stock_cid);
-    }
+    // @Todo: Add the tags of the display node as well.
+    return Cache::mergeTags($cache_tags, $parent_skus);
   }
 
 }

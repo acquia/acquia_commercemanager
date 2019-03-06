@@ -1,0 +1,7 @@
+acm_sku_stock.settings:
+  path: '/admin/commerce/stock-settings'
+  defaults:
+    _form: '\Drupal\acm_sku_stock\Form\StockSettingsForm'
+    _title: 'Stock Settings'
+  requirements:
+    _permission: 'access commerce administration pages'

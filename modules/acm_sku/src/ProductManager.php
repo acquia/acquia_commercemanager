@@ -8,7 +8,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\acm_sku\Event\AcmSkuValidateEvent;
@@ -63,6 +62,13 @@ class ProductManager implements ProductManagerInterface {
   private $i18nHelper;
 
   /**
+   * SKU Fields Manager.
+   *
+   * @var \Drupal\acm_sku\SKUFieldsManager
+   */
+  private $skuFieldsManager;
+
+  /**
    * Module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -110,33 +116,34 @@ class ProductManager implements ProductManagerInterface {
    *   Product Options Manager service instance.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
+   * @param \Drupal\acm_sku\SKUFieldsManager $sku_fields_manager
+   *   SKU Fields Manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher object.
    */
-  public function __construct(
-    EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $config_factory,
-    LoggerChannelFactoryInterface $logger_factory,
-    CategoryRepositoryInterface $cat_repo,
-    ProductOptionsManager $product_options_manager,
-    I18nHelper $i18nHelper,
-    ModuleHandlerInterface $moduleHandler,
-    EventDispatcherInterface $event_dispatcher
-  ) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager,
+                              ConfigFactoryInterface $config_factory,
+                              LoggerChannelFactoryInterface $logger_factory,
+                              CategoryRepositoryInterface $cat_repo,
+                              ProductOptionsManager $product_options_manager,
+                              I18nHelper $i18nHelper,
+                              SKUFieldsManager $sku_fields_manager,
+                              ModuleHandlerInterface $moduleHandler,
+                              EventDispatcherInterface $event_dispatcher) {
     $this->entityManager = $entity_type_manager;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');
     $this->categoryRepo = $cat_repo;
     $this->productOptionsManager = $product_options_manager;
     $this->i18nHelper = $i18nHelper;
+    $this->skuFieldsManager = $sku_fields_manager;
     $this->moduleHandler = $moduleHandler;
-    $this->debug = $this->configFactory->get('acm.connector')
-      ->get('debug');
-    $this->debugDir = $this->configFactory->get('acm.connector')
-      ->get('debug_dir');
     $this->eventDispatcher = $event_dispatcher;
+
+    $this->debug = $this->configFactory->get('acm.connector')->get('debug');
+    $this->debugDir = $this->configFactory->get('acm.connector')->get('debug_dir');
   }
 
   /**
@@ -563,122 +570,16 @@ class ProductManager implements ProductManagerInterface {
       $this->logger->error('SKU import, ignored: @ignored_skus', ['@ignored_skus' => implode(',', $this->ignoredSkus)]);
     }
 
+    // Return success true always, we reached here which means we successfully
+    // processed the sync request.
     return [
-      'success' => !$this->failed && ($this->created || $this->updated || $this->ignored || $this->deleted),
+      'success' => TRUE,
       'created' => $this->created,
       'updated' => $this->updated,
       'failed' => $this->failed,
       'ignored' => $this->ignored,
       'deleted' => $this->deleted,
     ];
-  }
-
-  /**
-   * SynchronizeStockData.
-   *
-   * Syncs an array of stock data.
-   *
-   * @param array $stock
-   *   Stock data for a product.
-   * @param string $storeId
-   *   Store ID from header.
-   *
-   * @return array
-   *   Array of results.
-   */
-  public function synchronizeStockData(array $stock = [], $storeId = '') {
-    $lock = \Drupal::lock();
-
-    $response = [
-      'success' => FALSE,
-    ];
-
-    $config = $this->configFactory->get('acm.connector');
-    $debug = $config->get('debug');
-    $debug_dir = $config->get('debug_dir');
-
-    if ($debug && !empty($debug_dir)) {
-      // Export product data into file.
-      if (!isset($fps)) {
-        $filename = $debug_dir . '/stock.data';
-        $fps = fopen($filename, 'a');
-      }
-      fwrite($fps, var_export($stock, 1));
-      fwrite($fps, '\n');
-    }
-
-    $langcode = NULL;
-
-    // For v1 connector we are going to get store_id from each stock,
-    // because we are not sending X-ACM-UUID header.
-    if (empty($storeId) && isset($stock['store_id'])) {
-      $storeId = $stock['store_id'];
-    }
-
-    if (!empty($storeId)) {
-      $langcode = $this->i18nHelper->getLangcodeFromStoreId($storeId);
-
-      if (empty($langcode)) {
-        // It could be for a different store/website, don't do anything.
-        return ($response);
-      }
-    }
-
-    // Work with single and array:
-    if (array_key_exists("sku", $stock)) {
-      $stockArray = [$stock];
-    }
-    else {
-      $stockArray = $stock;
-    }
-
-    foreach ($stockArray as $stock) {
-
-      if (!isset($stock['sku']) || !strlen($stock['sku'])) {
-        $this->logger->error('Invalid or empty product SKU.');
-        return ($response);
-      }
-
-      // Acquire lock to ensure parallel processes are executed one by one.
-      // TODO @Malachy: Should we change the key and move outside loop?
-      $lock_key = 'synchronizeProduct' . $stock['sku'];
-      do {
-        $lock_acquired = $lock->acquire($lock_key);
-      } while (!$lock_acquired);
-
-      /** @var \Drupal\acm_sku\Entity\SKU $sku */
-      if ($sku = SKU::loadFromSku($stock['sku'], $langcode)) {
-        $this->logger->info('Updating stock for SKU @sku.', ['@sku' => $stock['sku']]);
-
-        if (isset($stock['is_in_stock']) && empty($stock['is_in_stock'])) {
-          $stock['quantity'] = 0;
-        }
-
-        $quantity = isset($stock['quantity']) ? $stock['quantity'] : 0;
-
-        if ($quantity != $sku->get('stock')->getString()) {
-          $sku->get('stock')->setValue($quantity);
-          $sku->save();
-
-          // Clear product and forms related to sku.
-          Cache::invalidateTags(['acm_sku:' . $sku->id()]);
-        }
-      }
-
-      // Release the lock.
-      $lock->release($lock_key);
-
-    }
-
-    if (isset($fps)) {
-      fclose($fps);
-    }
-
-    $response = [
-      'success' => TRUE,
-    ];
-
-    return ($response);
   }
 
   /**
@@ -830,20 +731,6 @@ class ProductManager implements ProductManagerInterface {
     $sku->final_price->value = $product['final_price'];
     $sku->attributes = $this->formatProductAttributes($product['attributes']);
 
-    // Set default value of stock to 0.
-    $stock = 0;
-
-    if (isset($product['extension']['stock_item'],
-        $product['extension']['stock_item']['is_in_stock'],
-        $product['extension']['stock_item']['qty'])
-      && $product['extension']['stock_item']['is_in_stock']) {
-
-      // Store stock value in sku.
-      $stock = $product['extension']['stock_item']['qty'];
-    }
-
-    $sku->get('stock')->setValue($stock);
-
     $hasSerializableMedia = (
       array_key_exists('extension', $product) &&
       array_key_exists('media', $product['extension']) &&
@@ -952,8 +839,7 @@ class ProductManager implements ProductManagerInterface {
    *   If the complex data structure is unset and no item can be set.
    */
   private function updateFields($parent, SKU $sku, array $values) {
-    $additionalFields = \Drupal::config('acm_sku.base_field_additions')
-      ->getRawData();
+    $additionalFields = $this->skuFieldsManager->getFieldAdditions();
 
     // Filter fields for the parent requested.
     $additionalFields = array_filter($additionalFields, function ($field) use ($parent) {

@@ -50,4 +50,9 @@ interface SKUInterface extends ContentEntityInterface, EntityOwnerInterface, Ent
    */
   public function getNumberFormattedPrice(bool $returnOriginalPrice = FALSE);
 
+  /**
+   * Refresh stock for the sku using stock api.
+   */
+  public function refreshStock();
+
 }

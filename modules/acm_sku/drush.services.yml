@@ -1,0 +1,21 @@
+services:
+  acm_sku.commands:
+    class: \Drupal\acm_sku\Commands\AcmSkuDrushCommands
+    arguments:
+      - '@acm.api'
+      - '@acm.i18n_helper'
+      - '@acm.ingest_api'
+      - '@acm_sku.category_manager'
+      - '@acm_sku.product_options_manager'
+      - '@logger.factory'
+      - '@database'
+      - '@entity_type.manager'
+      - '@entity.query'
+      - '@entity.manager'
+      - '@language_manager'
+      - '@module_handler'
+      - '@cache.linked_skus'
+      - '@cache_tags.invalidator'
+      - '@config.factory'
+    tags:
+      - { name: drush.command }

@@ -12,6 +12,7 @@ services:
       - '@logger.factory'
       - '@acm.i18n_helper'
       - '@module_handler'
+      - '@database'
 
   acm_sku.product_options_manager:
     class: Drupal\acm_sku\ProductOptionsManager
@@ -51,15 +52,9 @@ services:
       - '@acm_sku.category_repo'
       - '@acm_sku.product_options_manager'
       - '@acm.i18n_helper'
+      - '@acm_sku.fields_manager'
       - '@module_handler'
       - '@event_dispatcher'
-
-  cache.stock:
-      class: Drupal\Core\Cache\CacheBackendInterface
-      tags:
-        - { name: cache.bin, default_backend: cache.backend.permanent_database }
-      factory: cache_factory:get
-      arguments: [stock]
 
   acm_sku.linked_sku:
     class: Drupal\acm_sku\AcmSkuLinkedSku
@@ -77,7 +72,31 @@ services:
     factory: cache_factory:get
     arguments: [linked_skus]
 
+  logger.channel.acm_sku:
+    parent: logger.channel_base
+    arguments: ['acm_sku']
+
+  acm_sku.fields_manager:
+    class: Drupal\acm_sku\SKUFieldsManager
+    arguments:
+      - '@config.factory'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@entity.definition_update_manager'
+      - '@logger.channel.acm_sku'
+
   acm_sku.product_info_helper:
     class: Drupal\acm_sku\ProductInfoHelper
     arguments:
       - '@event_dispatcher'
+
+  acm_sku.stock_manager:
+    class: Drupal\acm_sku\StockManager
+    arguments:
+      - '@database'
+      - '@acm.api'
+      - '@acm.i18n_helper'
+      - '@config.factory'
+      - '@lock.persistent'
+      - '@event_dispatcher'
+      - '@logger.factory'

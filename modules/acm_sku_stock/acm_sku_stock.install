@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Installation and update functions for SKU Stock.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function acm_sku_stock_schema() {
+  $schema['acm_sku_stock'] = [
+    'description' => 'Stores sku stock info.',
+    'fields' => [
+      'sku' => [
+        'type' => 'varchar_ascii',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Product SKU.',
+      ],
+      'quantity' => [
+        'type' => 'float',
+        'description' => 'Product stock quantity.',
+      ],
+      'status' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+        'size' => 'tiny',
+      ],
+    ],
+    'primary key' => ['sku'],
+  ];
+  return $schema;
+}

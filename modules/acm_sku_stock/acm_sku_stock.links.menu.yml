@@ -1,0 +1,6 @@
+acm_sku_stock.settings:
+  title: 'Stock Settings'
+  route_name: acm_sku_stock.settings
+  description: 'Manage stock settings.'
+  parent: acm.configuration
+  weight: 20

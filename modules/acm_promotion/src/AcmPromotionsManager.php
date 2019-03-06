@@ -155,19 +155,22 @@ class AcmPromotionsManager {
 
     // Delete promotions, which are not part of API response.
     if (!empty($ids)) {
-      $this->unpublishPromotions($ids);
+      $this->deletePromotions($types, $ids);
     }
   }
 
   /**
    * Delete Promotion nodes, not part of API Response.
    *
+   * @param array $types
+   *   Promotions types to delete.
    * @param array $validIDs
    *   Valid Rule ID's from API.
    */
-  protected function deletePromotions(array $validIDs = []) {
+  protected function deletePromotions(array $types, array $validIDs = []) {
     $query = $this->nodeStorage->getQuery();
     $query->condition('type', 'acm_promotion');
+    $query->condition('field_acm_promotion_type', $types, 'IN');
 
     if ($validIDs) {
       $query->condition('field_acm_promotion_rule_id', $validIDs, 'NOT IN');
