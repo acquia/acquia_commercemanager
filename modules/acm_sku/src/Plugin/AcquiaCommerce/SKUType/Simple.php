@@ -27,7 +27,8 @@ class Simple extends SKUPluginBase {
       return $form;
     }
 
-    $configurable_form_settings = \Drupal::service('config.factory')->get('acm_sku.configurable_form_settings');
+    /** @var \Drupal\acm_sku\CartFormHelper $helper */
+    $helper = \Drupal::service('acm_sku.cart_form_helper');
 
     $form['sku_id'] = [
       '#type' => 'hidden',
@@ -39,7 +40,7 @@ class Simple extends SKUPluginBase {
       '#type' => 'number',
       '#default_value' => 1,
       '#required' => TRUE,
-      '#access' => $configurable_form_settings->get('show_quantity'),
+      '#access' => $helper->showQuantity(),
       '#size' => 2,
       '#attributes' => [
         'min' => '0',

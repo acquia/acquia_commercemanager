@@ -296,3 +296,14 @@ function acm_sku_update_8106() {
 function acm_sku_update_8107() {
   \Drupal::entityDefinitionUpdateManager()->applyUpdates();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add attribute set as parent key for attribute_weights.
+ */
+function acm_sku_update_8108() {
+  $config = \Drupal::configFactory()->getEditable('acm_sku.configurable_form_settings');
+  $config->set('attribute_weights', ['default' => $config->get('attribute_weights')]);
+  $config->save(TRUE);
+}

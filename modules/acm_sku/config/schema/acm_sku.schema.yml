@@ -24,12 +24,14 @@ acm_sku.configurable_form_settings:
   label: 'configurable_form_settings'
   mapping:
     attribute_weights:
-      type: config_object
+      type: sequence
       label: 'attribute_weights'
-      mapping:
-        size:
-          label: 'Size'
-          type: integer
+      sequence:
+        type: mapping
+        mapping:
+          size:
+            label: 'Size'
+            type: integer
     show_quantity:
       type: boolean
       label: 'show_quantity'

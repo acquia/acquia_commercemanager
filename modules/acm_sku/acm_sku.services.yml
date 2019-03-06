@@ -55,6 +55,11 @@ services:
       - '@acm_sku.fields_manager'
       - '@module_handler'
 
+  acm_sku.cart_form_helper:
+    class: Drupal\acm_sku\CartFormHelper
+    arguments:
+      - '@config.factory'
+
   acm_sku.linked_sku:
     class: Drupal\acm_sku\AcmSkuLinkedSku
     arguments:
