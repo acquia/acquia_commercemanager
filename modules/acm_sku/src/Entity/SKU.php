@@ -7,7 +7,9 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\user\UserInterface;
 use GuzzleHttp\Exception\RequestException;
 
@@ -493,7 +495,11 @@ class SKU extends ContentEntityBase implements SKUInterface {
           throw new \RuntimeException('Field type not defined yet, please contact TA.');
         }
 
-        $field->setLabel($field_info['label']);
+        // We want to allow field labels to be translatable.
+        // Since we try to do this dynamically, we need to use t() with
+        // variable.
+        // @codingStandardsIgnoreLine
+        $field->setLabel(new TranslatableMarkup($field_info['label']));
 
         // Update cardinality with default value if empty.
         $field_info['description'] = empty($field_info['description']) ? 1 : $field_info['description'];
@@ -602,13 +608,15 @@ class SKU extends ContentEntityBase implements SKUInterface {
   /**
    * Function to return media files for a SKU.
    *
+   * @param bool $download_media
+   *   Whether to download media or not.
    * @param bool $reset
    *   Flag to reset cache and generate array again from serialized string.
    *
    * @return array
    *   Array of media files.
    */
-  public function getMedia($reset = FALSE) {
+  public function getMedia($download_media = TRUE, $reset = FALSE) {
     if (!$reset && !empty($this->mediaData)) {
       return $this->mediaData;
     }
@@ -623,32 +631,14 @@ class SKU extends ContentEntityBase implements SKUInterface {
       }
 
       foreach ($media_data as &$data) {
-        \Drupal::logger('acm_sku')->debug($data['media_type']);
-        if (isset($data['media_type']) && $data['media_type'] == 'image') {
-          if (empty($data['fid'])) {
-            try {
-              // Prepare the File object when we access it the first time.
-              $data['fid'] = $this->downloadMediaImage($data);
-              $update_sku = TRUE;
-            }
-            catch (\Exception $e) {
-              \Drupal::logger('acm_sku')->error($e->getMessage());
-              continue;
-            }
-          }
-
-          $data['file'] = File::load($data['fid']);
-          if (empty($data['file'])) {
-            \Drupal::logger('sku')->error('Empty file object for fid @fid on sku "@sku"', ['@fid' => $data['fid'], '@sku' => $this->getSku()]);
-            continue;
-          }
-
-          if (empty($data['label'])) {
-            $data['label'] = $this->label();
-          }
+        // We don't want to show disabled images.
+        if (isset($data['disabled']) && $data['disabled']) {
+          continue;
         }
 
-        $this->mediaData[] = $data;
+        $media_item = $this->processMediaItem($update_sku, $data, $download_media);
+
+        $this->mediaData[] = $media_item;
       }
 
       if ($update_sku) {
@@ -661,13 +651,74 @@ class SKU extends ContentEntityBase implements SKUInterface {
   }
 
   /**
+   * Function to get processed media item with File entity in array.
+   *
+   * @param bool $update_sku
+   *   Flag to specify if SKU should be updated or not.
+   *   Update is done in parent function, here we only update the flag.
+   * @param array $data
+   *   Media item array.
+   * @param bool $download
+   *   Flag to specify if we should download missing images or not.
+   *
+   * @return array|null
+   *   Processed media item or null if some error occurred.
+   */
+  protected function processMediaItem(&$update_sku, array &$data, $download = FALSE) {
+    $media_item = $data;
+
+    // Processing is required only for media type image as of now.
+    if (isset($data['media_type']) && $data['media_type'] == 'image') {
+      if (!empty($data['fid'])) {
+        $file = File::load($data['fid']);
+        if (!($file instanceof FileInterface)) {
+          \Drupal::logger('acm_sku')->error('Empty file object for fid @fid on sku "@sku"', [
+            '@fid' => $data['fid'],
+            '@sku' => $this->getSku(),
+          ]);
+
+          unset($data['fid']);
+
+          // Try to download again if download flag is set to true.
+          if ($download) {
+            return $this->processMediaItem($update_sku, $data, TRUE);
+          }
+        }
+      }
+      elseif ($download) {
+        try {
+          // Prepare the File object when we access it the first time.
+          $file = $this->downloadMediaImage($data);
+          $update_sku = TRUE;
+        }
+        catch (\Exception $e) {
+          \Drupal::logger('acm_sku')->error($e->getMessage());
+          return NULL;
+        }
+      }
+
+      if ($file instanceof FileInterface) {
+        $data['fid'] = $file->id();
+        $media_item['fid'] = $data['fid'];
+        $media_item['file'] = $file;
+      }
+
+      if (empty($data['label'])) {
+        $media_item['label'] = $this->label();
+      }
+
+      return $media_item;
+    }
+  }
+
+  /**
    * Function to save image file into public dir.
    *
    * @param array $data
    *   File data.
    *
-   * @return int
-   *   File id.
+   * @return \Drupal\file\Entity\File
+   *   File object.
    *
    * @throws \Exception
    *   If media fails to be downloaded.
@@ -713,7 +764,7 @@ class SKU extends ContentEntityBase implements SKUInterface {
             '@file' => $file->id(),
             '@sku' => $this->id(),
           ]);
-      return $file->id();
+      return $file;
     }
     else {
       throw new \Exception(new FormattableMarkup('Failed to save file "@file" for SKU id @sku_id.', $args));
@@ -727,6 +778,22 @@ class SKU extends ContentEntityBase implements SKUInterface {
     /** @var \Drupal\acm_sku\AcquiaCommerce\SKUPluginBase $plugin */
     $plugin = $this->getPluginInstance();
     $plugin->refreshStock($this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+
+    // Delete media files.
+    foreach ($entities as $entity) {
+      foreach ($entity->getMedia(FALSE) as $media) {
+        if ($media['file'] instanceof FileInterface) {
+          $media['file']->delete();
+        }
+      }
+    }
   }
 
   /**
