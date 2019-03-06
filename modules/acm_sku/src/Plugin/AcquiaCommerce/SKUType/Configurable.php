@@ -359,7 +359,7 @@ class Configurable extends SKUPluginBase {
         }
 
         // Clear stock cache.
-        $tree_pointer->clearStockCache();
+        $this->refreshStock($tree_pointer);
 
         // Dispatch event so action can be taken.
         $dispatcher = \Drupal::service('event_dispatcher');
@@ -773,7 +773,7 @@ class Configurable extends SKUPluginBase {
   /**
    * Wrapper function to get available children for a configurable SKU.
    *
-   * @param \Drupal\acq_sku\Entity\SKU $sku
+   * @param \Drupal\acm_sku\Entity\SKU $sku
    *   Configurable SKU.
    *
    * @return array

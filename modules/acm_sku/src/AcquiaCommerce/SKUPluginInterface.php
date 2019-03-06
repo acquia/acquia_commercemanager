@@ -179,16 +179,33 @@ interface SKUPluginInterface {
   public function getAdminGridDisplayFormattedPrice(SKU $sku, $fetchOriginalPrice = FALSE);
 
   /**
-   * Function to get stock for particular SKU.
+   * Check if product is in stock.
    *
    * @param \Drupal\acm_sku\Entity\SKU $sku
    *   SKU Entity.
-   * @param bool $reset
-   *   Flag to mention if we should always try to get fresh value.
    *
-   * @return mixed
-   *   Stock quantity.
+   * @return bool
+   *   TRUE if product is in stock.
    */
-  public function getProcessedStock(SKU $sku, $reset = FALSE);
+  public function isProductInStock(SKU $sku);
+
+  /**
+   * Returns the stock for the given sku.
+   *
+   * @param string|\Drupal\acm_sku\Entity\SKU $sku
+   *   SKU code of the product.
+   *
+   * @return int
+   *   Available stock quantity.
+   */
+  public function getStock($sku);
+
+  /**
+   * Refresh stock for particular SKU.
+   *
+   * @param \Drupal\acm_sku\Entity\SKU $sku
+   *   SKU Entity.
+   */
+  public function refreshStock(SKU $sku);
 
 }

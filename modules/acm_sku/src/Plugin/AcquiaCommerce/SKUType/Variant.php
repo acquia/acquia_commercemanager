@@ -332,7 +332,7 @@ class Variant extends SKUPluginBase {
         // if the Commerce Connector is unavailable)
         $cartStorage->removeItemFromCart($sku);
       }
-      $selected_sku_entity->clearStockCache();
+      $this->refreshStock($selected_sku_entity);
 
       // Clear product and forms related to sku.
       Cache::invalidateTags(['acm_sku:' . $selected_sku_entity->id()]);
