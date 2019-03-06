@@ -4,7 +4,7 @@ namespace Drupal\Tests\acm_customer\Unit;
 
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Tests\UnitTestCase;
-use Drupal\acm_customer\Plugin\rest\resource\CustomerDeleteResource;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\acm_customer\Plugin\rest\resource\CustomerDeleteResource
@@ -24,7 +24,7 @@ class CustomerDeleteResourceTest extends UnitTestCase {
   /**
    * The customer delete resource.
    *
-   * @var \Drupal\acm_customer\Plugin\rest\resource|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\acm_customer\Plugin\rest\resource\CustomerDeleteResource|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $customerDeleteResource;
 
