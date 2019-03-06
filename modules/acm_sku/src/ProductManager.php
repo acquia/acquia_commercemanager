@@ -308,7 +308,7 @@ class ProductManager implements ProductManagerInterface {
 
         // If skip attribute is set via any event subscriber, skip importing the
         // product.
-        if ($product['skip']) {
+        if (!empty($product['skip'])) {
           // We mark the status to disabled so product is deleted if available.
           $product['status'] = 0;
 
