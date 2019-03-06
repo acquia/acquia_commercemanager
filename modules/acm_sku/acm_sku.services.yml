@@ -54,6 +54,7 @@ services:
       - '@acm.i18n_helper'
       - '@acm_sku.fields_manager'
       - '@module_handler'
+      - '@event_dispatcher'
 
   acm_sku.cart_form_helper:
     class: Drupal\acm_sku\CartFormHelper

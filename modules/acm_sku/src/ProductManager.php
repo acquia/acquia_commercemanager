@@ -9,6 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\acm_sku\Event\AcmSkuValidateEvent;
 
 /**
  * Class ProductManager.
@@ -74,6 +76,13 @@ class ProductManager implements ProductManagerInterface {
   private $moduleHandler;
 
   /**
+   * Event Dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  private $eventDispatcher;
+
+  /**
    * True if you want extra logging for debugging.
    *
    * @var bool
@@ -111,6 +120,8 @@ class ProductManager implements ProductManagerInterface {
    *   SKU Fields Manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   Module handler.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher object.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager,
                               ConfigFactoryInterface $config_factory,
@@ -119,19 +130,20 @@ class ProductManager implements ProductManagerInterface {
                               ProductOptionsManager $product_options_manager,
                               I18nHelper $i18nHelper,
                               SKUFieldsManager $sku_fields_manager,
-                              ModuleHandlerInterface $moduleHandler) {
+                              ModuleHandlerInterface $moduleHandler,
+                              EventDispatcherInterface $event_dispatcher) {
     $this->entityManager = $entity_type_manager;
     $this->configFactory = $config_factory;
     $this->logger = $logger_factory->get('acm');
     $this->categoryRepo = $cat_repo;
     $this->productOptionsManager = $product_options_manager;
     $this->i18nHelper = $i18nHelper;
-    $this->moduleHandler = $moduleHandler;
-    $this->debug = $this->configFactory->get('acm.connector')
-      ->get('debug');
-    $this->debugDir = $this->configFactory->get('acm.connector')
-      ->get('debug_dir');
     $this->skuFieldsManager = $sku_fields_manager;
+    $this->moduleHandler = $moduleHandler;
+    $this->eventDispatcher = $event_dispatcher;
+
+    $this->debug = $this->configFactory->get('acm.connector')->get('debug');
+    $this->debugDir = $this->configFactory->get('acm.connector')->get('debug_dir');
   }
 
   /**
@@ -288,6 +300,23 @@ class ProductManager implements ProductManagerInterface {
     $this->debugLogger('Number of products: @count', ['@count' => count($products)]);
     foreach ($products as $product) {
       try {
+        // Allow other modules to subscribe to pre-validation of the SKU being
+        // imported.
+        $event = new AcmSkuValidateEvent($product);
+        $this->eventDispatcher->dispatch(AcmSkuValidateEvent::ACM_SKU_VALIDATE, $event);
+        $product = $event->getProduct();
+
+        // If skip attribute is set via any event subscriber, skip importing the
+        // product.
+        if ($product['skip']) {
+          // We mark the status to disabled so product is deleted if available.
+          $product['status'] = 0;
+
+          $this->logger->warning('Updated status of sku @sku to 0 as it is marked as skipped.', [
+            '@sku' => $product['sku'],
+          ]);
+        }
+
         $lock_key = 'synchronizeProduct' . $product['sku'];
         // Acquire lock to ensure parallel processes are executed one by one.
         do {
