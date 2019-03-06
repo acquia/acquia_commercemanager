@@ -60,12 +60,21 @@ use GuzzleHttp\Exception\RequestException;
  */
 class SKU extends ContentEntityBase implements SKUInterface {
 
+  const SWATCH_IMAGE_ROLE = 'swatch_image';
+
   /**
    * Processed media array.
    *
    * @var array
    */
   protected $mediaData = [];
+
+  /**
+   * Processed swatch media item array.
+   *
+   * @var array
+   */
+  protected $swatchData = [];
 
   /**
    * {@inheritdoc}
@@ -638,6 +647,12 @@ class SKU extends ContentEntityBase implements SKUInterface {
 
         $media_item = $this->processMediaItem($update_sku, $data, $download_media);
 
+        if ($media_item
+          && isset($media_item['roles'])
+          && in_array(self::SWATCH_IMAGE_ROLE, $media_item['roles'])) {
+          continue;
+        }
+
         $this->mediaData[] = $media_item;
       }
 
@@ -648,6 +663,56 @@ class SKU extends ContentEntityBase implements SKUInterface {
     }
 
     return $this->mediaData;
+  }
+
+  /**
+   * Function to return swatch media item for a SKU.
+   *
+   * @param bool $download
+   *   Whether to download media or not.
+   * @param bool $reset
+   *   Flag to reset cache and generate array again from serialized string.
+   *
+   * @return array
+   *   Array containing media item.
+   */
+  public function getSwatchImage($download = TRUE, $reset = FALSE) {
+    if (!$reset && !empty($this->swatchData)) {
+      return $this->swatchData;
+    }
+
+    if ($media_data = $this->get('media')->getString()) {
+      $update_sku = FALSE;
+
+      $media_data = unserialize($media_data);
+
+      if (empty($media_data)) {
+        return [];
+      }
+
+      foreach ($media_data as &$data) {
+        // We don't want to show disabled images.
+        if (isset($data['disabled']) && $data['disabled']) {
+          continue;
+        }
+
+        $media_item = $this->processMediaItem($update_sku, $data, $download);
+
+        if ($media_item
+            && isset($media_item['roles'])
+            && in_array(self::SWATCH_IMAGE_ROLE, $media_item['roles'])) {
+          $this->swatchData = $media_item;
+          break;
+        }
+      }
+
+      if ($update_sku) {
+        $this->get('media')->setValue(serialize($media_data));
+        $this->save();
+      }
+    }
+
+    return $this->swatchData;
   }
 
   /**
@@ -792,6 +857,11 @@ class SKU extends ContentEntityBase implements SKUInterface {
         if ($media['file'] instanceof FileInterface) {
           $media['file']->delete();
         }
+      }
+
+      $swatch = $entity->getSwatchImage(FALSE);
+      if ($swatch && $swatch['file'] instanceof FileInterface) {
+        $swatch['file']->delete();
       }
     }
   }
