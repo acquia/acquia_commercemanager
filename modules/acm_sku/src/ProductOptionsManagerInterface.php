@@ -31,4 +31,22 @@ interface ProductOptionsManagerInterface {
    */
   public function synchronizeProductOptions();
 
+  /**
+   * Create product option if not available or update the name.
+   *
+   * @param string $langcode
+   *   Lang code.
+   * @param int $option_id
+   *   Option id.
+   * @param string $option_value
+   *   Value (term name).
+   * @param int $attribute_id
+   *   Attribute id.
+   * @param string $attribute_code
+   *   Attribute code.
+   * @param int $weight
+   *   Taxonomy term weight == attribute option sort order.
+   */
+  public function createProductOption($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight);
+
 }

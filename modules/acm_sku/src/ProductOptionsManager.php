@@ -112,22 +112,9 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
   }
 
   /**
-   * Create product option if not available or update the name.
-   *
-   * @param string $langcode
-   *   Lang code.
-   * @param int $option_id
-   *   Option id.
-   * @param string $option_value
-   *   Value (term name).
-   * @param int $attribute_id
-   *   Attribute id.
-   * @param string $attribute_code
-   *   Attribute code.
-   * @param int $weight
-   *   Taxonomy term weight == attribute option sort order.
+   * {@inheritdoc}
    */
-  protected function createProductOption($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight) {
+  public function createProductOption($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight) {
     if (strlen($option_value) == 0) {
       $this->logger->warning('Got empty value while syncing production options: @data', [
         '@data' => json_encode([
