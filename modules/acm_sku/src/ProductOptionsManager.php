@@ -195,7 +195,7 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
   }
 
   /**
-   * Synchronize all product options.
+   * {@inheritdoc}
    */
   public function synchronizeProductOptions() {
     $options_available = [];
@@ -254,7 +254,7 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
           $this->termStorage->delete($entities);
         }
         catch (\Exception $e) {
-          $this->logger->error(t('Error occurred while deleting options not available in MDC. Error: @message', [
+          $this->logger->error(t('Error occurred while deleting options that are no longer available. Error: @message', [
             '@message' => $e->getMessage(),
           ]));
         }
