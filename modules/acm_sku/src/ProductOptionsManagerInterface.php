@@ -57,7 +57,7 @@ interface ProductOptionsManagerInterface {
    *
    * @param array $synced_options
    *   Multi-dimensional array containing attribute codes as key and option ids
-   *   currently available on MDC.
+   *   as value.
    */
   public function deleteUnavailableOptions(array $synced_options);
 
