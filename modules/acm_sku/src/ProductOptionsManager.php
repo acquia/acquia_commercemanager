@@ -4,6 +4,7 @@ namespace Drupal\acm_sku;
 
 use Drupal\acm\Connector\APIWrapperInterface;
 use Drupal\acm\I18nHelper;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -51,6 +52,13 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
   private $logger;
 
   /**
+   * Database connection service.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  private $connection;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -61,14 +69,21 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
    *   LoggerFactory object.
    * @param \Drupal\acm\I18nHelper $i18nHelper
    *   Instance of I18nHelper service.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   Database connection service.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, APIWrapperInterface $api_wrapper, LoggerChannelFactoryInterface $logger_factory, I18nHelper $i18nHelper) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager,
+                              APIWrapperInterface $api_wrapper,
+                              LoggerChannelFactoryInterface $logger_factory,
+                              I18nHelper $i18nHelper,
+                              Connection $connection) {
     $this->termStorage = $entity_type_manager->getStorage('taxonomy_term');
     $this->apiWrapper = $api_wrapper;
     $this->logger = $logger_factory->get('acm_sku');
     $this->i18nHelper = $i18nHelper;
+    $this->connection = $connection;
   }
 
   /**
