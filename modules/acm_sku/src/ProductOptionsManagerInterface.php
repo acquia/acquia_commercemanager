@@ -49,4 +49,13 @@ interface ProductOptionsManagerInterface {
    */
   public function createProductOption($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight);
 
+  /**
+   * Delete all the options that are no longer available in MDC.
+   *
+   * @param array $synced_options
+   *   Multi-dimensional array containing attribute codes as key and option ids
+   *   currently available on MDC.
+   */
+  public function deleteUnavailableOptions(array $synced_options);
+
 }

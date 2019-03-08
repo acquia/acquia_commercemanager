@@ -178,9 +178,11 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Synchronize all product options.
    */
   public function synchronizeProductOptions() {
+    $options_available = [];
+
     foreach ($this->i18nHelper->getStoreLanguageMapping() as $langcode => $store_id) {
       $this->apiWrapper->updateStoreContext($store_id);
       $option_sets = $this->apiWrapper->getProductOptions();
@@ -189,6 +191,55 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
       foreach ($option_sets as $options) {
         foreach ($options['options'] as $key => $value) {
           $this->createProductOption($langcode, $key, $value, $options['attribute_id'], $options['attribute_code'], $weight++);
+          $options_available[$options['attribute_code']][$options['attribute_id']] = $options['attribute_id'];
+        }
+      }
+    }
+
+    if ($options_available) {
+      $this->deleteUnavailableOptions($options_available);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteUnavailableOptions(array $synced_options) {
+    // Cleanup queries can be done only for one language.
+    $query = $this->connection->select('taxonomy_term__field_sku_attribute_code', 'ttfsac');
+    $query->addExpression('count(entity_id)', 'cnt');
+    $query->condition('field_sku_attribute_code_value', array_keys($synced_options), 'IN');
+    $result = $query->execute()->fetchAllKeyed(0, 0);
+    $options_in_db = reset($result);
+
+    $synced_option_ids = [];
+    foreach ($synced_options as $attribute_code => $options) {
+      $synced_option_ids = array_merge($synced_option_ids, $options);
+    }
+
+    // Do nothing if count of option ids synced and in DB match.
+    if (count($synced_option_ids) === $options_in_db) {
+      return;
+    }
+
+    $query = $this->termStorage->getQuery();
+    $query->condition('field_sku_option_id', $synced_option_ids, 'NOT IN');
+    $query->condition('field_sku_attribute_code', array_keys($synced_options), 'IN');
+    $query->condition('vid', self::PRODUCT_OPTIONS_VOCABULARY);
+    $tids = $query->execute();
+
+    if ($tids) {
+      foreach (array_chunk($tids, 50) as $ids) {
+        $this->termStorage->resetCache();
+
+        try {
+          $entities = $this->termStorage->loadMultiple($ids);
+          $this->termStorage->delete($entities);
+        }
+        catch (\Exception $e) {
+          $this->logger->error(t('Error occurred while deleting options not available in MDC. Error: @message', [
+            '@message' => $e->getMessage(),
+          ]));
         }
       }
     }
