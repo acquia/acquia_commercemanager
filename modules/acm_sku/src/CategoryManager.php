@@ -251,9 +251,9 @@ class CategoryManager implements CategoryManagerInterface {
    */
   private function resetResults() {
     $this->results = [
-      'created' => 0,
-      'updated' => 0,
-      'failed' => 0,
+      'created' => [],
+      'updated' => [],
+      'failed' => [],
     ];
   }
 
@@ -293,7 +293,7 @@ class CategoryManager implements CategoryManagerInterface {
     foreach ($categories as $category) {
       if (!isset($category['category_id']) || !isset($category['name'])) {
         $this->logger->error('Invalid / missing category ID or name.');
-        $this->results['failed']++;
+        $this->results['failed'][] = $category['category_id'] ?? '-1';
         continue;
       }
 
@@ -391,7 +391,7 @@ class CategoryManager implements CategoryManagerInterface {
           $this->termStorage->deleteTermHierarchy($child_ids);
         }
 
-        $this->results['updated']++;
+        $this->results['updated'][] = $category['category_id'];
 
       }
       else {
@@ -409,7 +409,7 @@ class CategoryManager implements CategoryManagerInterface {
           'langcode' => $langcode,
         ]);
 
-        $this->results['created']++;
+        $this->results['created'][] = $category['category_id'];
       }
 
       // Store status of category.
