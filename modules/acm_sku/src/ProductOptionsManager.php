@@ -190,6 +190,8 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
         $this->logger->critical('Product option "@option" wasn\'t saved. Try again later please.', ['@option' => $option_value]);
       }
     }
+
+    return $term;
   }
 
   /**

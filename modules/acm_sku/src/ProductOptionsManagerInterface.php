@@ -46,7 +46,10 @@ interface ProductOptionsManagerInterface {
    *   Attribute code.
    * @param int $weight
    *   Taxonomy term weight == attribute option sort order.
-   */
+   *
+   * @return \Drupal\taxonomy\Entity\Term|null
+   *   Term object or null.
+  */
   public function createProductOption($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight);
 
   /**
