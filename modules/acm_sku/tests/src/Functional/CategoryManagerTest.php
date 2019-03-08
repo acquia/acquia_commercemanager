@@ -66,11 +66,11 @@ class CategoryManagerTest extends BrowserTestBase {
   public function testSyncCategory() {
     global $_acm_commerce_categories_create;
     $result = $this->categoryManager->synchronizeTreeOffline('acm_product_category', $_acm_commerce_categories_create[0]['children']);
-    $this->assertSame($result['created'], 9);
+    $this->assertSame(count($result['created']), 9);
 
     global $_acm_commerce_categories_update;
     $result = $this->categoryManager->synchronizeTreeOffline('acm_product_category', $_acm_commerce_categories_update);
-    $this->assertSame($result['updated'], 1);
+    $this->assertSame(count($result['updated']), 1);
   }
 
 }
