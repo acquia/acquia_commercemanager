@@ -71,7 +71,7 @@ class CartFormHelper {
     $existing_weights[$attribute_set] = $weights;
 
     $config = $this->configFactory->getEditable(self::CONFIG_KEY);
-    $config->set('attribute_weights', $weights);
+    $config->set('attribute_weights', $existing_weights);
     $config->save();
 
     // Reload config.
