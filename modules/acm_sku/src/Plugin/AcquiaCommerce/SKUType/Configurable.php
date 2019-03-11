@@ -511,9 +511,10 @@ class Configurable extends SKUPluginBase {
     // Sort the values in attribute_sku so we can use it later.
     foreach ($combinations['attribute_sku'] ?? [] as $code => $values) {
       if ($helper->isAttributeSortable($code)) {
-        $combinations['attribute_sku'][$code] = Configurable::sortConfigOptions($values, $code);
-        }
-        else {
+        $combinations['attribute_sku'][$code]
+          = Configurable::sortConfigOptions($values, $code);
+      }
+      else {
         // Sort from field_configurable_attributes.
         $configurable_attribute = [];
         foreach ($configurables as $configurable) {
@@ -525,9 +526,12 @@ class Configurable extends SKUPluginBase {
 
         if ($configurable_attribute) {
           $configurable_attribute_weights = array_flip(array_column($configurable_attribute, 'value_id'));
-          uksort($combinations['attribute_sku'][$code], function ($a, $b) use ($configurable_attribute_weights) {
-            return $configurable_attribute_weights[$a] - $configurable_attribute_weights[$b];
-          });
+
+          uksort($combinations['attribute_sku'][$code],
+            function ($a, $b) use ($configurable_attribute_weights) {
+              return $configurable_attribute_weights[$a]
+                - $configurable_attribute_weights[$b];
+            });
         }
       }
     }
@@ -563,10 +567,10 @@ class Configurable extends SKUPluginBase {
       foreach ($configurable_codes as $code) {
         if (isset($configurables[$code])) {
           $selected[$code] = $configurables[$code];
-      }
+        }
       }
       $configurables = $selected;
-        }
+    }
 
     $combination = '';
 
@@ -745,7 +749,7 @@ class Configurable extends SKUPluginBase {
     $helper->setConfigurableAttributeWeights($attribute_set, $existing_options);
   }
 
-    /**
+  /**
    * Get sorted configurable options.
    *
    * @param \Drupal\acq_commerce\SKUInterface $sku
