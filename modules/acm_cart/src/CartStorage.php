@@ -81,9 +81,6 @@ class CartStorage implements CartInterface, CartStorageInterface {
     if (!empty($cart) && $cart instanceof CartInterface) {
       $this->cart = $cart;
     }
-    else {
-      $this->cart = $this->loadCart();
-    }
   }
 
   /**
