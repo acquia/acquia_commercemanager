@@ -291,7 +291,7 @@ class CategoryManager implements CategoryManagerInterface {
     }
 
     foreach ($categories as $category) {
-      if (!isset($category['category_id']) || !isset($category['name'])) {
+      if (empty($category['category_id']) || empty($category['name'])) {
         $this->logger->error('Invalid / missing category ID or name.');
         $this->results['failed'][] = $category['category_id'] ?? '-1';
         continue;
