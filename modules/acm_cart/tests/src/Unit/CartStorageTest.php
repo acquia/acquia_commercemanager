@@ -292,12 +292,15 @@ class CartStorageTest extends UnitTestCase {
   public function testAssociateCart() {
     $test_customer_id = 999999;
 
-    $this->session->expects($this->exactly(2))
+    $this->session->expects($this->exactly(1))
       ->method('set')
       ->with($this->storageKey);
 
     // No cart in session.
     $this->cartStorage->associateCart($test_customer_id);
+
+    // Load cart in session.
+    $this->cartStorage->loadCart();
 
     // Cart in session.
     $this->cartStorage->associateCart($test_customer_id);
