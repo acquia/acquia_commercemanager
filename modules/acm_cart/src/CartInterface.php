@@ -327,4 +327,15 @@ interface CartInterface {
    */
   public function get($property_name);
 
+  /**
+   * Check if Cart has an sku.
+   *
+   * @param string $sku
+   *   SKU to check.
+   *
+   * @return bool
+   *   TRUE if sku is already in cart.
+   */
+  public function hasItem(string $sku);
+
 }
