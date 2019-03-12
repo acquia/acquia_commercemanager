@@ -874,4 +874,15 @@ class CartStorage implements CartInterface, CartStorageInterface {
     unset($this->cart->payment);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hasItem(string $sku) {
+    if ($this->isEmpty()) {
+      return FALSE;
+    }
+
+    return $this->cart->hasItem($sku);
+  }
+
 }
