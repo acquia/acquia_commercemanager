@@ -4,7 +4,6 @@ namespace Drupal\Tests\acm_customer\Unit;
 
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\acm_customer\Plugin\rest\resource\CustomerDeleteResource
