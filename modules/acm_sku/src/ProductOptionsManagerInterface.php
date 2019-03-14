@@ -31,4 +31,34 @@ interface ProductOptionsManagerInterface {
    */
   public function synchronizeProductOptions();
 
+  /**
+   * Create product option if not available or update the name.
+   *
+   * @param string $langcode
+   *   Lang code.
+   * @param int $option_id
+   *   Option id.
+   * @param string $option_value
+   *   Value (term name).
+   * @param int $attribute_id
+   *   Attribute id.
+   * @param string $attribute_code
+   *   Attribute code.
+   * @param int $weight
+   *   Taxonomy term weight == attribute option sort order.
+   *
+   * @return \Drupal\taxonomy\Entity\Term|null
+   *   Term object or null.
+   */
+  public function createProductOptionWrapper($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight);
+
+  /**
+   * Delete all the options that are no longer available.
+   *
+   * @param array $synced_options
+   *   Multi-dimensional array containing attribute codes as key and option ids
+   *   as value.
+   */
+  public function deleteUnavailableOptions(array $synced_options);
+
 }

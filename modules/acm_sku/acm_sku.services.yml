@@ -21,6 +21,7 @@ services:
       - '@acm.api'
       - '@logger.factory'
       - '@acm.i18n_helper'
+      - '@database'
 
   acm_sku.category_repo:
     class: Drupal\acm_sku\CategoryRepository
