@@ -23,7 +23,7 @@ class MiniCartManager {
    * Helper function to get Mini cart.
    */
   public function getMiniCart() {
-    $cart = $this->cartStorage->getCart();
+    $cart = $this->cartStorage->getCart(FALSE);
 
     // Return empty cart in case no cart available in current session.
     $output = [

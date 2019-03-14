@@ -216,9 +216,9 @@ class CartStorageTest extends UnitTestCase {
 
     $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
 
-    // This is the third time loadCart is being called, so the next generated
-    // cart ID will be 3.
-    $expected_cart_id = 3;
+    // This is the first time loadCart is being called with no param or TRUE
+    // as param, so we expect 1.
+    $expected_cart_id = 1;
     $new_cart = $cartStorage->loadCart();
 
     $this->assertSame($expected_cart_id, $new_cart->id());
@@ -292,12 +292,15 @@ class CartStorageTest extends UnitTestCase {
   public function testAssociateCart() {
     $test_customer_id = 999999;
 
-    $this->session->expects($this->exactly(2))
+    $this->session->expects($this->exactly(3))
       ->method('set')
       ->with($this->storageKey);
 
     // No cart in session.
     $this->cartStorage->associateCart($test_customer_id);
+
+    // Load cart in session.
+    $this->cartStorage->loadCart();
 
     // Cart in session.
     $this->cartStorage->associateCart($test_customer_id);
