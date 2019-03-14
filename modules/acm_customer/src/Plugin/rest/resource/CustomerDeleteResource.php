@@ -5,6 +5,7 @@ namespace Drupal\acm_customer\Plugin\rest\resource;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\rest\ModifiedResourceResponse;
 use Drupal\rest\Plugin\ResourceBase;
+use Drupal\user\UserInterface;
 
 /**
  * Class CustomerDeleteResource.
@@ -35,40 +36,49 @@ class CustomerDeleteResource extends ResourceBase {
    * @return \Drupal\rest\ModifiedResourceResponse
    *   HTTP Response.
    */
-  public function post(array $data = []) {
+  public function post(array $data) {
     // If 'email' key is not available.
-    if (!$data['email']) {
+    if (!isset($data['email'])) {
       $this->logger->error('Invalid data to delete customer.');
       $response['success'] = (bool) (FALSE);
       return (new ModifiedResourceResponse($response));
     }
 
     $email = $data['email'];
-    /* @var \Drupal\user\Entity\User $user */
     $user = $this->myUserLoadByMail($email);
+
     // If there is user with given email.
-    if ($user) {
+    if ($user instanceof UserInterface) {
       try {
         $user->delete();
-        $this->logger->notice('Deleted user with uid %id and email %email.', ['%id' => $user->id(), '%email' => $email]);
-        $response['success'] = (bool) (TRUE);
-        return (new ModifiedResourceResponse($response));
+
+        $this->logger->info('Deleted user with uid %id and email %email.', [
+          '%id' => $user->id(),
+          '%email' => $email,
+        ]);
       }
       catch (EntityStorageException $e) {
-        $this->logger->error($e->getMessage());
-        $response['success'] = (bool) (FALSE);
-        return (new ModifiedResourceResponse($response));
+        $this->logger->error('Failed to delete user with email %email. Exception: @message', [
+          '%email' => $email,
+          '@message' => $e->getMessage(),
+        ]);
       }
     }
     else {
-      $this->logger->warning('User with email %email doesn\'t exist.', ['%email' => $email]);
-      $response['success'] = (bool) (FALSE);
-      return (new ModifiedResourceResponse($response));
+      $this->logger->warning('User with email %email does not exist.', ['%email' => $email]);
     }
+
+    // For exception or missing user we have added entries in logs.
+    // We don't want ACM to try again if message is processed successfully.
+    $response['success'] = TRUE;
+    return (new ModifiedResourceResponse($response));
   }
 
   /**
    * Wrapper around user_load_by_mail to allow for stubbing during testing.
+   *
+   * @return \Drupal\user\UserInterface|null
+   *   User entity object or null.
    */
   public function myUserLoadByMail($email) {
     return user_load_by_mail($email);

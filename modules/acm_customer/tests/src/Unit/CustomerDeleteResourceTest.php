@@ -105,9 +105,20 @@ class CustomerDeleteResourceTest extends UnitTestCase {
    * @covers ::post
    */
   public function testPostNoData() {
-    $response = $this->customerDeleteResource->post(['email' => '']);
+    $response = $this->customerDeleteResource->post([]);
     $content = $response->getResponseData();
     $this->assertSame(FALSE, $content['success']);
+  }
+
+  /**
+   * Tests the post() method with empty email passed.
+   *
+   * @covers ::post
+   */
+  public function testPostEmptyEmail() {
+    $response = $this->customerDeleteResource->post(['email' => '']);
+    $content = $response->getResponseData();
+    $this->assertSame(TRUE, $content['success']);
   }
 
   /**
@@ -118,7 +129,7 @@ class CustomerDeleteResourceTest extends UnitTestCase {
   public function testPostInvalidEmail() {
     $response = $this->customerDeleteResource->post(['email' => 'invalidEmail@invalid.com']);
     $content = $response->getResponseData();
-    $this->assertSame(FALSE, $content['success']);
+    $this->assertSame(TRUE, $content['success']);
   }
 
   /**
@@ -129,7 +140,7 @@ class CustomerDeleteResourceTest extends UnitTestCase {
   public function testErrorOnDelete() {
     $response = $this->customerDeleteResource->post(['email' => 'badUser@bad.com']);
     $content = $response->getResponseData();
-    $this->assertSame(FALSE, $content['success']);
+    $this->assertSame(TRUE, $content['success']);
   }
 
   /**
