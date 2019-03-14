@@ -940,6 +940,9 @@ class APIWrapper implements APIWrapperInterface {
    * @throws \Drupal\acm\Connector\RouteException
    */
   public function getLinkedskus($sku, $type = LINKED_SKU_TYPE_ALL) {
+    // Without this we get following error:
+    // 9006: Signature does not match expected signature.
+    $sku = urlencode($sku);
     $endpoint = $this->apiVersion . "/agent/product/$sku/related/$type";
 
     $doReq = function ($client, $opt) use ($endpoint) {
