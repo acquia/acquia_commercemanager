@@ -396,16 +396,24 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
    * @param string $sku
    *   Sku string.
    *
-   * @return mixed
-   *   All parent skus.
+   * @return array
+   *   All parent skus with sku as key and id as value.
    */
   public function getAllParentSkus(string $sku) {
+    $static = &drupal_static(__FUNCTION__, []);
+
+    if (isset($static[$sku])) {
+      return $static[$sku];
+    }
+
     $query = $this->connection->select('acm_sku_field_data', 'acm_sku');
     $query->addField('acm_sku', 'sku');
     $query->addField('acm_sku', 'id');
     $query->join('acm_sku__field_configured_skus', 'child_sku', 'acm_sku.id = child_sku.entity_id');
     $query->condition('child_sku.field_configured_skus_value', $sku);
-    return $query->execute()->fetchAllKeyed('sku');
+    $static[$sku] = $query->execute()->fetchAllKeyed(0, 1) ?? [];
+
+    return $static[$sku];
   }
 
 }
