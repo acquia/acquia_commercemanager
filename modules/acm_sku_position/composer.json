@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_sku_position",
+    "type": "drupal-module",
+    "description": "This module provides functionality to store the sku (product) position.",
+    "license": "GPL-2.0-or-later"
+}

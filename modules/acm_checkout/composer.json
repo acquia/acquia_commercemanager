@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_checkout",
+    "type": "drupal-module",
+    "description": "This module provides cart checkout functionality to the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later"
+}
