@@ -5,6 +5,7 @@ namespace Drupal\acm_sku\Plugin\AcquiaCommerce\SKUType;
 use Drupal\acm_sku\AcquiaCommerce\SKUPluginBase;
 use Drupal\acm_sku\AddToCartErrorEvent;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\acm_sku\Entity\SKUType;
 use Drupal\acm_sku\Entity\SKUTypeInterface;
 use Drupal\Core\Cache\Cache;
@@ -414,7 +415,7 @@ class Variant extends SKUPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function processImport(SKU $configuredSkuEntity, array $product) {
+  public function processImport(SKUInterface $configuredSkuEntity, array $product) {
     $configuredSkuEntity->field_configurable_attributes->value =
       serialize($product['extension']['configurable_product_options']);
 
