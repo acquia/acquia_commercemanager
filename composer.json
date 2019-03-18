@@ -1,10 +1,9 @@
 {
     "name": "drupal/acquia_commercemanager",
-    "description": "This project provides the ability to use the Acquia Commerce Connector.",
     "type": "drupal-module",
-    "license": "GPL-2.0+",
-    "minimum-stability": "dev",
+    "description": "This project provides the ability to use the Acquia Commerce Connector.",
     "homepage": "https://www.drupal.org/project/acquia_commercemanager",
+    "license": "GPL-2.0+",
     "authors": [
         {
             "name": "Acquia Engineering",
@@ -12,33 +11,34 @@
             "role": "Maintainer"
         }
     ],
-    "support": {
-        "issues": "https://github.com/acquia/commerce-manager/issues",
-        "source": "https://github.com/acquia/commerce-manager"
-    },
     "require": {
         "php": "^7.1",
+        "acquia/http-hmac-php": "~3.2",
         "commerceguys/intl": "~1.0",
         "drupal/address": "^1.4.0",
+        "drupal/consumers": "1.4",
         "drupal/field_group": "^3.0@beta",
         "drupal/inline_entity_form": "^1.0@rc",
         "drupal/key_value_field": "~1.0",
-        "acquia/http-hmac-php": "~3.2",
         "drupal/pcb": "~1.0",
-        "drupal/simple_oauth": "^3",
-        "drupal/consumers": "1.4"
+        "drupal/simple_oauth": "^3"
     },
     "require-dev": {
         "behat/behat": "3.5.*",
-        "behat/mink-goutte-driver": "*",
+        "behat/mink": "*",
         "behat/mink-browserkit-driver": "*",
         "behat/mink-extension": "*",
+        "behat/mink-goutte-driver": "*",
         "behat/mink-selenium2-driver": "*",
-        "behat/mink": "*",
-        "drupal/drupal-extension": "3.4.*",
         "drupal/drupal-driver": "*",
+        "drupal/drupal-extension": "3.4.*",
+        "emuse/behat-html-formatter": "^0.1.0",
         "jakoch/phantomjs-installer": "*",
-        "se/selenium-server-standalone": "3.4.0",
-        "emuse/behat-html-formatter": "^0.1.0"
+        "se/selenium-server-standalone": "3.4.0"
+    },
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://github.com/acquia/commerce-manager/issues",
+        "source": "https://github.com/acquia/commerce-manager"
     }
 }
