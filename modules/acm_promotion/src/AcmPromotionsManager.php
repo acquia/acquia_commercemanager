@@ -14,12 +14,15 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 /**
  * Class AcmPromotionsManager.
  */
 class AcmPromotionsManager {
+
+  use StringTranslationTrait;
 
   /**
    * Language Manager service.
