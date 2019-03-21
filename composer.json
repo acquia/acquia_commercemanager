@@ -23,6 +23,11 @@
         "drupal/pcb": "~1.0",
         "drupal/simple_oauth": "^3"
     },
+    "autoload": {
+        "classmap": [
+            "features/bootstrap/"
+        ]
+    },
     "minimum-stability": "dev",
     "support": {
         "issues": "https://github.com/acquia/commerce-manager/issues",
