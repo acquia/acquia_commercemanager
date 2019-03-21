@@ -13,6 +13,10 @@ cache:
     - "$HOME/.drush/cache"
     - "$TMPDIR/phpstan/cache"
 
+env:
+  global:
+    - "ORCA_PACKAGES_CONFIG_ALTER=../commerce-manager/packages.yml"
+
 matrix:
   fast_finish: true
   include:
