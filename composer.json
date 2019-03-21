@@ -23,6 +23,11 @@
         "drupal/pcb": "~1.0",
         "drupal/simple_oauth": "^3"
     },
+    "extra": {
+        "branch-alias": {
+            "dev-8.x-1.x": "1.x-dev"
+        }
+    },
     "autoload": {
         "classmap": [
             "features/bootstrap/"
