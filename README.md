@@ -53,6 +53,14 @@ immediately log the user in.
 
 The logout page handles forgetting the users access token.
 
+## Locks
+
+Acquia Commerce Manager uses Drupal locks to avoid data duplication and issues 
+around data creating through APIs. To avoid issues with use of memcache for 
+locks, persistent locks are used. Check [here](
+https://www.drupal.org/project/memcache/issues/3020060) for more details on 
+issues with memcache. 
+
 ## Contributing
 Issues and contributions are welcomed on our [GitHub](
 https://github.com/acquia/commerce-manager

@@ -273,8 +273,8 @@ class CategoryManager implements CategoryManagerInterface {
    *   If the data is read-only.
    */
   private function syncCategory(array $categories, $parent = NULL, $storeId = '') {
-
-    $lock = \Drupal::lock();
+    /** @var \Drupal\Core\Lock\PersistentDatabaseLockBackend $lock */
+    $lock = \Drupal::service('lock.persistent');
 
     // Remove top level item (Default Category) from the categories, if its set
     // in configuration and category is with no parent.
