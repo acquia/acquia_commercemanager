@@ -1,4 +1,4 @@
-@javascript
+@javascript @orca_ignore
 Feature: Test basket page
 
   Background:

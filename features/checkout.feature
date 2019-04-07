@@ -1,4 +1,4 @@
-@javascript
+@javascript @orca_ignore
 Feature: Test Checkout feature
   Background:
     Given I am an anonymous user
@@ -299,7 +299,7 @@ Feature: Test Checkout feature
     And I wait for the page to load
     Then I should see "Your order has been submitted" in the "content"
 
-  @shipping @justthisone
+  @shipping
   Scenario: As a Guest,
   I should be able to use same shipping address and then change it from review pane and checkout using COD.
     Given I enter a valid Email ID in field "edit-billing-information-address-email"
