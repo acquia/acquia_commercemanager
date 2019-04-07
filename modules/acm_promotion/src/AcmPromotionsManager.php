@@ -7,7 +7,7 @@ use Drupal\acm_sku\Entity\SKU;
 use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\acm\I18nHelper;
-use Drupal\Core\Database\Driver\mysql\Connection;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
@@ -73,7 +73,7 @@ class AcmPromotionsManager {
   /**
    * Database connection service.
    *
-   * @var \Drupal\Core\Database\Driver\mysql\Connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected $connection;
 
@@ -101,7 +101,7 @@ class AcmPromotionsManager {
    *   Queue factory service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory service.
-   * @param \Drupal\Core\Database\Driver\mysql\Connection $connection
+   * @param \Drupal\Core\Database\Connection $connection
    *   Database connection service.
    * @param \Drupal\acm\I18nHelper $i18n_helper
    *   I18nHelper object.
