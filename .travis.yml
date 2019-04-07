@@ -1,58 +1,40 @@
+---
 language: php
+dist: trusty
 
-php:
-  - 7.1
-  - 7.2
+php: 7.1
+
+addons:
+  chrome: stable
+
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$TMPDIR/phpstan/cache"
 
 env:
-  - DRUPAL=~8.5.0
-  - DRUPAL=~8.6.0
-  - DRUPAL=8.5.x-dev
-  - DRUPAL=8.6.x-dev
+  global:
+    - "ORCA_PACKAGES_CONFIG_ALTER=../commerce-manager/packages.yml"
 
-before_install:
-  # items for phpcs
-  - composer global require drupal/coder ^8.2@stable
-  - export COMPOSER_HOME=`composer config home`
-  - export PATH="$PATH:$COMPOSER_HOME/vendor/bin" 
-  - phpcs --config-set installed_paths $COMPOSER_HOME/vendor/drupal/coder/coder_sniffer
-  - phpcs --standard=Drupal .
+matrix:
+  fast_finish: true
+  include:
+    - { name: "Static code analysis", env: ORCA_JOB=STATIC_CODE_ANALYSIS }
+    - { name: "Deprecated code scan w/ SUT", env: ORCA_JOB=DEPRECATED_CODE_SCAN_SUT }
+    - { name: "Deprecated code scan w/ dependencies", env: ORCA_JOB=DEPRECATED_CODE_SCAN_CONTRIB }
+    - { name: "Isolated test w/ recommended package versions", env: ORCA_JOB=ISOLATED_RECOMMENDED }
+    - { name: "Integrated test w/ recommended package versions", env: ORCA_JOB=INTEGRATED_RECOMMENDED }
+    - { name: "Isolated test w/ dev package versions", env: ORCA_JOB=ISOLATED_DEV }
+    - { name: "Integrated test w/ dev package versions", env: ORCA_JOB=INTEGRATED_DEV }
+  allow_failures:
+    - env: ORCA_JOB=DEPRECATED_CODE_SCAN_SUT
+    - env: ORCA_JOB=DEPRECATED_CODE_SCAN_CONTRIB
+    - env: ORCA_JOB=ISOLATED_DEV
+    - env: ORCA_JOB=INTEGRATED_DEV
+
 install:
-# Create the MySQL database and add a user for testing.
-  - mysql -u root -e "CREATE DATABASE testing; CREATE USER 'testing'@'localhost' IDENTIFIED BY 'testing'; GRANT ALL ON testing.* TO 'testing'@'localhost';"
-  - export SIMPLETEST_DB="mysql://testing:testing@localhost/testing"
-  - export SIMPLETEST_BASE_URL=http://localhost:8080
-  # first clone everything also into a subfolder, via a parent build folder
-  - mkdir acm
-  - mv `ls -A | grep -v "^acm$"` ./acm
-  - composer clearcache
-  - composer self-update
-  - composer create-project drupal/drupal:${DRUPAL} drupal --no-interaction --no-install
-  # Add packages required by acm.
-  - cd drupal
-  # see https://github.com/drupal-composer/drupal-project/issues/175
-  - composer config --unset repositories.0
-  - composer config repositories.drupal composer https://packages.drupal.org/8
-  - mkdir -p modules/contrib
-  - mv ../acm modules/contrib
-  - composer require drush/drush commerceguys/intl:~0.7 drupal/address:~1.0 drupal/key_value_field:~1.0 drupal/field_group:^3.0@beta drupal/pcb:~1.0 acquia/http-hmac-php:~3.2.0 drupal/simple_oauth:'~3.8' drupal/consumers:'1.4' drupal/inline_entity_form php-coveralls/php-coveralls
-  - composer run-script drupal-phpunit-upgrade
-  - composer install
-  # Install drupal.
-  - ./vendor/bin/drush --verbose site-install --db-url=mysql://root:@127.0.0.1/drupal --yes
-  # Enable the acm suite of modules.
-  - ./vendor/bin/drush en -y acm acm_cart acm_checkout acm_customer acm_exception acm_payment acm_product acm_promotion acm_sku acm_sku_position
-  # Enable simpletest for module tests
-  - ./vendor/bin/drush en -y simpletest
-before_script:
-  - phpenv config-rm xdebug.ini
-  - mkdir -p $TRAVIS_BUILD_DIR/drupal/sites/simpletest && chmod 777 $TRAVIS_BUILD_DIR/drupal/sites/simpletest -fR
-  - cd $TRAVIS_BUILD_DIR/drupal
-  - ./vendor/bin/drush runserver localhost:8080 &
-  - echo $! > drush_runserver.pid
-  - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
-script:
-  - mkdir -p $TRAVIS_BUILD_DIR/drupal/modules/contrib/acm/tests/logs
-  # Run behat tests.
-  - ./vendor/bin/phpunit -c modules/contrib/acm/phpunit.xml modules/contrib/acm --debug -v --stop-on-failure
-  - kill -s TERM `cat drush_runserver.pid`
+  - "git clone --branch v1.0.0-alpha6 --depth 1 https://github.com/acquia/orca.git ../orca"
+  - "../orca/bin/travis/install 8.x-1.x"
+
+script: "../orca/bin/travis/script drupal/acquia_commercemanager"

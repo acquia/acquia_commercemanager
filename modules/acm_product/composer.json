@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_product",
+    "type": "drupal-module",
+    "description": "This module provides a product content type and views to use with the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later"
+}

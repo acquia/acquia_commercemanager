@@ -1,0 +1,15 @@
+{
+    "name": "drupal/acm_sku",
+    "type": "drupal-module",
+    "description": "This module provides SKU functionality to the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "drupal/inline_entity_form": "^1.0@rc",
+        "drupal/key_value_field": "~1.0"
+    },
+    "autoload": {
+        "classmap": [
+            "tests/src/"
+        ]
+    }
+}

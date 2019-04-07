@@ -1,4 +1,4 @@
-@javascript @promotions
+@javascript @promotions @orca_ignore
 Feature: Test various scenarios for promotions
 
   Scenario: As a guest

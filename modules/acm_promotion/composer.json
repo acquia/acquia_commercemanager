@@ -1,0 +1,9 @@
+{
+    "name": "drupal/acm_promotion",
+    "type": "drupal-module",
+    "description": "This module provides Promotions functionality to the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "drupal/field_group": "^3.0@beta"
+    }
+}

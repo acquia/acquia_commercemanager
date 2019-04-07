@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_sku_stock",
+    "type": "drupal-module",
+    "description": "This module adds stock management functionality to the Acquia Commerce Connector.",
+    "license": "GPL-2.0-or-later"
+}

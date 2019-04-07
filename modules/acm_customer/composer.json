@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_customer",
+    "type": "drupal-module",
+    "description": "This module provides customer profile functionality to the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later"
+}

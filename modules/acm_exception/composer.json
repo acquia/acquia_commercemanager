@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_exception",
+    "type": "drupal-module",
+    "description": "Provides configurable error messaging for API exceptions.",
+    "license": "GPL-2.0-or-later"
+}

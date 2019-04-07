@@ -1,0 +1,10 @@
+{
+    "name": "drupal/acm_cart",
+    "type": "drupal-module",
+    "description": "This module lays the foundation to use the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "drupal/pcb": "~1.0",
+        "drupal/simple_oauth": "^3"
+    }
+}

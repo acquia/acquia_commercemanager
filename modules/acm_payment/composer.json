@@ -1,0 +1,6 @@
+{
+    "name": "drupal/acm_payment",
+    "type": "drupal-module",
+    "description": "This module provides payment functionality to the Acquia Commerce Connector Service.",
+    "license": "GPL-2.0-or-later"
+}
