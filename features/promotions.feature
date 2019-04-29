@@ -41,15 +41,9 @@ Feature: Test various scenarios for promotions
     And I wait for the page to load
     Then I should see "Coupon code is not valid" in the "highlighted"
     And I should see "Your cart has been updated." in the "highlighted"
-    And I should see the price doubled for the product
-
-    When I fill in "edit-cart-24-mb01-quantity" with "4"
-    And I fill in "acm-promotion-coupon" with "demo"
-    And I press "Update"
-    And I wait for the page to load
-    And I should see "Your cart has been updated." in the "highlighted"
     And I should see the discounted price for four products
-    And I press "Remove coupon code"
+
+    When I press "Remove coupon code"
     And I wait for the page to load
     Then I should see "Your cart has been updated." in the "highlighted"
-    And I should see the price for four products
+    And I should see the price doubled for the product
