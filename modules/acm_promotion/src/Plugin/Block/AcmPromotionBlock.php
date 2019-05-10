@@ -8,6 +8,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,11 +25,32 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class AcmPromotionBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity type manager.
+   * The entity display repository.
    *
    * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
    */
   protected $entityDisplayRepository;
+
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Renderer service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * Route match service.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
 
   /**
    * Constructs a NodeEmbedBlock instance.
@@ -39,10 +63,26 @@ class AcmPromotionBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
    *   The entity display repository.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   Renderer service.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   Route match service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityDisplayRepositoryInterface $entity_display_repository) {
+  public function __construct(array $configuration,
+                              $plugin_id,
+                              $plugin_definition,
+                              EntityDisplayRepositoryInterface $entity_display_repository,
+                              EntityTypeManagerInterface $entity_type_manager,
+                              RendererInterface $renderer,
+                              RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityDisplayRepository = $entity_display_repository;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->renderer = $renderer;
+    $this->routeMatch = $route_match;
+
   }
 
   /**
@@ -53,7 +93,10 @@ class AcmPromotionBlock extends BlockBase implements ContainerFactoryPluginInter
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_display.repository')
+      $container->get('entity_display.repository'),
+      $container->get('entity_type.manager'),
+      $container->get('renderer'),
+      $container->get('current_route_match')
     );
   }
 
@@ -123,8 +166,10 @@ class AcmPromotionBlock extends BlockBase implements ContainerFactoryPluginInter
     $json = [];
     foreach ($promos as $promo_node) {
       $promo_code = $promo_node->getTitle();
-      $teaser = node_view($promo_node, $display_mode);
-      $json[$promo_code] = \Drupal::service('renderer')->render($teaser);
+      $teaser = $this->entityTypeManager
+        ->getViewBuilder('node')
+        ->view($promo_node, $display_mode);
+      $json[$promo_code] = $this->renderer->render($teaser);
     }
 
     // TODO We may need to remove the id and add better (more specific) classes.
@@ -159,19 +204,20 @@ class AcmPromotionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * This method loads the active promotion nodes.
    *
-   * @return Drupal\node\Entity\Node[]
+   * @return \Drupal\node\Entity\Node[]
    *   The promotion node for the user's session.
    */
   protected function getPromotionNodes($view_mode) {
     $nodes = [];
 
     // Default to loading all enabled (published) nodes.
-    $query = \Drupal::entityQuery('node')
+    $query = $this->entityTypeManager->getStorage('node')
+      ->getQuery()
       ->condition('type', 'acm_promotion')
       ->condition('status', NodeInterface::PUBLISHED);
 
     if ($view_mode === 'sku_limit') {
-      $viewing_node = \Drupal::routeMatch()->getParameter('node');
+      $viewing_node = $this->routeMatch->getParameter('node');
 
       if (
         !is_null($viewing_node)

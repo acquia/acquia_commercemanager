@@ -30,6 +30,7 @@ class AcmPromotionCommands extends DrushCommands {
    */
   public function __construct(AcmPromotionsManager $acmPromotionsManager,
                               LoggerChannelFactoryInterface $loggerChannelFactory) {
+    parent::__construct();
     $this->acmPromotionsManager = $acmPromotionsManager;
     $this->logger = $loggerChannelFactory->get('acm_promotion');
   }

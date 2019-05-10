@@ -26,7 +26,7 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
   /**
    * Promotion manager.
    *
-   * @var \Drupal\acm_promotion\AcqPromotionsManager
+   * @var \Drupal\acm_promotion\AcmPromotionsManager
    */
   protected $promotionManager;
 
@@ -55,7 +55,7 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
    *   Plugin definition.
    * @param \Drupal\acm\Connector\IngestAPIWrapper $ingestApiWrapper
    *   IngestAPIWrapper Service object.
-   * @param \Drupal\acm_promotion\AcqPromotionsManager $promotionManager
+   * @param \Drupal\acm_promotion\AcmPromotionsManager $promotionManager
    *   Promotion manager.
    * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   Logger service.
@@ -66,7 +66,7 @@ abstract class AcmPromotionQueueBase extends QueueWorkerBase implements Containe
                               $plugin_id,
                               $plugin_definition,
                               IngestAPIWrapper $ingestApiWrapper,
-                              AcqPromotionsManager $promotionManager,
+                              AcmPromotionsManager $promotionManager,
                               LoggerChannelFactory $loggerFactory,
                               CacheTagsInvalidatorInterface $tag_invalidate) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

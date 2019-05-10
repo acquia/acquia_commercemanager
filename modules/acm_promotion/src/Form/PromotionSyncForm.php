@@ -88,7 +88,7 @@ class PromotionSyncForm extends FormBase {
     switch ($action) {
       case 'Synchronize Promotions':
         $this->promotionManager->syncPromotions();
-        drupal_set_message('Promotions Synchronization Complete.', 'status');
+        $this->messenger()->addStatus($this->t('Promotions Synchronization Complete'));
         break;
     }
   }

@@ -15,6 +15,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -81,6 +82,27 @@ class AcmPromotionsManager {
   protected $connection;
 
   /**
+   * Entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Logger channel.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
    * I18n Helper.
    *
    * @var \Drupal\acm\I18nHelper
@@ -108,6 +130,8 @@ class AcmPromotionsManager {
    *   Database connection service.
    * @param \Drupal\acm\I18nHelper $i18n_helper
    *   I18nHelper object.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager,
                               APIWrapperInterface $api_wrapper,
@@ -117,7 +141,9 @@ class AcmPromotionsManager {
                               QueueFactory $queue,
                               ConfigFactoryInterface $configFactory,
                               Connection $connection,
-                              I18nHelper $i18n_helper) {
+                              I18nHelper $i18n_helper,
+                              ModuleHandlerInterface $module_handler) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->nodeStorage = $entity_type_manager->getStorage('node');
     $this->skuStorage = $entity_type_manager->getStorage('acm_sku');
     $this->apiWrapper = $api_wrapper;
@@ -128,6 +154,7 @@ class AcmPromotionsManager {
     $this->configFactory = $configFactory;
     $this->connection = $connection;
     $this->i18nHelper = $i18n_helper;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -244,7 +271,7 @@ class AcmPromotionsManager {
    */
   public function getSkusForPromotion(NodeInterface $promotion) {
     $query = $this->connection->select('acm_sku__field_acm_sku_promotions', 'fasp');
-    if (\Drupal::entityTypeManager()->getDefinition('acm_sku')->isTranslatable()) {
+    if ($this->entityTypeManager->getDefinition('acm_sku')->isTranslatable()) {
       $query->join('acm_sku_field_data', 'asfd', 'asfd.id = fasp.entity_id');
     }
     else {
@@ -347,7 +374,7 @@ class AcmPromotionsManager {
     }
 
     // Invoke the alter hook to allow modules to update the node from API data.
-    \Drupal::moduleHandler()->alter('acm_promotion_promotion_node', $promotion_node, $promotion);
+    $this->moduleHandler->alter('acm_promotion_promotion_node', $promotion_node, $promotion);
 
     $status = $promotion_node->save();
     // Create promotion translations based on the language codes available in
