@@ -204,7 +204,7 @@ class AcmPromotionBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * This method loads the active promotion nodes.
    *
-   * @return \Drupal\node\Entity\Node[]
+   * @return \Drupal\node\NodeInterface[]
    *   The promotion node for the user's session.
    */
   protected function getPromotionNodes($view_mode) {
