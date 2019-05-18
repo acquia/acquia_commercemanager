@@ -33,6 +33,7 @@ class AcmCustomerDrushCommands extends DrushCommands {
    */
   public function __construct(Connection $connection,
                               LoggerChannelFactoryInterface $logger_factory) {
+    parent::__construct();
     $this->connection = $connection;
     $this->setLogger($logger_factory->get('AcmCustomerDrushCommands'));
   }

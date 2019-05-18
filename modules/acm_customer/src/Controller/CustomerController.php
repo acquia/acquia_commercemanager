@@ -16,6 +16,8 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Drupal\acm_customer\Ajax\CustomerFormMessageCommand;
+use Drupal\acm\Response\NeedsRedirectException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -154,7 +156,7 @@ class CustomerController extends ControllerBase {
    * @param string $id
    *   The id route parameter.
    *
-   * @return Drupal\Core\Ajax\AjaxResponse
+   * @return \Drupal\Core\Ajax\AjaxResponse
    *   The form.
    */
   public function ajaxFormPage(Request $request, $action = NULL, $id = NULL) {

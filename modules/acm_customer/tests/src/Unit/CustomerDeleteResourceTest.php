@@ -24,7 +24,7 @@ class CustomerDeleteResourceTest extends UnitTestCase {
   /**
    * The customer delete resource.
    *
-   * @var \Drupal\acm_customer\Plugin\rest\resource|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\acm_customer\Plugin\rest\resource\CustomerDeleteResource|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $customerDeleteResource;
 

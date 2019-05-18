@@ -260,7 +260,7 @@ abstract class CustomerPagesBase extends PluginBase implements CustomerPagesInte
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    $dependencies = parent::calculateDependencies();
+    $dependencies = [];
     // Merge-in the form dependencies.
     foreach ($this->getChildForms() as $child_form) {
       foreach ($child_form->calculateDependencies() as $dependency_type => $list) {

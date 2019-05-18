@@ -4,6 +4,7 @@ namespace Drupal\acm_customer;
 
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
