@@ -3,7 +3,10 @@
 namespace Drupal\acm_promotion\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Utility\Token;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a block to display promotion information to users.
@@ -17,7 +20,48 @@ use Drupal\Core\Form\FormStateInterface;
  *   }
  * )
  */
-class AcmPromotionContainerBlock extends BlockBase {
+class AcmPromotionContainerBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * Token manager.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $tokenManager;
+
+  /**
+   * Constructs a new AcmPromotionContainerBlock.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Utility\Token $token_manager
+   *   Token manager.
+   */
+  public function __construct(array $configuration,
+                              $plugin_id,
+                              $plugin_definition,
+                              Token $token_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->tokenManager = $token_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('entity_display.repository'),
+      $container->get('current_user')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -132,8 +176,7 @@ class AcmPromotionContainerBlock extends BlockBase {
       return !empty($value);
     });
 
-    $token = \Drupal::token();
-    $argument = $token->replace($argument, $contexts);
+    $argument = $this->tokenManager->replace($argument, $contexts);
 
     // TODO May need to update this in the future to make this more flexible,
     // perhaps with a theme function.

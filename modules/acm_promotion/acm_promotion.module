@@ -48,7 +48,9 @@ function acm_promotion_page_attachments(array &$page) {
 
     // Create a map of promo displays to fill in containers once the page loads.
     foreach (array_keys($display_modes) as $display_mode) {
-      $render_array = node_view($node, $display_mode);
+      $render_array = \Drupal::entityTypeManager()
+        ->getViewBuilder('node')
+        ->view()($node, $display_mode);
       $promo_display_map[$promo_code][$display_mode] = \Drupal::service('renderer')->renderRoot($render_array);
     }
 

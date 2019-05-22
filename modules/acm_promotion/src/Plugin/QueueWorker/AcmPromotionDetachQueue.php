@@ -56,6 +56,7 @@ class AcmPromotionDetachQueue extends AcmPromotionQueueBase {
 
     $sku_texts = implode(',', $skus);
 
+    $invalidate_tags = array_merge($skus, ['node:' . $promotion_nid]);
     // Invalidate cache tags for updated skus & promotions.
     $this->tagInvalidate->invalidateTags($invalidate_tags);
 
