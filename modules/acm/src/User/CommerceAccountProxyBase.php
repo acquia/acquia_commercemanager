@@ -33,20 +33,6 @@ abstract class CommerceAccountProxyBase extends AccountProxy implements Commerce
   /**
    * {@inheritdoc}
    */
-  public function setAccount(AccountInterface $account) {
-    // If the passed account is already proxied, use the actual account instead
-    // to prevent loops.
-    if ($account instanceof static) {
-      $account = $account->getAccount();
-    }
-    $this->account = $account;
-    $this->id = $account->id();
-    date_default_timezone_set(drupal_get_user_timezone());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getAccount() {
     if (!isset($this->account) || $this->account->isAnonymous()) {
       // User has already logged in an account fetched from API.
