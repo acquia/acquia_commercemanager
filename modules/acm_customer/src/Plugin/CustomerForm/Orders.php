@@ -142,11 +142,11 @@ class Orders extends CustomerFormBase implements CustomerFormInterface {
 
     try {
       $cart->updateCart();
-      drupal_set_message($this->t('Your cart has been updated.'));
+      $this->messenger()->addStatus($this->t('Your cart has been updated.'));
       $form_state->setRedirect('acm_cart.cart');
     }
     catch (\Exception $e) {
-      drupal_set_message($this->t('Something went wrong and the order could not be added to your cart.'));
+      $this->messenger()->addError($this->t('Something went wrong and the order could not be added to your cart.'));
     }
   }
 
