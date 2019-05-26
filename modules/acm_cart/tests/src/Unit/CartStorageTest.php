@@ -69,8 +69,8 @@ class CartStorageTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
 
-    $this->session = $this->getMock('Drupal\acm\SessionStoreInterface');
-    $this->logger = $this->getMock('Drupal\Core\Logger\LoggerChannelFactoryInterface');
+    $this->session = $this->createMock('Drupal\acm\SessionStoreInterface');
+    $this->logger = $this->createMock('Drupal\Core\Logger\LoggerChannelFactoryInterface');
     $this->eventDispatcher = new EventDispatcher();
     $this->apiWrapper = new MockAPIWrapper();
 
@@ -91,7 +91,9 @@ class CartStorageTest extends UnitTestCase {
       return $m->getName();
     }, (new \ReflectionClass($interface))->getMethods());
     $methods[] = 'getCartItemsCount';
-    $mock_cart = $this->getMock($interface, $methods);
+    $mock_cart = $this->getMockBuilder($interface)
+      ->setMethods($methods)
+      ->getMock();
     $mock_cart->cart = $cart;
     $mock_cart->expects($this->any())
       ->method('id')
@@ -185,7 +187,7 @@ class CartStorageTest extends UnitTestCase {
    * @covers ::loadCart
    */
   public function testLoadCartWithCartInSession() {
-    $session = $this->getMock('Drupal\acm\SessionStoreInterface');
+    $session = $this->createMock('Drupal\acm\SessionStoreInterface');
 
     $session->expects($this->at(0))
       ->method('get')
@@ -208,7 +210,7 @@ class CartStorageTest extends UnitTestCase {
    * @covers ::loadCart
    */
   public function testLoadCartNoCartInSession() {
-    $session = $this->getMock('Drupal\acm\SessionStoreInterface');
+    $session = $this->createMock('Drupal\acm\SessionStoreInterface');
 
     $session->expects($this->exactly(1))
       ->method('get')
@@ -238,7 +240,7 @@ class CartStorageTest extends UnitTestCase {
    * @covers ::updateCart
    */
   public function testUpdateCart() {
-    $session = $this->getMock('Drupal\acm\SessionStoreInterface');
+    $session = $this->createMock('Drupal\acm\SessionStoreInterface');
 
     $session->expects($this->exactly(1))
       ->method('get')

@@ -127,7 +127,7 @@ class EmptyCartForm extends FormBase {
     $this->cartStorage->clearCart();
     $form_state->setRedirect($route);
 
-    drupal_set_message($this->t('Cart has been cleared.'));
+    $this->messenger()->addStatus($this->t('Cart has been cleared.'));
   }
 
   /**
