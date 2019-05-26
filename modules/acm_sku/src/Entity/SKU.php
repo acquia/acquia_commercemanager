@@ -8,6 +8,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
@@ -753,11 +754,11 @@ class SKU extends ContentEntityBase implements SKUInterface {
     $directory = 'public://media/' . str_replace('/' . $file_name, '', $path);
 
     // Prepare the directory.
-    file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
+    \Drupal::service('file_system')->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
 
     // Save the file as file entity.
     /** @var \Drupal\file\Entity\File $file */
-    if ($file = file_save_data($file_data, $directory . '/' . $file_name, FILE_EXISTS_REPLACE)) {
+    if ($file = file_save_data($file_data, $directory . '/' . $file_name, FileSystemInterface::EXISTS_REPLACE)) {
       \Drupal::logger('acm_sku')
         ->debug('File @url downloaded to @file for SKU @sku',
           [
