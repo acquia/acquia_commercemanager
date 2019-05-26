@@ -2,6 +2,7 @@
 
 namespace Drupal\acm_exception\EventSubscriber;
 
+use Drupal\acm_exception\RouteExceptionHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -12,6 +13,23 @@ use Drupal\acm\Connector\RouteException;
  * Exception event subscriber for Drupal\acm\Connector\RouteException.
  */
 class RouteExceptionSubscriber implements EventSubscriberInterface {
+
+  /**
+   * Route exception handler.
+   *
+   * @var \Drupal\acm_exception\RouteExceptionHandler
+   */
+  protected $routeExceptionHandler;
+
+  /**
+   * RouteExceptionSubscriber constructor.
+   *
+   * @param \Drupal\acm_exception\RouteExceptionHandler $route_exception_handler
+   *   Route exception handler.
+   */
+  public function __construct(RouteExceptionHandler $route_exception_handler) {
+    $this->routeExceptionHandler = $route_exception_handler;
+  }
 
   /**
    * Catch all uncaught RouteException exceptions.
@@ -25,8 +43,7 @@ class RouteExceptionSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $handler = \Drupal::service('acm_exception.route_exception_handler');
-    $redirect = $handler->getRedirect($exception);
+    $redirect = $this->routeExceptionHandler->getRedirect($exception);
     $event->setResponse(RedirectResponse::create($redirect, 302));
   }
 
