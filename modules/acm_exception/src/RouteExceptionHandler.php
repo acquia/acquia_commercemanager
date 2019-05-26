@@ -5,6 +5,7 @@ namespace Drupal\acm_exception;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Url;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\acm\Connector\RouteException;
 
 /**
@@ -27,16 +28,26 @@ class RouteExceptionHandler {
   private $logger;
 
   /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  private $messenger;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   ConfigFactoryInterface object.
    * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
    *   LoggerChannelFactory object.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The Messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, LoggerChannelFactory $logger_factory, MessengerInterface $messenger) {
     $this->config = $config_factory->get('acm_exception.settings');
     $this->logger = $logger_factory->get('acm_exception');
+    $this->messenger = $messenger;
   }
 
   /**
@@ -48,7 +59,7 @@ class RouteExceptionHandler {
   public function message(RouteException $e) {
     $message = $this->getConfig('message', $e);
     if (!empty($message) && PHP_SAPI !== 'cli') {
-      drupal_set_message($message, 'error');
+      $this->messenger->addError($message);
     }
   }
 
