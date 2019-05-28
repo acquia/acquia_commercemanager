@@ -4,6 +4,7 @@ namespace Drupal\Tests\acm_cart\Unit;
 
 use Drupal\Tests\acm\Unit\Connector\MockAPIWrapper;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -57,6 +58,26 @@ class CartStorageTest extends UnitTestCase {
   protected $cartObject;
 
   /**
+   * @var \Drupal\Core\Config\ConfigFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $configFactory;
+
+  /**
+   * @var \Drupal\acm\User\CommerceAccountInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $commerceUserManager;
+
+  /**
+   * @var \Drupal\Core\Session\AccountProxyInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $accountManager;
+
+  /**
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $requestStack;
+
+  /**
    * The key the cart gets stored to.
    *
    * @var string
@@ -73,8 +94,13 @@ class CartStorageTest extends UnitTestCase {
     $this->logger = $this->createMock('Drupal\Core\Logger\LoggerChannelFactoryInterface');
     $this->eventDispatcher = new EventDispatcher();
     $this->apiWrapper = new MockAPIWrapper();
+    $this->configFactory = $this->createMock('Drupal\Core\Config\ConfigFactoryInterface');
+    $this->commerceUserManager = $this->createMock('Drupal\acm\User\CommerceAccountInterface');
+    $this->accountManager = $this->createMock('Drupal\Core\Session\AccountProxyInterface');
+    $request = Request::createFromGlobals();
+    $this->requestStack->push($request);
 
-    $this->cartStorage = new MockCartStorage($this->session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $this->cartStorage = new MockCartStorage($this->session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
 
     $cart = (object) [
       'shippable' => TRUE,
@@ -198,7 +224,7 @@ class CartStorageTest extends UnitTestCase {
       ->method('get')
       ->with($this->storageKey);
 
-    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
     $cart = $cartStorage->loadCart();
 
     $this->assertSame($this->cartObject->id(), $cart->id());
@@ -216,7 +242,7 @@ class CartStorageTest extends UnitTestCase {
       ->method('get')
       ->with($this->storageKey);
 
-    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
 
     // This is the first time loadCart is being called with no param or TRUE
     // as param, so we expect 1.
@@ -246,7 +272,7 @@ class CartStorageTest extends UnitTestCase {
       ->method('get')
       ->with($this->storageKey);
 
-    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
 
     // Create a new cart.
     $cart1 = $cartStorage->updateCart();
