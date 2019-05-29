@@ -175,7 +175,7 @@ class APIWrapper implements APIWrapperInterface {
     // But for robustness we go back to the SKU plugin and ask
     // it to return a name as a string only.
     $originalItemsNames = [];
-    $items = $cart->items;
+    $items = $cart->items ?? NULL;
     if ($items) {
       foreach ($items as $key => &$item) {
         $cart->items[$key]['qty'] = (int) $item['qty'];
