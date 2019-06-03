@@ -29,9 +29,21 @@ acm_sku.configurable_form_settings:
       sequence:
         type: mapping
         mapping:
-          size:
-            label: 'Size'
-            type: integer
+          attribute_set:
+            label: 'attribute_set'
+            type: string
+          fields:
+            label: 'fields'
+            type: sequence
+            sequence:
+              type: mapping
+              mapping:
+                field:
+                  label: 'field'
+                  type: 'string'
+                weight:
+                  label: 'weight'
+                  type: integer
     show_quantity:
       type: boolean
       label: 'show_quantity'

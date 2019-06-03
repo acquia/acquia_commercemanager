@@ -43,14 +43,20 @@ class ProductManagerTest extends BrowserTestBase {
    */
   public function setUp() {
     parent::setUp();
+
     Term::create([
       'vid' => 'acm_product_category',
       'name' => 'Cat1',
       'middleware_id' => 1,
+    ], [
+      'vid' => 'acm_product_category',
+      'name' => 'Cat2',
+      'middleware_id' => 5,
     ])->save();
 
     // Load categories data.
     module_load_include('data', 'acm_sku', 'tests/data/products');
+    module_load_include('data', 'acm_sku', 'tests/data/configurable_products');
   }
 
   /**
@@ -176,6 +182,53 @@ class ProductManagerTest extends BrowserTestBase {
     $this->assertSame($sku->get("sku")->value, "24-MB07");
     $skus = NULL;
     $sku = NULL;
+  }
+
+  /**
+   * Tests the synchronizeProducts method with configurable product data passed.
+   *
+   * @covers ::synchronizeProducts
+   */
+  public function testSynchronizeConfigurableProducts() {
+    global $_acm_commerce_configurable_products;
+
+    $result = $this->container
+      ->get('acm_sku.product_manager')
+      ->synchronizeProducts($_acm_commerce_configurable_products);
+
+    $this->assertSame($result['success'], TRUE);
+
+    $title = 'Configurable product';
+    $nodes = $this->container->get('entity_type.manager')
+      ->getStorage('node')
+      ->loadByProperties(['title' => $title]);
+    // Fetch the first element of the array $nodes.
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = reset($nodes);
+    $this->assertNotNull($node);
+    $this->assertSame($node->label(), $title);
+    $this->assertSame($node->get('field_skus')->getString(), 'cf1');
+    $nodes = NULL;
+    $node = NULL;
+
+    $validate_skus = [
+      'cf1',
+      'cf1-variant1',
+      'cf1-variant2',
+      'cf1-variant3',
+      'cf1-variant4',
+    ];
+
+    $skuStorage = $this->container->get('entity_type.manager')->getStorage('acm_sku');
+    foreach ($validate_skus as $validate_sku) {
+      $skus = $skuStorage->loadByProperties(['sku' => $validate_sku]);
+      // Fetch the first element of the array $skus.
+      $sku = reset($skus);
+      $this->assertNotNull($sku);
+      $this->assertSame($sku->get('sku')->getString(), $validate_sku);
+      $skus = NULL;
+      $sku = NULL;
+    }
   }
 
 }
