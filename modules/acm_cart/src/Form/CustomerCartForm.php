@@ -5,7 +5,9 @@ namespace Drupal\acm_cart\Form;
 use Drupal\acm_cart\CartStorageInterface;
 use Drupal\acm\UpdateCartErrorEvent;
 use Drupal\Core\Form\FormBase;
+use Drupal\acm\I18nHelper;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -37,13 +39,35 @@ class CustomerCartForm extends FormBase {
   protected $successMessage = NULL;
 
   /**
+   * I18 helper.
+   *
+   * @var \Drupal\acm\I18nHelper
+   */
+  protected $i18Helper;
+
+  /**
+   * Event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\acm_cart\CartStorageInterface $cart_storage
    *   The cart storage.
+   * @param \Drupal\acm\I18nHelper $i18_helper
+   *   I18 helper.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher.
    */
-  public function __construct(CartStorageInterface $cart_storage) {
+  public function __construct(CartStorageInterface $cart_storage,
+                              I18nHelper $i18_helper,
+                              EventDispatcherInterface $event_dispatcher) {
     $this->cartStorage = $cart_storage;
+    $this->i18Helper = $i18_helper;
+    $this->eventDispatcher = $event_dispatcher;
   }
 
   /**
@@ -51,7 +75,9 @@ class CustomerCartForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('acm_cart.cart_storage')
+      $container->get('acm_cart.cart_storage'),
+      $container->get('acm.i18n_helper'),
+      $container->get('event_dispatcher')
     );
   }
 
@@ -113,8 +139,7 @@ class CustomerCartForm extends FormBase {
 
       if (is_numeric($line_item->price)) {
         $form['cart'][$id]['price'] = [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($line_item->price),
+          '#markup' => $this->i18Helper->formatPrice($line_item->price),
         ];
       }
       else {
@@ -133,8 +158,7 @@ class CustomerCartForm extends FormBase {
     $form['totals']['sub'] = [
       'label' => ['#plain_text' => t('Subtotal')],
       'value' => [
-        '#markup' => \Drupal::service('acm.i18n_helper')
-          ->formatPrice($totals['sub']),
+        '#markup' => $this->i18Helper->formatPrice($totals['sub']),
       ],
     ];
 
@@ -142,8 +166,7 @@ class CustomerCartForm extends FormBase {
       $form['totals']['tax'] = [
         'label' => ['#plain_text' => t('Tax')],
         'value' => [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($totals['tax']),
+          '#markup' => $this->i18Helper->formatPrice($totals['tax']),
         ],
       ];
     }
@@ -152,8 +175,7 @@ class CustomerCartForm extends FormBase {
       $form['totals']['discount'] = [
         'label' => ['#plain_text' => t('Discount')],
         'value' => [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($totals['discount']),
+          '#markup' => $this->i18Helper->formatPrice($totals['discount']),
         ],
       ];
     }
@@ -162,8 +184,7 @@ class CustomerCartForm extends FormBase {
       $form['totals']['shipping'] = [
         'label' => ['#plain_text' => t('Shipping')],
         'value' => [
-          '#markup' => \Drupal::service('acm.i18n_helper')
-            ->formatPrice($totals['shipping']),
+          '#markup' => $this->i18Helper->formatPrice($totals['shipping']),
         ],
       ];
     }
@@ -171,8 +192,7 @@ class CustomerCartForm extends FormBase {
     $form['totals']['grand'] = [
       'label' => ['#plain_text' => t('Grand total')],
       'value' => [
-        '#markup' => \Drupal::service('acm.i18n_helper')
-          ->formatPrice($totals['grand']),
+        '#markup' => $this->i18Helper->formatPrice($totals['grand']),
       ],
     ];
 
@@ -301,9 +321,8 @@ class CustomerCartForm extends FormBase {
       }
 
       // Dispatch event so action can be taken.
-      $dispatcher = \Drupal::service('event_dispatcher');
       $event = new UpdateCartErrorEvent($e);
-      $dispatcher->dispatch(UpdateCartErrorEvent::SUBMIT, $event);
+      $this->eventDispatcher->dispatch(UpdateCartErrorEvent::SUBMIT, $event);
       $this->messenger()->addError($e->getMessage());
     }
   }

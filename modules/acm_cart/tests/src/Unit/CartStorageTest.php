@@ -4,6 +4,7 @@ namespace Drupal\Tests\acm_cart\Unit;
 
 use Drupal\Tests\acm\Unit\Connector\MockAPIWrapper;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -57,6 +58,26 @@ class CartStorageTest extends UnitTestCase {
   protected $cartObject;
 
   /**
+   * @var \Drupal\Core\Config\ConfigFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $configFactory;
+
+  /**
+   * @var \Drupal\acm\User\CommerceAccountInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $commerceUserManager;
+
+  /**
+   * @var \Drupal\Core\Session\AccountProxyInterface|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $accountManager;
+
+  /**
+   * @var \Symfony\Component\HttpFoundation\RequestStack|\PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $requestStack;
+
+  /**
    * The key the cart gets stored to.
    *
    * @var string
@@ -69,12 +90,17 @@ class CartStorageTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
 
-    $this->session = $this->getMock('Drupal\acm\SessionStoreInterface');
-    $this->logger = $this->getMock('Drupal\Core\Logger\LoggerChannelFactoryInterface');
+    $this->session = $this->createMock('Drupal\acm\SessionStoreInterface');
+    $this->logger = $this->createMock('Drupal\Core\Logger\LoggerChannelFactoryInterface');
     $this->eventDispatcher = new EventDispatcher();
     $this->apiWrapper = new MockAPIWrapper();
+    $this->configFactory = $this->createMock('Drupal\Core\Config\ConfigFactoryInterface');
+    $this->commerceUserManager = $this->createMock('Drupal\acm\User\CommerceAccountInterface');
+    $this->accountManager = $this->createMock('Drupal\Core\Session\AccountProxyInterface');
+    $request = Request::createFromGlobals();
+    $this->requestStack->push($request);
 
-    $this->cartStorage = new MockCartStorage($this->session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $this->cartStorage = new MockCartStorage($this->session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
 
     $cart = (object) [
       'shippable' => TRUE,
@@ -91,7 +117,9 @@ class CartStorageTest extends UnitTestCase {
       return $m->getName();
     }, (new \ReflectionClass($interface))->getMethods());
     $methods[] = 'getCartItemsCount';
-    $mock_cart = $this->getMock($interface, $methods);
+    $mock_cart = $this->getMockBuilder($interface)
+      ->setMethods($methods)
+      ->getMock();
     $mock_cart->cart = $cart;
     $mock_cart->expects($this->any())
       ->method('id')
@@ -185,7 +213,7 @@ class CartStorageTest extends UnitTestCase {
    * @covers ::loadCart
    */
   public function testLoadCartWithCartInSession() {
-    $session = $this->getMock('Drupal\acm\SessionStoreInterface');
+    $session = $this->createMock('Drupal\acm\SessionStoreInterface');
 
     $session->expects($this->at(0))
       ->method('get')
@@ -196,7 +224,7 @@ class CartStorageTest extends UnitTestCase {
       ->method('get')
       ->with($this->storageKey);
 
-    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
     $cart = $cartStorage->loadCart();
 
     $this->assertSame($this->cartObject->id(), $cart->id());
@@ -208,13 +236,13 @@ class CartStorageTest extends UnitTestCase {
    * @covers ::loadCart
    */
   public function testLoadCartNoCartInSession() {
-    $session = $this->getMock('Drupal\acm\SessionStoreInterface');
+    $session = $this->createMock('Drupal\acm\SessionStoreInterface');
 
     $session->expects($this->exactly(1))
       ->method('get')
       ->with($this->storageKey);
 
-    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
 
     // This is the first time loadCart is being called with no param or TRUE
     // as param, so we expect 1.
@@ -238,13 +266,13 @@ class CartStorageTest extends UnitTestCase {
    * @covers ::updateCart
    */
   public function testUpdateCart() {
-    $session = $this->getMock('Drupal\acm\SessionStoreInterface');
+    $session = $this->createMock('Drupal\acm\SessionStoreInterface');
 
     $session->expects($this->exactly(1))
       ->method('get')
       ->with($this->storageKey);
 
-    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger);
+    $cartStorage = new MockCartStorage($session, $this->apiWrapper, $this->eventDispatcher, $this->logger, $this->configFactory, $this->commerceUserManager, $this->accountManager, $this->requestStack);
 
     // Create a new cart.
     $cart1 = $cartStorage->updateCart();

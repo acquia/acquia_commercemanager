@@ -1,7 +1,7 @@
 services:
   acm_cart.cart_storage:
     class: Drupal\acm_cart\CartStorage
-    arguments: ['@acm.session_storage', '@acm.api', '@event_dispatcher', '@logger.factory']
+    arguments: ['@acm.session_storage', '@acm.api', '@event_dispatcher', '@logger.factory', '@config.factory', '@acm.commerce_user_manager', '@current_user', '@request_stack']
   acm_cart.mini_cart:
     class: Drupal\acm_cart\MiniCartManager
     arguments: ['@acm_cart.cart_storage']
