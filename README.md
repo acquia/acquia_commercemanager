@@ -1,8 +1,8 @@
 # Acquia Commerce Manager
 
 [![Build Status](
-https://travis-ci.org/acquia/commerce-manager.svg?branch=master
-)](https://travis-ci.org/acquia/commerce-manager)
+https://travis-ci.org/acquia/acquia_commercemanager.svg?branch=8.x-1.x
+)](https://travis-ci.org/acquia/acquia_commercemanager)
 
 [![Coverage Status](
 https://coveralls.io/repos/github/acquia/commerce-manager/badge.svg?branch=8.x-1.x
@@ -16,7 +16,7 @@ systems as the source of truth for eCommerce data in these experiences.
 ## Installation
 Module can be installed using Composer:
 ```
-composer require acquia/commerce-manager
+composer require drupal/acquia_commercemanager
 ```
 
 If you don't want to use Composer, you can install Acquia Commerce Manager
