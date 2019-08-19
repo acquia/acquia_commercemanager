@@ -11,7 +11,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Class SKUFieldsManager.
  *
- * @package Drupal\acm_sku
+ * @deprecated This class will be removed in the 8.x-2.0 release. You should use
+ * update hooks instead of it.
  */
 class SKUFieldsManager {
 
