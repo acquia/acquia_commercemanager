@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\acq_sku\Functional;
+namespace Drupal\Tests\acm_sku\Functional;
 
 use Drupal\Tests\BrowserTestBase;
 

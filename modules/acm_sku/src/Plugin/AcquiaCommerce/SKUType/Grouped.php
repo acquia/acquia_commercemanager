@@ -81,7 +81,7 @@ class Grouped extends SKUPluginBase {
       if ($quantity > 0) {
         $cartStorage->addItemToCart($sku, $quantity);
 
-        drupal_set_message(
+        $this->messenger->addStatus(
           t('Added @quantity of @name to the cart.',
             [
               '@quantity' => $quantity,
@@ -94,7 +94,7 @@ class Grouped extends SKUPluginBase {
     }
 
     if ($added == 0) {
-      drupal_set_message(t('Please select a quantity greater than 0.'), 'error');
+      $this->messenger->addError(t('Please select a quantity greater than 0.'));
     }
 
     try {
