@@ -12,7 +12,6 @@
         }
     ],
     "require": {
-        "php": "^7.1",
         "acquia/http-hmac-php": "~3.2",
         "commerceguys/intl": "~1.0",
         "drupal/address": "^1.4.0",
@@ -27,11 +26,6 @@
         "branch-alias": {
             "dev-8.x-1.x": "1.x-dev"
         }
-    },
-    "autoload": {
-        "classmap": [
-            "features/bootstrap/"
-        ]
     },
     "minimum-stability": "dev",
     "support": {
