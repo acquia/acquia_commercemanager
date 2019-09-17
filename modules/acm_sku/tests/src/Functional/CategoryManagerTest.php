@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\Tests\acq_sku\Functional;
+namespace Drupal\Tests\acm_sku\Functional;
 
 use Drupal\Tests\BrowserTestBase;
 
 /**
  * @coversDefaultClass \Drupal\acm_sku\CategoryManager
  *
- * @group acq_sku
+ * @group acm_sku
  */
 class CategoryManagerTest extends BrowserTestBase {
   /**
