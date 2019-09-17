@@ -2,8 +2,8 @@
 
 namespace Drupal\acm;
 
-use Symfony\Component\EventDispatcher\Event;
 use Drupal\acm\Connector\RouteException;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class UpdateCartErrorEvent.

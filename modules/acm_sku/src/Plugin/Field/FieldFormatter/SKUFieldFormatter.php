@@ -2,11 +2,11 @@
 
 namespace Drupal\acm_sku\Plugin\Field\FieldFormatter;
 
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\acm_sku\Entity\SKU;
 
 /**
  * Plugin implementation of the 'sku_formatter' formatter.

@@ -3,8 +3,8 @@
 namespace Drupal\acm_sku\Plugin\AcquiaCommerce\SKUType;
 
 use Drupal\acm_sku\AcquiaCommerce\SKUPluginBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines the simple SKU type.

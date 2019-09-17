@@ -115,7 +115,7 @@ abstract class CheckoutFlowBase extends PluginBase implements CheckoutFlowInterf
    * @return string
    *   The processed step ID.
    *
-   * @throws NeedsRedirectException
+   * @throws \Drupal\acm\Response\NeedsRedirectException
    *   Throws exception when cart is empty.
    */
   protected function processStepId($requested_step_id) {

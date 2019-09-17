@@ -2,11 +2,11 @@
 
 namespace Drupal\acm_sku\Form;
 
+use Drupal\acm\Connector\APIWrapperInterface;
+use Drupal\acm\Connector\IngestAPIWrapper;
 use Drupal\acm\I18nHelper;
 use Drupal\acm_sku\CategoryManagerInterface;
 use Drupal\acm_sku\ProductManagerInterface;
-use Drupal\acm\Connector\APIWrapperInterface;
-use Drupal\acm\Connector\IngestAPIWrapper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;

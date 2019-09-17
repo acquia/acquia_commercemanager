@@ -4,8 +4,8 @@ namespace Drupal\acm\Connector;
 
 use Acquia\Hmac\Exception\MalformedResponseException;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\TransferStats;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\TransferStats;
 
 /**
  * Trait AgentRequestTrait.

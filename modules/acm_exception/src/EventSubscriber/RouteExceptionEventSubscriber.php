@@ -2,8 +2,8 @@
 
 namespace Drupal\acm_exception\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\acm\RouteExceptionEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Exception event subscriber for \Drupal\acm\RouteExceptionEvent.

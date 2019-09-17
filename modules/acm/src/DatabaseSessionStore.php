@@ -5,9 +5,9 @@ namespace Drupal\acm;
 use Drupal\acm\User\AccountProxyInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Lock\LockBackendInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\TempStore\PrivateTempStore;
 use Drupal\Core\TempStore\TempStoreException;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Stores and retrieves temporary data for a given owner.

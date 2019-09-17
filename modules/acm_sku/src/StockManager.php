@@ -4,8 +4,8 @@ namespace Drupal\acm_sku;
 
 use Drupal\acm\Connector\APIWrapperInterface;
 use Drupal\acm\I18nHelper;
-use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\acm_sku_stock\Event\StockUpdatedEvent;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;

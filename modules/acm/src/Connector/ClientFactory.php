@@ -2,11 +2,11 @@
 
 namespace Drupal\acm\Connector;
 
+use Acquia\Hmac\Guzzle\HmacAuthMiddleware;
+use Acquia\Hmac\Key;
 use Drupal\acm\I18nHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Http\ClientFactory as DrupalClientFactory;
-use Acquia\Hmac\Guzzle\HmacAuthMiddleware;
-use Acquia\Hmac\Key;
 use GuzzleHttp\HandlerStack;
 
 /**

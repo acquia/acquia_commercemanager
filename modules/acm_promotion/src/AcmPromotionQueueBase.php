@@ -3,11 +3,11 @@
 namespace Drupal\acm_promotion;
 
 use Drupal\acm\Connector\IngestAPIWrapper;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 
 /**
  * Class AcmPromotionQueueBase.

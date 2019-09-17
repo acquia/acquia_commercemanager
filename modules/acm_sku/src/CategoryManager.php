@@ -3,12 +3,12 @@
 namespace Drupal\acm_sku;
 
 use Drupal\acm\Connector\APIWrapper;
-use Drupal\acm\I18nHelper;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\acm\Connector\ClientFactory;
+use Drupal\acm\I18nHelper;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 
 /**
  * Provides a service for category data to taxonomy synchronization.

@@ -5,9 +5,9 @@ namespace Drupal\acm_checkout;
 use Drupal\acm_checkout\Plugin\CheckoutFlow\CheckoutFlowInterface;
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\Factory\DefaultFactory;
-use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * Provides the ACM Checkout Pane plugin manager.

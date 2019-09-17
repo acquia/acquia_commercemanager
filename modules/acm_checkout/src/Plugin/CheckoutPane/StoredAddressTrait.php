@@ -3,8 +3,8 @@
 namespace Drupal\acm_checkout\Plugin\CheckoutPane;
 
 use Drupal\acm\ACMAddressFormatter;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a trait for stored address forms.

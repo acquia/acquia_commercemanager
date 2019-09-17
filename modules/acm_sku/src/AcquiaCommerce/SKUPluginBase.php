@@ -2,10 +2,11 @@
 
 namespace Drupal\acm_sku\AcquiaCommerce;
 
-use Drupal\acm_sku\Entity\SKUInterface;
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\acm_sku\Entity\SKUTypeInterface;
+use Drupal\Component\Plugin\PluginBase;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormInterface;
@@ -14,7 +15,6 @@ use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Component\Plugin\PluginBase;
 
 /**
  * Defines a base SKU Plugin. Can be used as a template for a new SKU type.

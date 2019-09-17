@@ -4,8 +4,8 @@ namespace Drupal\acm\Access;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Checks access for displaying commerce admin pages with v2 specific functions.

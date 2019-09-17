@@ -2,11 +2,11 @@
 
 namespace Drupal\acm_promotion\Plugin\rest\resource;
 
+use Drupal\acm_promotion\AcmPromotionsManager;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\acm_promotion\AcmPromotionsManager;
 
 /**
  * Class PromotionSyncResource.

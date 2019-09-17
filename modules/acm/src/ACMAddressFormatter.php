@@ -6,8 +6,8 @@ use CommerceGuys\Addressing\AddressFormat\AddressFormat;
 use CommerceGuys\Addressing\Locale;
 use Drupal\address\FieldHelper;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Provides an address formatter.

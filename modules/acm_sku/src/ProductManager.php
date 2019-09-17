@@ -4,13 +4,13 @@ namespace Drupal\acm_sku;
 
 use Drupal\acm\I18nHelper;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\acm_sku\Event\AcmSkuValidateEvent;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\acm_sku\Event\AcmSkuValidateEvent;
 
 /**
  * Class ProductManager.
@@ -89,16 +89,81 @@ class ProductManager implements ProductManagerInterface {
    */
   private $debug;
 
+  /**
+   * Number failed.
+   *
+   * @var int
+   */
   private $failed;
+
+  /**
+   * Number ignored.
+   *
+   * @var int
+   */
   private $ignored;
+
+  /**
+   * Number deleted.
+   *
+   * @var int
+   */
   private $deleted;
+
+  /**
+   * Number created.
+   *
+   * @var int
+   */
   private $created;
+
+  /**
+   * Number updated.
+   *
+   * @var int
+   */
   private $updated;
+
+  /**
+   * Failed SKUs.
+   *
+   * @var string[]
+   */
   private $failedSkus;
+
+  /**
+   * Created SKUs.
+   *
+   * @var string[]
+   */
   private $createdSkus;
+
+  /**
+   * Ignored SKUs.
+   *
+   * @var string[]
+   */
   private $ignoredSkus;
+
+  /**
+   * Deleted SKUs.
+   *
+   * @var string[]
+   */
   private $deletedSkus;
+
+  /**
+   * Updated SKUs.
+   *
+   * @var string[]
+   */
   private $updatedSkus;
+
+  /**
+   * Debug directory.
+   *
+   * @var string
+   */
   private $debugDir;
 
   /**
