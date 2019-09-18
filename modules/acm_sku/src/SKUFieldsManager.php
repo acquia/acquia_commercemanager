@@ -360,6 +360,9 @@ class SKUFieldsManager {
     if (empty($fieldDefinition)) {
       throw new \RuntimeException('Field type not defined yet, please contact TA.');
     }
+
+    // We want to allow field labels to be translatable.
+    // Since we try to do this dynamically, we need to use t() with variable.
     // @codingStandardsIgnoreLine
     $fieldDefinition->setLabel(new TranslatableMarkup($field_info['label']));
     // Update cardinality with default value if empty.
