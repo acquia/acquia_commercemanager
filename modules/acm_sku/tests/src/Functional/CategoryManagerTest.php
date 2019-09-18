@@ -49,11 +49,6 @@ class CategoryManagerTest extends BrowserTestBase {
    */
   public function setUp() {
     parent::setup();
-
-    // Without this, it keeps giving exception:
-    // Column not found: 1054 Unknown column 'content_translation_source'.
-    $this->container->get('entity.definition_update_manager')->applyUpdates();
-
     // Load categories data.
     module_load_include('data', 'acm_sku', 'tests/data/categories_en');
 
