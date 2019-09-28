@@ -2,12 +2,12 @@
 
 namespace Drupal\acm_sku\AcquiaCommerce;
 
-use Drupal\Core\Plugin\Factory\ContainerFactory;
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\acm_sku\Entity\SKU;
+use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Plugin\Factory\ContainerFactory;
 
 /**
  * Provides an SKU plugin manager.

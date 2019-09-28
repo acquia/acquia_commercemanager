@@ -2,8 +2,8 @@
 
 namespace Drupal\acm\Connector;
 
-use GuzzleHttp\TransferStats;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\TransferStats;
 
 /**
  * Trait IngestRequestTrait.

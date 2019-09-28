@@ -3,8 +3,8 @@
 namespace Drupal\acm\Connector;
 
 use Drupal\acm\I18nHelper;
-use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 
 /**
  * IngestAPIWrapper class.

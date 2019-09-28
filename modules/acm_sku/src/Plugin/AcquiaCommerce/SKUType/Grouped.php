@@ -3,10 +3,10 @@
 namespace Drupal\acm_sku\Plugin\AcquiaCommerce\SKUType;
 
 use Drupal\acm_sku\AcquiaCommerce\SKUPluginBase;
+use Drupal\acm_sku\AddToCartErrorEvent;
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\acm_sku\Entity\SKU;
-use Drupal\acm_sku\AddToCartErrorEvent;
 
 /**
  * Defines the grouped SKU type.

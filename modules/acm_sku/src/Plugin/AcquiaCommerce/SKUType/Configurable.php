@@ -4,12 +4,12 @@ namespace Drupal\acm_sku\Plugin\AcquiaCommerce\SKUType;
 
 use Drupal\acm\Connector\APIWrapper;
 use Drupal\acm_sku\AcquiaCommerce\SKUPluginBase;
+use Drupal\acm_sku\AddToCartErrorEvent;
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\acm_sku\Entity\SKUInterface;
 use Drupal\acm_sku\ProductOptionsManager;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Link;
-use Drupal\acm_sku\AddToCartErrorEvent;
 use Drupal\node\Entity\Node;
 
 /**

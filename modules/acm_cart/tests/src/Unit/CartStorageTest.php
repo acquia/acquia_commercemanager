@@ -52,7 +52,7 @@ class CartStorageTest extends UnitTestCase {
   /**
    * A cart object.
    *
-   * @var \stdClass
+   * @var object
    */
   protected $cartObject;
 

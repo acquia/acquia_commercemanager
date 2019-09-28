@@ -5,9 +5,9 @@ namespace Drupal\acm_customer;
 use Drupal\acm_customer\Plugin\CustomerPages\CustomerPagesInterface;
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Plugin\Factory\DefaultFactory;
-use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * Provides the ACMCustomerForm plugin manager.

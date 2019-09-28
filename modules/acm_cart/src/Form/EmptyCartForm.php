@@ -39,6 +39,11 @@ class EmptyCartForm extends FormBase {
    */
   protected $request;
 
+  /**
+   * The router.
+   *
+   * @var \Symfony\Component\Routing\RouterInterface
+   */
   protected $router;
 
   /**

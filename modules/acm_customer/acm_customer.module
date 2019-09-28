@@ -8,8 +8,8 @@
  * connector.
  */
 
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Implements hook_element_info_alter().

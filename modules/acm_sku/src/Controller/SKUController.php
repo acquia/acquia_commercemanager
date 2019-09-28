@@ -2,8 +2,8 @@
 
 namespace Drupal\acm_sku\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\acm_sku\Entity\SKUTypeInterface;
+use Drupal\Core\Controller\ControllerBase;
 
 /**
  * Class SKUController.

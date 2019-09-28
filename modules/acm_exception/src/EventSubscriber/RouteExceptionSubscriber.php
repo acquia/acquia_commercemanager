@@ -2,11 +2,11 @@
 
 namespace Drupal\acm_exception\EventSubscriber;
 
+use Drupal\acm\Connector\RouteException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Drupal\acm\Connector\RouteException;
 
 /**
  * Exception event subscriber for Drupal\acm\Connector\RouteException.

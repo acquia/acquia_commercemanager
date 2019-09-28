@@ -2,9 +2,8 @@
 
 namespace Drupal\acm_sku\Plugin\Field\FieldFormatter;
 
-use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
-
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 
 /**
  * Plugin implementation of the 'product_link' formatter.

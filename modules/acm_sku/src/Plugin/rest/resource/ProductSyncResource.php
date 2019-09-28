@@ -3,8 +3,8 @@
 namespace Drupal\acm_sku\Plugin\rest\resource;
 
 use Drupal\acm_sku\ProductManagerInterface;
-use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ModifiedResourceResponse;
+use Drupal\rest\Plugin\ResourceBase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;

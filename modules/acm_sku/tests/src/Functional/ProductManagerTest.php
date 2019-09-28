@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\acm_sku\Functional;
 
-use Drupal\Tests\BrowserTestBase;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * @coversDefaultClass \Drupal\acm_sku\ProductManager

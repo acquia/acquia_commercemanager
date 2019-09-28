@@ -4,10 +4,10 @@ namespace Drupal\acm\Connector;
 
 use Drupal\acm\APIHelper;
 use Drupal\acm\I18nHelper;
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\acm_sku\Entity\SKU;
 
 /**
  * APIWrapper class.

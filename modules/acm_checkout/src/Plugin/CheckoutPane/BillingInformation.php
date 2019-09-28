@@ -3,9 +3,9 @@
 namespace Drupal\acm_checkout\Plugin\CheckoutPane;
 
 use Drupal\acm\ACMAddressFormatter;
+use Drupal\address\LabelHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
-use Drupal\address\LabelHelper;
 
 /**
  * Provides the contact information pane.

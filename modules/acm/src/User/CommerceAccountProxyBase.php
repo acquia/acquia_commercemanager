@@ -4,7 +4,6 @@ namespace Drupal\acm\User;
 
 use Drupal\acm\Connector\APIWrapperInterface;
 use Drupal\Core\Session\AccountProxy;
-use Drupal\Core\Session\AccountInterface;
 
 /**
  * A base class implementation of a proxied AccountInterface.

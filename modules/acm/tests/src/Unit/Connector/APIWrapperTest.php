@@ -2,15 +2,15 @@
 
 namespace Drupal\Tests\acm\Unit\Connector;
 
-use Drupal\acm\Connector\APIWrapper;
 use Drupal\acm\APIHelper;
-use Drupal\acm\I18nHelper;
-use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\Core\Logger\LoggerChannel;
+use Drupal\acm\Connector\APIWrapper;
 use Drupal\acm\Connector\ClientFactory;
+use Drupal\acm\I18nHelper;
+use Drupal\Core\Logger\LoggerChannel;
+use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Tests\UnitTestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\acm\Access\VersionAccessCheck
