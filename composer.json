@@ -25,6 +25,11 @@
     "extra": {
         "branch-alias": {
             "dev-8.x-1.x": "1.x-dev"
+        },
+        "patches": {
+            "drupal/lightning_core": {
+              "Fix failures due to exceeding SQLite query variable limit": "https://gist.githubusercontent.com/TravisCarden/13e8672115beaf6990ae4e6b8e7a5cf4/raw/6ac488af062a06507e847b3e4494b50b2d3419ff/lightning_core.patch"
+            }
         }
     },
     "minimum-stability": "dev",
