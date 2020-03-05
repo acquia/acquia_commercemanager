@@ -4,6 +4,7 @@ namespace Drupal\acm_sku;
 
 use Drupal\acm\Connector\APIWrapper;
 use Drupal\acm_sku\Entity\SKU;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -50,6 +51,13 @@ class AcmSkuLinkedSku {
   protected $loggerFactory;
 
   /**
+   * Utility for manage time.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * AcmSkuLinkedSku constructor.
    *
    * @param \Drupal\acm\Connector\APIWrapper $api_wrapper
@@ -62,13 +70,16 @@ class AcmSkuLinkedSku {
    *   The language manager.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger factory.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   Utility for manage time.
    */
-  public function __construct(APIWrapper $api_wrapper, CacheBackendInterface $cache, ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(APIWrapper $api_wrapper, CacheBackendInterface $cache, ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, LoggerChannelFactoryInterface $logger_factory, TimeInterface $time) {
     $this->apiWrapper = $api_wrapper;
     $this->cache = $cache;
     $this->configFactory = $config_factory;
     $this->loggerFactory = $logger_factory;
     $this->languageManager = $language_manager;
+    $this->time = $time;
   }
 
   /**
@@ -98,7 +109,7 @@ class AcmSkuLinkedSku {
       $data = $type != LINKED_SKU_TYPE_ALL ? $linked_skus[$type] : $linked_skus;
       // Set the cache.
       if ($cache_lifetime = $this->configFactory->get('acm_sku.settings')->get('linked_skus_cache_max_lifetime')) {
-        $cache_lifetime += \Drupal::time()->getRequestTime();
+        $cache_lifetime += $this->time->getRequestTime();
         $this->cache->set($cache_key, $data, $cache_lifetime, ['acm_sku:' . $sku->id()]);
       }
     }

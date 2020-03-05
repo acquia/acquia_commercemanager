@@ -9,6 +9,7 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -36,6 +37,13 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
   protected $connection;
 
   /**
+   * Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructor.
    *
    * @param array $configuration
@@ -48,11 +56,14 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
    *   The factory for configuration objects.
    * @param \Drupal\Core\Database\Connection $connection
    *   The current active database's master connection.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, Connection $connection) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, Connection $connection, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
     $this->connection = $connection;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -64,7 +75,8 @@ abstract class SKUPluginBase extends PluginBase implements SKUPluginInterface, F
       $plugin_id,
       $plugin_definition,
       $container->get('config.factory'),
-      $container->get('database')
+      $container->get('database'),
+      $container->get('messenger')
     );
   }
 

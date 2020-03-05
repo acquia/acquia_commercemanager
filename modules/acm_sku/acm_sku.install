@@ -289,13 +289,13 @@ function acm_sku_update_8106() {
 }
 
 /**
- * Implements hook_update_N().
+ * Update 8107 was removed because it just ran entityupdates, which no longer
+ * works as of Drupal 8.7. If you did not run this update prior to updating to
+ * 8.7, please get the earlier version of ACM, run all updates, and download the
+ * new version.
  *
- * Make price, final_price and special_price non-translatable.
+ * Old intention: Make price, final_price and special_price non-translatable.
  */
-function acm_sku_update_8107() {
-  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
-}
 
 /**
  * Implements hook_update_N().

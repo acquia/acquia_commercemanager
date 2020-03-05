@@ -4,6 +4,7 @@ namespace Drupal\acm_sku\Plugin\CommerceDashboardItem;
 
 use Drupal\acm\CommerceDashboardItemBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -37,9 +38,9 @@ class ProductStats extends CommerceDashboardItemBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, string $plugin_id, $plugin_definition, QueryFactory $entity_query, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, string $plugin_id, $plugin_definition, EntityTypeManager $entity_type_manager, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityQuery = $entity_query->get('node');
+    $this->entityQuery = $entity_type_manager->getStorage('node')->getQuery();
     $this->configFactory = $config_factory;
   }
 
@@ -51,7 +52,7 @@ class ProductStats extends CommerceDashboardItemBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.query'),
+      $container->get('entity_type.manager'),
       $container->get('config.factory')
     );
   }

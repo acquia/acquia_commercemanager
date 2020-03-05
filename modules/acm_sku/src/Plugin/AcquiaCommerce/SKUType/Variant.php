@@ -300,7 +300,7 @@ class Variant extends SKUPluginBase {
     }
 
     if (!$selected_sku) {
-      drupal_set_message(t('The product you configured is not available.'), 'error');
+      $this->messenger->addError(t('The product you configured is not available.'));
       return;
     }
 
@@ -317,7 +317,7 @@ class Variant extends SKUPluginBase {
     try {
       $cartStorage->addItemToCart($selected_sku, $quantity);
 
-      drupal_set_message(
+      $this->messenger->addStatus(
         t('Added @quantity of @name to the cart.',
           [
             '@quantity' => $quantity,

@@ -3,6 +3,7 @@
 namespace Drupal\acm_sku\Plugin\CommerceDashboardItem;
 
 use Drupal\acm\CommerceDashboardItemBase;
+use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,9 +29,9 @@ class SkuStats extends CommerceDashboardItemBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, string $plugin_id, $plugin_definition, QueryFactory $entity_query) {
+  public function __construct(array $configuration, string $plugin_id, $plugin_definition, EntityTypeManager $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityQuery = $entity_query->get('acm_sku');
+    $this->entityQuery = $entity_type_manager->getStorage('acm_sku')->getQuery();
   }
 
   /**
@@ -41,7 +42,7 @@ class SkuStats extends CommerceDashboardItemBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.query')
+      $container->get('entity_type.manager')
     );
   }
 

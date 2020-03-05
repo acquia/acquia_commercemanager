@@ -142,7 +142,6 @@ class SKUFieldsManager {
     $config->setData($fields)->save();
 
     $this->entityTypeManager->clearCachedDefinitions();
-    $this->entityDefinitionUpdateManager->applyUpdates();
 
     $fields_removed = [
       $field_code => $field,
@@ -188,29 +187,8 @@ class SKUFieldsManager {
       }
     }
 
-    // Need to apply entity updates for following.
-    $apply_updates = FALSE;
-    $field_labels_info = [
-      'label',
-      'description',
-      'visible_view',
-      'visible_form',
-      'weight',
-    ];
-
-    foreach ($field_labels_info as $info) {
-      if (isset($field[$info]) && $field['type'] != $existing_fields[$field_code]['type']) {
-        $apply_updates = TRUE;
-        break;
-      }
-    }
-
     $existing_fields[$field_code] = array_replace($existing_fields[$field_code], $field);
     $config->setData($existing_fields)->save();
-
-    if ($apply_updates) {
-      $this->entityDefinitionUpdateManager->applyUpdates();
-    }
   }
 
   /**

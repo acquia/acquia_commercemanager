@@ -70,6 +70,7 @@ services:
       - '@config.factory'
       - '@language_manager'
       - '@logger.factory'
+      - '@datetime.time'
 
   cache.linked_skus:
     class: Drupal\Core\Cache\CacheInterface
