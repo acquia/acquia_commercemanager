@@ -17,7 +17,7 @@ define("ORDER_DSC", 0);
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext {
+class FeatureContext extends RawDrupalContext {
 
   private $simple_product;
 
