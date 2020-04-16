@@ -1,2 +1,4 @@
 ---
-drupal/acquia_commercemanager: []
+drupal/acquia_commercemanager:
+  version: ~1.0
+  version_dev: 1.x-dev

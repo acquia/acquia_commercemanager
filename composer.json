@@ -20,11 +20,17 @@
         "drupal/inline_entity_form": "^1.0@rc",
         "drupal/key_value_field": "~1.0",
         "drupal/pcb": "~1.0",
-        "drupal/simple_oauth": "^3"
+        "drupal/simple_oauth": "^4"
     },
     "extra": {
         "branch-alias": {
             "dev-8.x-1.x": "1.x-dev"
+        },
+        "enable-patching": true,
+        "patches": {
+            "drupal/simple_oauth": {
+                "#3078547 - Merge Simple OAuth Extras in Simple OAuth": "https://www.drupal.org/files/issues/2020-04-07/3078547-install-field-definitions-43.patch"
+            }
         }
     },
     "minimum-stability": "dev",
