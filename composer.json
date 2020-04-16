@@ -31,6 +31,9 @@
         "patches": {
             "drupal/simple_oauth": {
                 "#3078547 - Merge Simple OAuth Extras in Simple OAuth": "https://www.drupal.org/files/issues/2020-04-07/3078547-install-field-definitions-43.patch"
+            },
+            "drupal/field_group": {
+                "#3109552 - Field Group D9 support": "https://www.drupal.org/files/issues/2020-04-14/3109552-30.patch"
             }
         }
     },
