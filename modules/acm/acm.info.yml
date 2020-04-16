@@ -1,7 +1,7 @@
 name: Acquia Commerce Manager
 type: module
 description: This module lays the foundation to use the Acquia Commerce Connector Service.
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 package: Commerce
 libraries:
   - acm/global_styles
