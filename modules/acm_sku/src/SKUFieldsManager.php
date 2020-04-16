@@ -6,9 +6,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Psr\Log\LoggerInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class SKUFieldsManager.
@@ -317,6 +317,7 @@ class SKUFieldsManager {
           ]);
         }
         break;
+
       case 'text_long':
         $fieldDefinition = BaseFieldDefinition::create('text_long');
         if ($field_info['visible_view']) {
@@ -333,6 +334,7 @@ class SKUFieldsManager {
           ]);
         }
         break;
+
     }
     // Check if we don't have the field type defined yet.
     if (empty($fieldDefinition)) {

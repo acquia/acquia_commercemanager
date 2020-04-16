@@ -8,7 +8,6 @@ use Drupal\acm\SessionStoreInterface;
 use Drupal\acm\User\AccountProxyInterface;
 use Drupal\acm\User\CommerceUserSession;
 use Drupal\acm_cart\CartStorageInterface;
-use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\user\UserAuthInterface;

@@ -5,7 +5,6 @@ namespace Drupal\acm_sku\Plugin\CommerceDashboardItem;
 use Drupal\acm\CommerceDashboardItemBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
