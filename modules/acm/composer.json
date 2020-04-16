@@ -5,6 +5,7 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "drupal/core": "^8.7.7 || ^9",
-        "drupal/pcb": "~1.0"
+        "drupal/pcb": "~2.0",
+        "drupal/simple_oauth": "^4.0"
     }
 }
