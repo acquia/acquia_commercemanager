@@ -17,7 +17,7 @@
         "drupal/address": "^1.4.0",
         "drupal/consumers": "^1.4",
         "drupal/core": "^8.7.7 || ^9",
-        "drupal/field_group": "^3.0@beta",
+        "drupal/field_group": "3.x-dev",
         "drupal/inline_entity_form": "^1.0@rc",
         "drupal/key_value_field": "~1.0",
         "drupal/pcb": "~1.0",
