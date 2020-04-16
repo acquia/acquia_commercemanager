@@ -320,7 +320,7 @@ class CartStorage implements CartInterface, CartStorageInterface {
   /**
    * Pushes the cart to the ecommerce app via the Connector API.
    *
-   * @deprecated Use updateCart() instead.
+   * Deprecated, Use updateCart() instead.
    *
    * @return null|\Drupal\acm_cart\CartInterface
    *   Returns the cart data as sent by the ecommerce backend
