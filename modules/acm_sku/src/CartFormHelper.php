@@ -50,7 +50,15 @@ class CartFormHelper {
   public function getConfigurableAttributeWeights($attribute_set = 'default') {
     $attribute_set = strtolower($attribute_set);
     $weights = $this->config->get('attribute_weights');
-    $set_weights = $weights[$attribute_set] ?? $weights['default'];
+
+    $processed_weights = [];
+    foreach ($weights as $weight) {
+      foreach ($weight['fields'] ?? [] as $field) {
+        $processed_weights[$weight['attribute_set']][$field['field']] = $field['weight'];
+      }
+    }
+
+    $set_weights = $processed_weights[$attribute_set] ?? $processed_weights['default'];
     asort($set_weights);
     return $set_weights;
   }
@@ -66,9 +74,32 @@ class CartFormHelper {
   public function setConfigurableAttributeWeights($attribute_set = 'default', array $weights = []) {
     $attribute_set = strtolower($attribute_set);
 
+    $fields = [];
+    foreach ($weights as $field => $weight) {
+      $fields[] = [
+        'field' => $field,
+        'weight' => $weight,
+      ];
+    }
+
     // Update weights for particular attribute set in config.
     $existing_weights = $this->config->get('attribute_weights');
-    $existing_weights[$attribute_set] = $weights;
+
+    $exists = FALSE;
+    foreach ($existing_weights as &$weight) {
+      if ($weight['attribute_set'] == $attribute_set) {
+        $weight['fields'] = $fields;
+        $exists = TRUE;
+        break;
+      }
+    }
+
+    if (!$exists) {
+      $existing_weights[] = [
+        'attribute_set' => $attribute_set,
+        'fields' => $fields,
+      ];
+    }
 
     $config = $this->configFactory->getEditable(self::CONFIG_KEY);
     $config->set('attribute_weights', $existing_weights);

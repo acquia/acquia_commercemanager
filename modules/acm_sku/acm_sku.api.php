@@ -5,6 +5,7 @@
  * Hooks specific to the acm_sku module.
  */
 
+use Drupal\acm_sku\Entity\SKU;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -66,6 +67,41 @@ function hook_acm_sku_product_node_alter(NodeInterface $node, array $product) {
  *   Parent Taxonomy term to if available.
  */
 function hook_acm_sku_commerce_category_alter(TermInterface $term, array $category, $parent) {
+
+}
+
+/**
+ * Alter the children of configurable products.
+ *
+ * @param array $children
+ *   Variants for the SKU.
+ * @param \Drupal\acm_sku\Entity\SKU $sku
+ *   Parent sku which is being added to cart.
+ */
+function hook_acm_sku_configurable_variants_alter(array &$children, SKU $sku) {
+
+}
+
+/**
+ * Alter the configurations for configurable product.
+ *
+ * @param array $configurations
+ *   Configurations available for configurable product.
+ * @param \Drupal\acm_sku\Entity\SKU $sku
+ *   Parent sku which is being added to cart.
+ */
+function hook_acm_sku_configurable_product_configurations_alter(array &$configurations, SKU $sku) {
+
+}
+/**
+ * Alter the options added to cart item.
+ *
+ * @param array $options
+ *   Options to be added to cart item.
+ * @param \Drupal\acm_sku\Entity\SKU $sku
+ *   Parent sku which is being added to cart.
+ */
+function hook_acm_sku_configurable_cart_options_alter(array &$options, SKU $sku) {
 
 }
 

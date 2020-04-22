@@ -99,6 +99,12 @@ acm.connector:
     category_field_name:
       type: string
       label: 'category_field_name'
+    delete_disabled_skus:
+      type: boolean
+      label: 'delete_disabled_skus'
+    product_title_use_sku:
+      type: boolean
+      label: 'product_title_use_sku'
 
 acm.session:
   type: config_object

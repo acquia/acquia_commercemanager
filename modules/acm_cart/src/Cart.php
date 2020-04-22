@@ -652,4 +652,18 @@ class Cart implements CartInterface {
     return NULL;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hasItem(string $sku) {
+    $items = $this->items();
+
+    if (empty($items)) {
+      return FALSE;
+    }
+
+    $skus = array_column($items, 'sku');
+    return in_array($sku, $skus);
+  }
+
 }

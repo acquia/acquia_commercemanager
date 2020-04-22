@@ -1,0 +1,455 @@
+<?php
+
+global $_acm_commerce_configurable_products;
+
+$_acm_commerce_configurable_products = [
+  [
+    'product_id' => 24,
+    'store_id' => 1,
+    'attribute_set_id' => 0,
+    'attribute_set_label' => 'Default',
+    'sku' => 'cf1',
+    'name' => 'Configurable product',
+    'type' => 'configurable',
+    'price' => '1212.5',
+    'special_price' => '',
+    'final_price' => '1212.5',
+    'regular_price' => '1250',
+    'status' => 1,
+    'visibility' => 1,
+    'attributes' =>
+      [
+        'description' => '<p>Long Description</p>',
+        'short_description' => 'short desc',
+      ],
+    'linked' =>
+      [
+      ],
+    'categories' =>
+      [
+        0 => '5',
+      ],
+    'extension' =>
+      [
+        'configurable_product_links' =>
+          [
+            0 =>
+              [
+                'id' => '27',
+                'sku' => 'cf1-variant1',
+              ],
+            1 =>
+              [
+                'id' => '30',
+                'sku' => 'cf1-variant2',
+              ],
+            2 =>
+              [
+                'id' => '33',
+                'sku' => 'cf1-variant3',
+              ],
+            3 =>
+              [
+                'id' => '123',
+                'sku' => 'cf1-variant4',
+              ],
+          ],
+        'configurable_product_options' =>
+          [
+            0 =>
+              [
+                'attribute_id' => '282',
+                'code' => 'color',
+                'label' => 'Color',
+                'position' => '1',
+                'values' =>
+                  [
+                    0 =>
+                      [
+                        'label' => 'Neutral',
+                        'value_id' => '108',
+                      ],
+                    1 =>
+                      [
+                        'label' => 'Brown',
+                        'value_id' => '333',
+                      ],
+                    2 =>
+                      [
+                        'label' => 'Ivory',
+                        'value_id' => '336',
+                      ],
+                    3 =>
+                      [
+                        'label' => 'Alfresco Brown',
+                        'value_id' => '123',
+                      ],
+                  ],
+              ],
+            1 =>
+              [
+                'attribute_id' => '660',
+                'code' => 'size',
+                'label' => 'Size',
+                'position' => '0',
+                'values' =>
+                  [
+                    0 =>
+                      [
+                        'label' => '5 x 8 ft',
+                        'value_id' => '99',
+                      ],
+                    1 =>
+                      [
+                        'label' => '8 x 10 ft',
+                        'value_id' => '102',
+                      ],
+                    2 =>
+                      [
+                        'label' => '9 x 12 ft',
+                        'value_id' => '105',
+                      ],
+                    3 =>
+                      [
+                        'label' => '21.5 x 23 x 36.5"',
+                        'value_id' => '201',
+                      ],
+                  ],
+              ],
+          ],
+        'labels' =>
+          [
+          ],
+        'media' =>
+          [
+            0 =>
+              [
+              ],
+            1 =>
+              [
+              ],
+          ],
+        'stock_item' =>
+          [
+            'backorders' => 0,
+            'enable_qty_increments' => FALSE,
+            'is_decimal_divided' => FALSE,
+            'is_in_stock' => FALSE,
+            'is_qty_decimal' => FALSE,
+            'item_id' => 10830,
+            'low_stock_date' => NULL,
+            'manage_stock' => TRUE,
+            'max_sale_qty' => 10000,
+            'min_qty' => 0,
+            'min_sale_qty' => 1,
+            'notify_stock_qty' => 1,
+            'product_id' => 24,
+            'qty' => 0,
+            'qty_increments' => 0,
+            'show_default_notification_message' => FALSE,
+            'stock_id' => 1,
+            'stock_status_changed_auto' => 1,
+            'use_config_backorders' => TRUE,
+            'use_config_enable_qty_inc' => TRUE,
+            'use_config_manage_stock' => TRUE,
+            'use_config_max_sale_qty' => TRUE,
+            'use_config_min_qty' => TRUE,
+            'use_config_min_sale_qty' => 1,
+            'use_config_notify_stock_qty' => TRUE,
+            'use_config_qty_increments' => TRUE,
+          ],
+      ],
+  ],
+  [
+    'product_id' => 27,
+    'store_id' => 1,
+    'attribute_set_id' => 0,
+    'attribute_set_label' => 'Default',
+    'sku' => 'cf1-variant1',
+    'name' => 'Configurable product, 5x8, Neutral',
+    'type' => 'simple',
+    'price' => '2390.0000',
+    'special_price' => '',
+    'final_price' => '2390',
+    'regular_price' => '2390',
+    'status' => 1,
+    'visibility' => 2,
+    'attributes' =>
+      [
+        'color' => '108',
+        'description' => '<p>Long Description</p>',
+        'short_description' => 'short desc',
+        'size' => '99',
+        'sku_name' => 'Configurable product, 5x8, Neutral',
+      ],
+    'linked' =>
+      [
+      ],
+    'categories' =>
+      [
+      ],
+    'extension' =>
+      [
+        'labels' =>
+          [
+          ],
+        'media' =>
+          [
+            0 =>
+              [
+              ],
+            1 =>
+              [
+              ],
+          ],
+        'stock_item' =>
+          [
+            'backorders' => 0,
+            'enable_qty_increments' => FALSE,
+            'is_decimal_divided' => FALSE,
+            'is_in_stock' => TRUE,
+            'is_qty_decimal' => FALSE,
+            'item_id' => 10833,
+            'low_stock_date' => NULL,
+            'manage_stock' => TRUE,
+            'max_sale_qty' => 10000,
+            'min_qty' => 0,
+            'min_sale_qty' => 1,
+            'notify_stock_qty' => 1,
+            'product_id' => 27,
+            'qty' => 5000,
+            'qty_increments' => 0,
+            'show_default_notification_message' => FALSE,
+            'stock_id' => 1,
+            'stock_status_changed_auto' => 0,
+            'use_config_backorders' => TRUE,
+            'use_config_enable_qty_inc' => TRUE,
+            'use_config_manage_stock' => TRUE,
+            'use_config_max_sale_qty' => TRUE,
+            'use_config_min_qty' => TRUE,
+            'use_config_min_sale_qty' => 1,
+            'use_config_notify_stock_qty' => TRUE,
+            'use_config_qty_increments' => TRUE,
+          ],
+      ],
+  ],
+  [
+    'product_id' => 30,
+    'store_id' => 1,
+    'attribute_set_id' => 0,
+    'attribute_set_label' => 'Default',
+    'sku' => 'cf1-variant2',
+    'name' => 'Configurable product, 8x10, Neutral',
+    'type' => 'simple',
+    'price' => '4190.0000',
+    'special_price' => '4000.0000',
+    'final_price' => '4000',
+    'regular_price' => '4190',
+    'status' => 1,
+    'visibility' => 2,
+    'attributes' =>
+      [
+        'color' => '333',
+        'description' => '<p>Long description</p>',
+        'short_description' => 'short desc',
+        'size' => '102',
+        'sku_name' => 'Configurable product, 8x10, Neutral',
+      ],
+    'linked' =>
+      [
+      ],
+    'categories' =>
+      [
+      ],
+    'extension' =>
+      [
+        'labels' =>
+          [
+          ],
+        'media' =>
+          [
+            0 =>
+              [
+              ],
+            1 =>
+              [
+              ],
+          ],
+        'stock_item' =>
+          [
+            'backorders' => 0,
+            'enable_qty_increments' => FALSE,
+            'is_decimal_divided' => FALSE,
+            'is_in_stock' => TRUE,
+            'is_qty_decimal' => FALSE,
+            'item_id' => 10836,
+            'low_stock_date' => NULL,
+            'manage_stock' => TRUE,
+            'max_sale_qty' => 10000,
+            'min_qty' => 0,
+            'min_sale_qty' => 1,
+            'notify_stock_qty' => 1,
+            'product_id' => 30,
+            'qty' => 5000,
+            'qty_increments' => 0,
+            'show_default_notification_message' => FALSE,
+            'stock_id' => 1,
+            'stock_status_changed_auto' => 0,
+            'use_config_backorders' => TRUE,
+            'use_config_enable_qty_inc' => TRUE,
+            'use_config_manage_stock' => TRUE,
+            'use_config_max_sale_qty' => TRUE,
+            'use_config_min_qty' => TRUE,
+            'use_config_min_sale_qty' => 1,
+            'use_config_notify_stock_qty' => TRUE,
+            'use_config_qty_increments' => TRUE,
+          ],
+      ],
+  ],
+  [
+    'product_id' => 33,
+    'store_id' => 1,
+    'attribute_set_id' => 0,
+    'attribute_set_label' => 'Default',
+    'sku' => 'cf1-variant3',
+    'name' => 'Configurable product, 9x12, Neutral',
+    'type' => 'simple',
+    'price' => '5080.0000',
+    'special_price' => '',
+    'final_price' => '4927.6',
+    'regular_price' => '5080',
+    'status' => 1,
+    'visibility' => 2,
+    'attributes' =>
+      [
+        'color' => '336',
+        'description' => '<p>Long Description</p>',
+        'short_description' => 'short desc',
+        'size' => '105',
+        'sku_name' => 'Configurable product, 9x12, Neutral',
+      ],
+    'linked' =>
+      [
+      ],
+    'categories' =>
+      [
+      ],
+    'extension' =>
+      [
+        'labels' =>
+          [
+          ],
+        'media' =>
+          [
+            0 =>
+              [
+              ],
+            1 =>
+              [
+              ],
+          ],
+        'stock_item' =>
+          [
+            'backorders' => 0,
+            'enable_qty_increments' => FALSE,
+            'is_decimal_divided' => FALSE,
+            'is_in_stock' => TRUE,
+            'is_qty_decimal' => FALSE,
+            'item_id' => 10839,
+            'low_stock_date' => NULL,
+            'manage_stock' => TRUE,
+            'max_sale_qty' => 10000,
+            'min_qty' => 0,
+            'min_sale_qty' => 1,
+            'notify_stock_qty' => 1,
+            'product_id' => 33,
+            'qty' => 5000,
+            'qty_increments' => 0,
+            'show_default_notification_message' => FALSE,
+            'stock_id' => 1,
+            'stock_status_changed_auto' => 0,
+            'use_config_backorders' => TRUE,
+            'use_config_enable_qty_inc' => TRUE,
+            'use_config_manage_stock' => TRUE,
+            'use_config_max_sale_qty' => TRUE,
+            'use_config_min_qty' => TRUE,
+            'use_config_min_sale_qty' => 1,
+            'use_config_notify_stock_qty' => TRUE,
+            'use_config_qty_increments' => TRUE,
+          ],
+      ],
+  ],
+  [
+    'product_id' => 123,
+    'store_id' => 1,
+    'attribute_set_id' => 0,
+    'attribute_set_label' => 'Default',
+    'sku' => 'cf1-variant4',
+    'name' => 'Configurable Product, Alfresco Brown',
+    'type' => 'simple',
+    'price' => '1250.0000',
+    'special_price' => '',
+    'final_price' => '1212.5',
+    'regular_price' => '1250',
+    'status' => 1,
+    'visibility' => 2,
+    'attributes' =>
+      [
+        'color' => '123',
+        'size' => '201',
+        'sku_name' => 'Configurable Product, Alfresco Brown',
+        'description' => '<p>Long Description</p>',
+        'short_description' => 'short desc',
+      ],
+    'linked' =>
+      [
+      ],
+    'categories' =>
+      [
+      ],
+    'extension' =>
+      [
+        'labels' =>
+          [
+          ],
+        'media' =>
+          [
+            0 =>
+              [
+              ],
+            1 =>
+              [
+              ],
+          ],
+        'stock_item' =>
+          [
+            'backorders' => 0,
+            'enable_qty_increments' => FALSE,
+            'is_decimal_divided' => FALSE,
+            'is_in_stock' => TRUE,
+            'is_qty_decimal' => FALSE,
+            'item_id' => 10881,
+            'low_stock_date' => NULL,
+            'manage_stock' => TRUE,
+            'max_sale_qty' => 10000,
+            'min_qty' => 0,
+            'min_sale_qty' => 1,
+            'notify_stock_qty' => 1,
+            'product_id' => 123,
+            'qty' => 5990,
+            'qty_increments' => 0,
+            'show_default_notification_message' => FALSE,
+            'stock_id' => 1,
+            'stock_status_changed_auto' => 1,
+            'use_config_backorders' => TRUE,
+            'use_config_enable_qty_inc' => TRUE,
+            'use_config_manage_stock' => TRUE,
+            'use_config_max_sale_qty' => TRUE,
+            'use_config_min_qty' => TRUE,
+            'use_config_min_sale_qty' => 1,
+            'use_config_notify_stock_qty' => TRUE,
+            'use_config_qty_increments' => TRUE,
+          ],
+      ],
+  ],
+];
