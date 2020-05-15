@@ -91,7 +91,9 @@ class CartStorageTest extends UnitTestCase {
       return $m->getName();
     }, (new \ReflectionClass($interface))->getMethods());
     $methods[] = 'getCartItemsCount';
-    $mock_cart = $this->createMock($interface, $methods);
+    $mock_cart = $this->getMockBuilder($interface)
+      ->setMethods($methods)
+      ->getMock();
     $mock_cart->cart = $cart;
     $mock_cart->expects($this->any())
       ->method('id')

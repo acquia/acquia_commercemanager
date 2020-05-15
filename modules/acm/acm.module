@@ -10,6 +10,7 @@ use Drupal\acm\User\CommerceAccountInterface;
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 
 /**
  * For the all.
@@ -114,10 +115,10 @@ function acm_mail_tokens(array &$replacements, array $data, array $options) {
  *   they can change their password.
  */
 function acm_commerce_user_pass_reset_url(CommerceAccountInterface $account, array $options = []) {
-  $timestamp = REQUEST_TIME;
+  $timestamp = \Drupal::time()->getRequestTime();
   $langcode = isset($options['langcode']) ? $options['langcode'] : $account->getPreferredLangcode();
   $email = $account->getEmail();
-  return \Drupal::url('acm.external_user_password_reset',
+  return Url::fromRoute('acm.external_user_password_reset',
     [
       'email' => base64_encode($email),
       'timestamp' => $timestamp,

@@ -8,6 +8,7 @@ use Drupal\acm\SessionStoreInterface;
 use Drupal\acm\User\AccountProxyInterface;
 use Drupal\acm\User\CommerceUserSession;
 use Drupal\acm_cart\CartStorageInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\user\UserAuthInterface;
@@ -26,6 +27,13 @@ class CommerceUserController extends ControllerBase {
    * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
 
   /**
    * The session storage.
@@ -67,6 +75,8 @@ class CommerceUserController extends ControllerBase {
    *
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    * @param \Drupal\acm\SessionStoreInterface $session
    *   The session.
    * @param \Drupal\user\UserAuthInterface $user_auth
@@ -78,8 +88,9 @@ class CommerceUserController extends ControllerBase {
    * @param \Drupal\acm_cart\CartStorageInterface $cartStorage
    *   Cart Storage object.
    */
-  public function __construct(DateFormatterInterface $date_formatter, SessionStoreInterface $session, UserAuthInterface $user_auth, AccountProxyInterface $commerce_user_manager, APIWrapperInterface $api_wrapper, CartStorageInterface $cartStorage) {
+  public function __construct(DateFormatterInterface $date_formatter, TimeInterface $time, SessionStoreInterface $session, UserAuthInterface $user_auth, AccountProxyInterface $commerce_user_manager, APIWrapperInterface $api_wrapper, CartStorageInterface $cartStorage) {
     $this->dateFormatter = $date_formatter;
+    $this->time = $time;
     $this->session = $session;
     $this->userAuth = $user_auth;
     $this->commerceUserManager = $commerce_user_manager;
@@ -93,6 +104,7 @@ class CommerceUserController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('date.formatter'),
+      $container->get('datetime.time'),
       $container->get('acm.session_storage'),
       $container->get('acm.auth'),
       $container->get('acm.commerce_user_manager'),
@@ -217,15 +229,15 @@ class CommerceUserController extends ControllerBase {
     $account = new CommerceUserSession($user);
 
     // The current user is not logged in, so check the parameters.
-    $current = REQUEST_TIME;
+    $current = $this->time->getRequestTime();
     // Time out, in seconds, until login URL expires.
     $timeout = $this->config('user.settings')->get('password_reset_timeout');
 
     if ($current - $timestamp > $timeout) {
-      drupal_set_message($this->t('you have tried to use a one-time password reset link that has expired. Please request a new one using the form below.'), 'error');
+      $this->messenger()->addError('you have tried to use a one-time password reset link that has expired. Please request a new one using the form below.');
       return $this->redirect('acm.external_user_password');
     }
-    elseif (($timestamp <= $current) && Crypt::hashEquals($hash, acm_commerce_user_pass_rehash($account, $timestamp))) {
+    elseif (($timestamp <= $current) && hash_equals($hash, acm_commerce_user_pass_rehash($account, $timestamp))) {
       $password_values = $request->get('new_password');
       $pass1 = trim($password_values['pass1']);
       $pass2 = trim($password_values['pass2']);
@@ -233,7 +245,7 @@ class CommerceUserController extends ControllerBase {
         if (strcmp($pass1, $pass2)) {
           // Passwords don't match, return back to the reset password page so
           // they can correct.
-          drupal_set_message($this->t('The passwords you entered do not match.'), 'error');
+          $this->messenger()->addError('The passwords you entered do not match.');
           return $this->redirect(
             'acm.external_user_password_reset', [
               'email' => base64_encode($email),
@@ -259,16 +271,16 @@ class CommerceUserController extends ControllerBase {
       }
 
       if ($updated_user) {
-        drupal_set_message($this->t('Your password has been updated.'));
+        $this->messenger()->addStatus('Your password has been updated.');
         return $this->redirect('acm_customer.view_page');
       }
       else {
-        drupal_set_message($this->t('There was an issue updating your password.'), 'error');
+        $this->messenger()->addError('There was an issue updating your password.');
         return $this->redirect('acm.external_user_password');
       }
     }
 
-    drupal_set_message($this->t('You have tried to use a one-time password reset link that has either been used or is no longer valid. Please request a new one using the form below.'), 'error');
+    $this->messenger()->addError('You have tried to use a one-time password reset link that has either been used or is no longer valid. Please request a new one using the form below.');
     return $this->redirect('acm.external_user_password');
   }
 

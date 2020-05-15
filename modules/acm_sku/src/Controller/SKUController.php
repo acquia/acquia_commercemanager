@@ -22,7 +22,7 @@ class SKUController extends ControllerBase {
    *   A SKU submission form.
    */
   public function add(SKUTypeInterface $acm_sku_type) {
-    $sku = $this->entityManager()
+    $sku = $this->entityTypeManager()
       ->getStorage('acm_sku')
       ->create(['type' => $acm_sku_type->id()]);
 
@@ -60,13 +60,13 @@ class SKUController extends ControllerBase {
     $build = [
       '#theme' => 'sku_add_list',
       '#cache' => [
-        'tags' => $this->entityManager()->getDefinition('acm_sku_type')->getListCacheTags(),
+        'tags' => $this->entityTypeManager()->getDefinition('acm_sku_type')->getListCacheTags(),
       ],
     ];
 
     $content = [];
 
-    foreach ($this->entityManager()->getStorage('acm_sku_type')->loadMultiple() as $type) {
+    foreach ($this->entityTypeManager()->getStorage('acm_sku_type')->loadMultiple() as $type) {
       $content[$type->id()] = $type;
     }
 

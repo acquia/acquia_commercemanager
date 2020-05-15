@@ -52,6 +52,7 @@ before_install:
   - ../orca/bin/travis/before_install.sh
 
 install: ../orca/bin/travis/install.sh
+  #- ./tests/install.sh
 
 before_script: ../orca/bin/travis/before_script.sh
 

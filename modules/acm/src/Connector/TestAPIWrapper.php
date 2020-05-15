@@ -218,7 +218,7 @@ class TestAPIWrapper extends APIWrapper {
     $order['coupon'] = 'GREAT DEAL';
     $order['status'] = $status;
     $order['state'] = $state;
-    $order['created_at'] = REQUEST_TIME;
+    $order['created_at'] = \Drupal::time()->getRequestTime();
     $order['order_id'] = $this->generateOrderId();
 
     return $order;

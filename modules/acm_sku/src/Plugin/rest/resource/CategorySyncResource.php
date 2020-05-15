@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:ignore PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.resourceFound
 namespace Drupal\acm_sku\Plugin\rest\resource;
 
 use Drupal\acm_sku\CategoryManagerInterface;

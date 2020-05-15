@@ -2,6 +2,7 @@
 
 namespace Drupal\acm\User;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
@@ -33,16 +34,26 @@ class CommerceUserManager implements AccountProxyInterface, CommerceAccountInter
   protected $currentCommerceUser;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   The cache backend interface to use for temp storing user info.
-   * @param \Drupal\acm\CommerceAccountProxyInterface $current_commerce_user
+   * @param \Drupal\acm\User\CommerceAccountProxyInterface $current_commerce_user
    *   The current commerce user.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The Time service.
    */
-  public function __construct(CacheBackendInterface $cache, CommerceAccountProxyInterface $current_commerce_user) {
+  public function __construct(CacheBackendInterface $cache, CommerceAccountProxyInterface $current_commerce_user, TimeInterface $time) {
     $this->cache = $cache;
     $this->currentCommerceUser = $current_commerce_user;
+    $this->time = $time;
   }
 
   /**
@@ -67,7 +78,7 @@ class CommerceUserManager implements AccountProxyInterface, CommerceAccountInter
 
       // Store the account for 5 minutes to prevent unnecessary API calls.
       $access_token = $this->getAccessToken();
-      $expire = 600 + \Drupal::time()->getRequestTime();
+      $expire = 600 + $this->time->getRequestTime();
       $this->cache->set(self::USER_STORAGE_KEY . ':' . $access_token, $account, $expire);
     }
 

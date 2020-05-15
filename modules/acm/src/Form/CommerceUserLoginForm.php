@@ -145,10 +145,10 @@ class CommerceUserLoginForm extends UserLoginForm {
     $account = $this->commerceUserManager->getAccount();
 
     if ($account && $account->isAnonymous()) {
-      drupal_set_message($this->t('There was an issue logging you in, please try again.'));
+      $this->messenger('There was an issue logging you in, please try again.');
     }
     else {
-      $this->logger('acm')->notice('Commerce session opened for %name.', ['%name' => $account->getUsername()]);
+      $this->logger('acm')->notice('Commerce session opened for %name.', ['%name' => $account->getAccountName()]);
 
       // Convert the guest cart after login.
       $customer_id = $account->id();

@@ -160,11 +160,11 @@ class CommerceUserPasswordTokenResetForm extends FormBase {
     }
 
     if ($updated_user) {
-      drupal_set_message($this->t('Your password has been updated.'));
+      $this->messenger->addStatus('Your password has been updated.');
       return $this->redirect('acm_customer.view_page');
     }
     else {
-      drupal_set_message($this->t('There was an issue updating your password.'), 'error');
+      $this->messenger->addError('There was an issue updating your password.');
     }
   }
 

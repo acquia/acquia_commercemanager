@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:ignore PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.resourceFound
 namespace Drupal\acm_promotion\Plugin\rest\resource;
 
 use Drupal\acm_promotion\AcmPromotionsManager;

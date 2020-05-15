@@ -13,7 +13,7 @@ class CategoryManagerTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
-  */
+   */
   protected $defaultTheme = 'stark';
 
   /**
