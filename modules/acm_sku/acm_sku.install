@@ -87,6 +87,25 @@ function acm_sku_uninstall() {
     }
     $role->save();
   }
+
+  // Remove configuration
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory */
+  $configFactory = \Drupal::configFactory();
+  $logger = \Drupal::logger('acm_sku');
+
+  $configNames = [
+    'acm_sku.configurable_form_settings',
+    'acm_sku.settings',
+  ];
+
+  foreach ($configNames as $configName) {
+    try {
+      $configFactory->getEditable($configName)->delete();
+    }
+    catch (\Exception $e) {
+      $logger->warning(sprintf('Unable to uninstall config: %s.', $configName));
+    }
+  }
 }
 
 /**
