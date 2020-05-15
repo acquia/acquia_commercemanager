@@ -10,6 +10,12 @@ use Drupal\Tests\BrowserTestBase;
  * @group acm_sku
  */
 class StockManagerTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
   /**
    * {@inheritdoc}
    */

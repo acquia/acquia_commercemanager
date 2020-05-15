@@ -28,7 +28,7 @@ class PhpSessionStoreTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
 
-    $this->session = $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+    $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
     $this->tempStore = new PhpSessionStore($this->session);
   }
 
