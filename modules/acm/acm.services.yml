@@ -72,7 +72,7 @@ services:
 
   acm.commerce_user_manager:
     class: Drupal\acm\User\CommerceUserManager
-    arguments: ['@cache.commerce_user', '@acm.current_user']
+    arguments: ['@cache.commerce_user', '@acm.current_user', '@datetime.time']
 
   acm.route_subscriber:
     class: Drupal\acm\Routing\CommerceUserRoutes

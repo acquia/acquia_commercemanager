@@ -27,6 +27,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "id" = "id",
  *     "label" = "label",
  *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *   },
  *   links = {
  *     "canonical" = "/admin/commerce/config/sku/{acm_sku_type}",
  *     "add-form" = "/admin/commerce/config/sku/add",

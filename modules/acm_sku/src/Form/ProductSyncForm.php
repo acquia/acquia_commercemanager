@@ -161,12 +161,12 @@ class ProductSyncForm extends FormBase {
       case 'Synchronize Categories':
         $category_vid = $this->connectorConfig->get('category_vid');
         $this->catManager->synchronizeTree($category_vid);
-        drupal_set_message('Category Synchronization Complete.', 'status');
+        $this->messenger->addStatus($this->t('Category Synchronization Complete.'));
         break;
 
       case 'Synchronize Products (async)':
         $this->ingestApi->productFullSync();
-        drupal_set_message('Product Synchronization Processing...', 'status');
+        $this->messenger->addStatus($this->t('Product Synchronization Processing...'));
         break;
 
       case 'Synchronize Products (sync)':
@@ -187,7 +187,8 @@ class ProductSyncForm extends FormBase {
           $drupalMessage .= "Product Synchronization Complete (" . $acm_uuid . "). \n";
         }
 
-        drupal_set_message($drupalMessage, 'status');
+        $this->messenger->addStatus($drupalMessage);
+
         break;
     }
   }

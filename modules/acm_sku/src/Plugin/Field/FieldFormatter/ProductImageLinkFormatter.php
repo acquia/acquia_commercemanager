@@ -38,7 +38,7 @@ class ProductImageLinkFormatter extends ImageFormatter {
 
     $node_entity = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
 
-    $url = $node_entity->urlInfo();
+    $url = $node_entity->toUrl();
 
     foreach ($elements as &$element) {
       if (!is_null($element['#url'])) {

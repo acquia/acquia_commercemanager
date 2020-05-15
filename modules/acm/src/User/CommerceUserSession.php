@@ -188,7 +188,7 @@ class CommerceUserSession implements CommerceAccountInterface {
   public function getTimeZone() {
     // Will return the value for system.date.timezone.default since this user
     // is always anonymous in drupal.
-    return drupal_get_user_timezone();
+    return date_default_timezone_get();
   }
 
   /**

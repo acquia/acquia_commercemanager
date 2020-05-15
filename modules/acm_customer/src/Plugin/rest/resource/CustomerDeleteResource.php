@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:ignore PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.resourceFound
 namespace Drupal\acm_customer\Plugin\rest\resource;
 
 use Drupal\Core\Entity\EntityStorageException;

@@ -23,6 +23,7 @@ env:
     - ORCA_PACKAGES_CONFIG_ALTER=../acquia_commercemanager/tests/packages_alter.yml
     - ORCA_TELEMETRY_ENABLE=TRUE
 
+#temporarily kill other jobs...
 jobs:
   fast_finish: true
   include:
@@ -41,7 +42,6 @@ jobs:
     - env: ORCA_JOB=INTEGRATED_DEV
     - env: ORCA_JOB=CORE_NEXT
     # Temporary allowances.
-    - env: ORCA_JOB=STATIC_CODE_ANALYSIS
     - env: ORCA_JOB=DEPRECATED_CODE_SCAN
     # You may need to allow the D9 readiness job to fail in the short term.
     - { php: "7.3", env: ORCA_JOB=D9_READINESS }
@@ -51,6 +51,7 @@ before_install:
   - ../orca/bin/travis/before_install.sh
 
 install: ../orca/bin/travis/install.sh
+  #- ./tests/install.sh
 
 before_script: ../orca/bin/travis/before_script.sh
 

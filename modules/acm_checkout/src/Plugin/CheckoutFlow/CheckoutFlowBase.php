@@ -6,6 +6,7 @@ use Drupal\acm\Connector\APIWrapperInterface;
 use Drupal\acm\Response\NeedsRedirectException;
 use Drupal\acm\User\AccountProxyInterface;
 use Drupal\acm_cart\CartStorageInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
@@ -60,6 +61,13 @@ abstract class CheckoutFlowBase extends PluginBase implements CheckoutFlowInterf
   protected $stepId;
 
   /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
+
+  /**
    * Constructs a new CheckoutFlowBase object.
    *
    * @param array $configuration
@@ -78,8 +86,12 @@ abstract class CheckoutFlowBase extends PluginBase implements CheckoutFlowInterf
    *   The api wrapper.
    * @param \Drupal\acm\User\AccountProxyInterface $commerce_user_manager
    *   The commerce user manager.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   *
+   * @throws \Drupal\acm\Response\NeedsRedirectException
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $route_match, CartStorageInterface $cart_storage, APIWrapperInterface $api_wrapper, AccountProxyInterface $commerce_user_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $route_match, CartStorageInterface $cart_storage, APIWrapperInterface $api_wrapper, AccountProxyInterface $commerce_user_manager, TimeInterface $time) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->setConfiguration($configuration);
@@ -102,7 +114,8 @@ abstract class CheckoutFlowBase extends PluginBase implements CheckoutFlowInterf
       $container->get('current_route_match'),
       $container->get('acm_cart.cart_storage'),
       $container->get('acm.api'),
-      $container->get('acm.commerce_user_manager')
+      $container->get('acm.commerce_user_manager'),
+      $container->get('datetime.time')
     );
   }
 
@@ -357,7 +370,7 @@ abstract class CheckoutFlowBase extends PluginBase implements CheckoutFlowInterf
           return;
         }
 
-        $timestamp = \Drupal::time()->getRequestTime();
+        $timestamp = $this->time->getRequestTime();
         $request = \Drupal::request();
 
         // Store the order time and order id to a cookie so that any checkout

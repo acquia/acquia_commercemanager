@@ -122,7 +122,7 @@ class CommerceUserPasswordForm extends FormBase {
     if ($ecomm_pass_reset) {
       $this->apiWrapper->resetCustomerPassword($email);
       $this->logger('acm')->notice('Password reset triggered for email %email.', ['%email' => $email]);
-      drupal_set_message($user_message);
+      $this->messenger->addMessage($user_message);
       return;
     }
 
@@ -146,7 +146,7 @@ class CommerceUserPasswordForm extends FormBase {
     $mail = \Drupal::service('plugin.manager.mail')->mail('acm', 'commerce_user_reset_password', $email, $langcode, $params, $site_mail);
     if (!empty($mail)) {
       $this->logger('acm')->notice('Password reset instructions mailed to %email.', ['%email' => $email]);
-      drupal_set_message($user_message);
+      $this->messenger->addMessage($user_message);
     }
 
     $form_state->setRedirect('acm.external_user_login');

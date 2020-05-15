@@ -29,7 +29,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
   /**
    * The user temp store.
    *
-   * @var \Drupal\user\DatabaseSessionStore
+   * @var \Drupal\acm\DatabaseSessionStore
    */
   protected $tempStore;
 
@@ -64,12 +64,12 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp():void {
     parent::setUp();
 
-    $this->keyValue = $this->getMock('Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface');
-    $this->lock = $this->getMock('Drupal\Core\Lock\LockBackendInterface');
-    $this->currentUser = $this->getMock('Drupal\acm\User\AccountProxyInterface');
+    $this->keyValue = $this->createMock('Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface');
+    $this->lock = $this->createMock('Drupal\Core\Lock\LockBackendInterface');
+    $this->currentUser = $this->createMock('Drupal\acm\User\AccountProxyInterface');
     $this->currentUser->expects($this->any())
       ->method('id')
       ->willReturn(1);
@@ -102,7 +102,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
       ->with('1:test')
       ->willReturn(NULL);
 
-    $current_user = $this->getMock('Drupal\acm\User\AccountProxyInterface');
+    $current_user = $this->createMock('Drupal\acm\User\AccountProxyInterface');
     $tempStore = new MockDatabaseSessionStore($this->keyValue, $this->lock, $current_user, $this->requestStack);
 
     $this->assertNull($tempStore->get('test'));
@@ -115,7 +115,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
    * @covers ::get
    */
   public function testGetWithNoCurrentUser() {
-    $current_user = $this->getMock('Drupal\acm\User\AccountProxyInterface');
+    $current_user = $this->createMock('Drupal\acm\User\AccountProxyInterface');
 
     $current_user->expects($this->any())
       ->method('getAccount')
@@ -136,7 +136,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
    * @covers ::get
    */
   public function testGetWithCurrentUserWithNoPreviousAnonSession() {
-    $current_user = $this->getMock('Drupal\acm\User\AccountProxyInterface');
+    $current_user = $this->createMock('Drupal\acm\User\AccountProxyInterface');
     $current_uid = 3;
 
     $current_user->expects($this->any())
@@ -170,7 +170,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
    * @covers ::get
    */
   public function testGetWithCurrentUserWithPreviousAnonSession() {
-    $current_user = $this->getMock('Drupal\acm\User\AccountProxyInterface');
+    $current_user = $this->createMock('Drupal\acm\User\AccountProxyInterface');
     $current_uid = 3;
 
     $current_user->expects($this->any())
@@ -211,7 +211,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
    * @covers ::get
    */
   public function testGetWithCurrentUserWithPreviousAnonSessionAndNoReference() {
-    $current_user = $this->getMock('Drupal\acm\User\AccountProxyInterface');
+    $current_user = $this->createMock('Drupal\acm\User\AccountProxyInterface');
     $current_uid = 3;
 
     $this->lock->expects($this->once())

@@ -90,7 +90,7 @@ class Simple extends SKUPluginBase {
     // Call above is to create cart if empty, we except a new or old cart here
     // and it can be empty if server is not working or in maintenance mode.
     if (empty($cart)) {
-      drupal_set_message(t('An error occured, please try again.'), 'error');
+      $this->messenger->addError(t('An error occured, please try again.'));
       $e = new \Exception(acm_api_down_global_error_message(), APIWrapper::API_DOWN_ERROR_CODE);
       // Dispatch event so action can be taken.
       $dispatcher = \Drupal::service('event_dispatcher');
@@ -103,7 +103,7 @@ class Simple extends SKUPluginBase {
     $sku = $sku_entity->getSku();
     $quantity = $form_state->getValue('quantity');
 
-    drupal_set_message(
+    $this->messenger->addStatus(
       t('Added @quantity of @name to the cart.',
         [
           '@quantity' => $quantity,

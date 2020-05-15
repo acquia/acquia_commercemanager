@@ -5,6 +5,7 @@
  * Contains install hooks for acm_sku.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\Role;
@@ -34,7 +35,10 @@ function acm_sku_update_8018() {
   }
 
   // Apply updates to remove stock field.
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($old_stock_field = $definition_update_manager->getFieldStorageDefinition('stock', 'acm_sku')) {
+    $definition_update_manager->uninstallFieldStorageDefinition($old_stock_field);
+  }
 }
 
 /**
@@ -87,6 +91,25 @@ function acm_sku_uninstall() {
     }
     $role->save();
   }
+
+  // Remove configuration
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory */
+  $configFactory = \Drupal::configFactory();
+  $logger = \Drupal::logger('acm_sku');
+
+  $configNames = [
+    'acm_sku.configurable_form_settings',
+    'acm_sku.settings',
+  ];
+
+  foreach ($configNames as $configName) {
+    try {
+      $configFactory->getEditable($configName)->delete();
+    }
+    catch (\Exception $e) {
+      $logger->warning(sprintf('Unable to uninstall config: %s.', $configName));
+    }
+  }
 }
 
 /**
@@ -109,43 +132,22 @@ function acm_sku_update_8001() {
  *   "Null value not allowed"
  */
 function acm_sku_update_8101() {
-  try {
-    $status_storage_schema = [
-      'acm_sku' => [
-        'fields' => [
-          'status' => [
-            'type' => 'int',
-            'size' => 'tiny',
-            'not null' => TRUE,
-          ],
-        ],
-      ],
-    ];
-    \Drupal::keyValue('entity.storage_schema.sql')
-      ->set('acm_sku.field_schema_data.status', $status_storage_schema);
 
-    $database = \Drupal::database();
-    $table_name = 'acm_sku';
-    $column_name = 'status';
-    if ($database->schema()->tableExists($table_name) && !$database->schema()->fieldExists($table_name, $column_name)) {
-      $database->schema()->addField($table_name, $column_name, [
-        'type' => 'int',
-        'size' => 'tiny',
-        'not null' => TRUE,
-        'description' => 'Whether the SKU is available or not.',
-        'default' => 1,
-      ]);
+  $storage_definition = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Status'))
+    ->setDescription(t('Whether the SKU is available or not.'))
+    ->setDefaultValue(TRUE);
 
-      \Drupal::entityDefinitionUpdateManager()->applyUpdates();
-    }
-  }
-  catch (\Exception $e) {
-    \Drupal::logger('acm_sku')->error($e->getMessage());
-  }
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('status', 'acm_sku', 'acm_sku', $storage_definition);
 }
 
 /**
  * Change type of attributes field.
+ *
+ * We do this because updateFieldStorageDefinition will not allow updates to
+ * any fields with existing data in it. We must first clear the field of data
+ * make the change, and then copy the data back.
  */
 function acm_sku_update_8102() {
   try {
@@ -289,13 +291,13 @@ function acm_sku_update_8106() {
 }
 
 /**
- * Implements hook_update_N().
+ * Update 8107 was removed because it just ran entityupdates, which no longer
+ * works as of Drupal 8.7. If you did not run this update prior to updating to
+ * 8.7, please get the earlier version of ACM, run all updates, and download the
+ * new version.
  *
- * Make price, final_price and special_price non-translatable.
+ * Old intention: Make price, final_price and special_price non-translatable.
  */
-function acm_sku_update_8107() {
-  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
-}
 
 /**
  * Implements hook_update_N().

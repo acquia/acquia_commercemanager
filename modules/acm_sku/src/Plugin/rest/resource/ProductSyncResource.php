@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:ignore PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.resourceFound
 namespace Drupal\acm_sku\Plugin\rest\resource;
 
 use Drupal\acm_sku\ProductManagerInterface;
@@ -134,7 +135,7 @@ class ProductSyncResource extends ResourceBase {
   public function errorHandler(int $error_number, string $error_message) {
     switch ($error_number) {
       case E_RECOVERABLE_ERROR:
-        throw new Exception($error_message, $error_number);
+        throw new \Exception($error_message, $error_number);
     }
   }
 

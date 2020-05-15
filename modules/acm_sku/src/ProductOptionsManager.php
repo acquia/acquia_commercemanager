@@ -130,7 +130,7 @@ class ProductOptionsManager implements ProductOptionsManagerInterface {
    * {@inheritdoc}
    */
   public function createProductOptionWrapper($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight) {
-    return $this->createProductOption();
+    return $this->createProductOption($langcode, $option_id, $option_value, $attribute_id, $attribute_code, $weight);
   }
 
   /**

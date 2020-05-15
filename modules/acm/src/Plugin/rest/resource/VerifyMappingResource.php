@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:ignore PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.resourceFound
 namespace Drupal\acm\Plugin\rest\resource;
 
 use Drupal\acm\VerifyMappingInterface;

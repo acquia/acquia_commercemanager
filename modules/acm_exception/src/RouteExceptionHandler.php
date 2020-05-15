@@ -48,7 +48,7 @@ class RouteExceptionHandler {
   public function message(RouteException $e) {
     $message = $this->getConfig('message', $e);
     if (!empty($message) && PHP_SAPI !== 'cli') {
-      drupal_set_message($message, 'error');
+      \Drupal::messenger()->addError($message);
     }
   }
 

@@ -357,7 +357,7 @@ class AcmAddress extends FormElement {
 
       // Address is valid and no suggestion came back.
       if (isset($response['result']['valid']) && empty($response['result']['suggested'])) {
-        drupal_set_message($address_review_text, 'status');
+        \Drupal::messenger()->addStatus($address_review_text);
       }
       // Address is in review and there's a suggestion that we use to pre-fill
       // the address fields.
@@ -374,7 +374,7 @@ class AcmAddress extends FormElement {
           }
         }
 
-        drupal_set_message($address_review_text, 'status');
+        \Drupal::messenger()->addStatus($address_review_text);
       }
       // Address failed validation.
       else {

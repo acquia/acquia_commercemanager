@@ -10,8 +10,6 @@ services:
       - '@logger.factory'
       - '@database'
       - '@entity_type.manager'
-      - '@entity.query'
-      - '@entity.manager'
       - '@language_manager'
       - '@module_handler'
       - '@cache.linked_skus'

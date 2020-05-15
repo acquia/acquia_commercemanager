@@ -4,7 +4,11 @@
     "description": "This module provides SKU functionality to the Acquia Commerce Connector Service.",
     "license": "GPL-2.0-or-later",
     "require": {
+        "drupal/core": "^8.7.7 || ^9",
         "drupal/inline_entity_form": "^1.0@rc",
-        "drupal/key_value_field": "~1.0"
+        "drupal/key_value_field": "^1.0"
+    },
+    "require-dev": {
+        "drupal/facets": "^1.0"
     }
 }

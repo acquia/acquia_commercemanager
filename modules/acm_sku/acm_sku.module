@@ -9,6 +9,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_theme().
@@ -78,7 +79,7 @@ function template_preprocess_sku_add_list(array &$variables) {
     /** @var \Drupal\acm_sku\Entity\SKUTypeInterface $type */
     foreach ($variables['content'] as $type) {
       $variables['types'][$type->id()]['label'] = $type->label();
-      $variables['types'][$type->id()]['url'] = \Drupal::url('acm_sku.sku_add', ['acm_sku_type' => $type->id()]);
+      $variables['types'][$type->id()]['url'] = Url::fromRoute('acm_sku.sku_add', ['acm_sku_type' => $type->id()]);
     }
   }
 }
