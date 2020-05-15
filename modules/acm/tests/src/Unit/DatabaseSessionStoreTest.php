@@ -29,7 +29,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
   /**
    * The user temp store.
    *
-   * @var \Drupal\user\DatabaseSessionStore
+   * @var \Drupal\acm\DatabaseSessionStore
    */
   protected $tempStore;
 
@@ -64,7 +64,7 @@ class DatabaseSessionStoreTest extends PrivateTempStoreTest {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp():void {
     parent::setUp();
 
     $this->keyValue = $this->getMock('Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface');
