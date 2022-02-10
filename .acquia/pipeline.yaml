@@ -1,0 +1,54 @@
+---
+type: default
+team: edge
+service: acquia_commercemanager
+
+environment_image:
+  file: ".acquia/Dockerfile.ci"
+  context: "."
+
+# -- Continuous Integration --
+# Pre-build runs after building the environment image, and relies on it to
+# run its sub-stages' steps inside of the environment container.
+pre_build:
+  security_composition_analysis:
+    required: true
+    directory: "."
+    language:
+      - php
+    before:
+      - steps:
+          - echo "security_composition_analysis before step"
+    after:
+      - steps:
+          - echo "security_composition_analysis after step"
+
+post_build:
+  dev:
+    functional_tests:
+      - steps:
+          - echo "There are no 'dev' functional tests"
+  prod:
+    functional_tests:
+      - steps:
+          - echo "There are no 'prod' functional tests"
+
+deploy:
+  - component: custom
+    dev:
+      - steps:
+          - echo "No dev deploy step"
+    prod:
+      - steps:
+          - echo "Nothing to do"
+        secrets:
+
+# These stages ensure that after every success or failure
+# the mentioned steps will always run
+after_failure:
+  - steps:
+      - echo "After failure step"
+
+after_success:
+  - steps:
+      - echo "After successful step"

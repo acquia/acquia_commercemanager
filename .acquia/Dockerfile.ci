@@ -1,0 +1,12 @@
+ARG BASE_IMAGE=ent-php:7.4-master
+ARG REPO_LOCATION
+
+FROM ${REPO_LOCATION}${BASE_IMAGE}
+
+# The WORKDIR for adding code and to run tests in pipeline.yaml
+WORKDIR /usr/src/acquia_commercemanager
+
+# Copy the rest of the application
+COPY . ./
+
+CMD []
