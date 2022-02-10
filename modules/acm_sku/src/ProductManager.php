@@ -487,19 +487,6 @@ class ProductManager implements ProductManagerInterface {
           continue;
         }
 
-        $query = $this->entityManager->getStorage('acm_sku')->getQuery()
-          ->condition('sku', $product['sku']);
-        $sku_ids = $query->execute();
-
-        if (count($sku_ids) > 1) {
-          $this->failedSkus[] = $product['sku'] . '(Duplicate product SKU found.)';
-          $this->failed++;
-          // Release the lock on this sku.
-          $lock->release($lock_key);
-          $lock_key = NULL;
-          continue;
-        }
-
         $sku = $this->processSku($product, $langcode);
 
         if (is_null($sku)) {

@@ -322,3 +322,37 @@ function acm_sku_update_8109() {
   $field->setTranslatable(FALSE);
   $field->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Re-structure attribute weights to make it schema compatible.
+ */
+function acm_sku_update_8110() {
+  $config = \Drupal::configFactory()->getEditable('acm_sku.configurable_form_settings');
+
+  $attribute_weights = [];
+  foreach ($config->get('attribute_weights') ?? [] as $attribute_set => $weights) {
+    $fields = [];
+
+    foreach ($weights as $field => $weight) {
+      if (is_array($weight)) {
+        // Ignore corrupt data created because of buggy code.
+        continue;
+      }
+
+      $fields[] = [
+        'field' => $field,
+        'weight' => $weight,
+      ];
+    }
+
+    $attribute_weights[] = [
+      'attribute_set' => $attribute_set,
+      'fields' => $fields,
+    ];
+  }
+
+  $config->set('attribute_weights', $attribute_weights);
+  $config->save(TRUE);
+}

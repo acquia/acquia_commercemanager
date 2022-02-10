@@ -1,4 +1,8 @@
 attribute_weights:
-  default:
-    size: 1
+  -
+    attribute_set: default
+    fields:
+      -
+        field: 'size'
+        weight: 1
 show_quantity: TRUE
